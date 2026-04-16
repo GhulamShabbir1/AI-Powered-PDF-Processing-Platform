@@ -1,0 +1,60 @@
+/* src/assets/styles/vuetify-overrides.css */
+
+/* Buttons */
+.v-btn {
+  border-radius: var(--radius-sm);
+  text-transform: none;
+}
+
+/* Cards */
+.v-card {
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-sm);
+}
+
+/* Inputs */
+.v-field {
+  border-radius: var(--radius-sm);
+}
+
+/* Progress Linear */
+.v-progress-linear {
+  border-radius: 10px;
+}
+
+/* Custom AI Progress */
+.v-progress-linear.ai-progress .v-progress-linear__background,
+.v-progress-linear.ai-progress .v-progress-linear__determinate {
+  background: linear-gradient(90deg, #4F46E5, #06B6D4);
+}
+
+/* Circular Loader Glow */
+.v-progress-circular.ai-loader {
+  filter: drop-shadow(0 0 8px #06B6D4);
+}
+
+/* Chips (Status) */
+.v-chip.success {
+  background-color: var(--color-success);
+  color: white;
+}
+
+.v-chip.warning {
+  background-color: var(--color-warning);
+  color: white;
+}
+
+.v-chip.error {
+  background-color: var(--color-error);
+  color: white;
+}
+
+/* Tables */
+.v-table {
+  border-radius: var(--radius-md);
+}
+
+/* Dialog */
+.v-dialog .v-card {
+  border-radius: var(--radius-lg);
+}

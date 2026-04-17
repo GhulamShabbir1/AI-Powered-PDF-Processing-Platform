@@ -2,87 +2,134 @@
 
 @import "./variables.css";
 
-/* Reset */
+/* Reset & Base */
 * {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
 }
 
-/* Body */
+html, body {
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  overflow-x: hidden !important;
+  position: relative;
+}
+
 body {
-  font-family: "Inter", sans-serif;
-  background-color: var(--color-background);
-  color: var(--color-text-primary);
-  transition: var(--transition-normal);
+  font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  background-color: rgb(var(--v-theme-background));
+  color: rgb(var(--v-theme-on-background));
+  transition: background-color 0.3s ease, color 0.3s ease;
+  line-height: 1.6;
 }
 
 /* Links */
 a {
   text-decoration: none;
   color: inherit;
+  transition: opacity 0.2s ease;
+}
+
+a:hover {
+  opacity: 0.8;
 }
 
 /* Scrollbar */
 ::-webkit-scrollbar {
-  width: 6px;
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
 }
 
 ::-webkit-scrollbar-thumb {
-  background: var(--color-border);
+  background: rgba(var(--v-border-color), 0.2);
   border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(var(--v-border-color), 0.4);
 }
 
 /* Utility Classes */
 
-/* Gradient Background */
+/* Gradient Styling */
 .bg-ai-gradient {
-  background: var(--gradient-ai);
-  color: white;
+  background: linear-gradient(135deg, #4F46E5 0%, #06B6D4 100%) !important;
+  color: white !important;
 }
 
-/* Card Style */
-.app-card {
-  background: var(--color-surface);
-  border-radius: var(--radius-md);
-  box-shadow: var(--shadow-md);
-  padding: 16px;
+.text-gradient {
+  background: linear-gradient(135deg, #4F46E5 0%, #06B6D4 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
 }
 
-/* Text */
-.text-muted {
-  color: var(--color-text-secondary);
+/* Glassmorphism */
+.glass-panel {
+  background: rgba(var(--v-theme-surface), 0.7) !important;
+  backdrop-filter: blur(12px) saturate(180%);
+  border: 1px solid rgba(var(--v-border-color), 0.1) !important;
 }
 
-/* Status Colors */
-.text-success { color: var(--color-success); }
-.text-warning { color: var(--color-warning); }
-.text-error { color: var(--color-error); }
-
-/* Loader Glow Effect */
-.ai-loader {
-  filter: drop-shadow(0 0 6px var(--color-secondary));
+/* Shadows */
+.shadow-soft {
+  box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.1) !important;
 }
 
-/* Buttons */
-.btn-primary {
-  background: var(--color-primary);
-  color: white;
-  border-radius: var(--radius-sm);
-  transition: var(--transition-fast);
+.shadow-glow {
+  box-shadow: 0 0 20px rgba(var(--v-theme-primary), 0.3) !important;
 }
 
-.btn-primary:hover {
-  background: var(--color-primary-dark);
+/* Layout */
+.section-py {
+  padding-top: clamp(4rem, 10vw, 8rem);
+  padding-bottom: clamp(4rem, 10vw, 8rem);
 }
 
-/* AI Progress Bar */
-.ai-progress .v-progress-linear__determinate {
-  background: var(--gradient-ai);
+/* Animation Utilities */
+.hover-lift {
+  transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
 }
 
-/* Dark Mode Support */
-.dark body {
-  background: var(--color-dark-bg);
-  color: var(--color-dark-text);
+.hover-lift:hover {
+  transform: translateY(-8px);
 }
+
+/* Vuetify Overrides */
+.v-btn {
+  text-transform: none !important;
+  letter-spacing: 0 !important;
+}
+
+.v-container {
+  max-width: 1280px !important;
+  padding-left: clamp(1rem, 3vw, 2rem) !important;
+  padding-right: clamp(1rem, 3vw, 2rem) !important;
+  overflow-x: hidden !important;
+}
+
+/* Landing containers tighter */
+.landing-page .v-container {
+  max-width: 1400px !important;
+  padding-left: clamp(1rem, 2.5vw, 1.5rem) !important;
+  padding-right: clamp(1rem, 2.5vw, 1.5rem) !important;
+}
+
+/* Navbar toggle button fixes */
+.v-app-bar-nav-icon {
+  border-radius: var(--radius-xl) !important;
+  padding: 8px 10px !important;
+  margin: 2px !important;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1) !important;
+}
+
+.v-app-bar-nav-icon:hover {
+  background-color: rgba(var(--v-theme-primary), 0.1) !important;
+  transform: scale(1.05) !important;
+}
+

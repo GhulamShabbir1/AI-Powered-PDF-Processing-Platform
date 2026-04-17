@@ -1,51 +1,64 @@
-/* src/assets/styles/variables.css */
-
+/* CSS Variables */
 :root {
-  /* 🎨 Primary Theme */
+  /* Colors - Primary */
   --color-primary: #4F46E5;
-  --color-primary-light: #6366F1;
   --color-primary-dark: #4338CA;
-
+  --color-primary-light: #6366F1;
   --color-secondary: #06B6D4;
-  --color-secondary-light: #22D3EE;
-  --color-secondary-dark: #0891B2;
-
   --color-accent: #8B5CF6;
 
-  /* ✅ Status Colors */
+  /* Colors - Semantic */
   --color-success: #10B981;
   --color-warning: #F59E0B;
   --color-error: #EF4444;
 
-  /* 🧱 Light Theme */
+  /* Colors - Light Theme */
   --color-background: #F9FAFB;
   --color-surface: #FFFFFF;
-  --color-border: #E5E7EB;
-
   --color-text-primary: #111827;
   --color-text-secondary: #6B7280;
+  --color-border: #E5E7EB;
 
-  /* 🌙 Dark Theme */
+  /* Colors - Dark Theme */
   --color-dark-bg: #0F172A;
   --color-dark-surface: #1E293B;
-  --color-dark-card: #334155;
   --color-dark-text: #F1F5F9;
+  --color-dark-text-secondary: #94A3B8;
+  --color-dark-border: #334155;
 
-  /* 🎯 Gradients */
+  /* Gradients */
   --gradient-ai: linear-gradient(135deg, #4F46E5, #06B6D4);
-  --gradient-accent: linear-gradient(135deg, #8B5CF6, #4F46E5);
 
-  /* 🔲 Radius */
+  /* Spacing */
+  --spacing-xs: 4px;
+  --spacing-sm: 8px;
+  --spacing-md: 16px;
+  --spacing-lg: 24px;
+  --spacing-xl: 32px;
+
+  /* Border Radius */
   --radius-sm: 6px;
-  --radius-md: 10px;
+  --radius-md: 12px;
   --radius-lg: 16px;
+  --radius-xl: 24px;
 
-  /* 🌫 Shadows */
-  --shadow-sm: 0 1px 2px rgba(0,0,0,0.05);
-  --shadow-md: 0 4px 10px rgba(0,0,0,0.08);
-  --shadow-lg: 0 10px 25px rgba(0,0,0,0.12);
+  /* Shadows */
+  --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+  --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1);
+  --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1);
+  --shadow-xl: 0 20px 25px -5px rgb(0 0 0 / 0.1);
 
-  /* ⏱ Transitions */
-  --transition-fast: 0.2s ease;
-  --transition-normal: 0.3s ease;
+  /* Transitions */
+  --transition-fast: 150ms ease;
+  --transition-normal: 300ms ease;
+  --transition-slow: 500ms ease;
+}
+
+/* Dark Theme Variables */
+[data-theme="dark"] {
+  --color-background: #0F172A;
+  --color-surface: #1E293B;
+  --color-text-primary: #F1F5F9;
+  --color-text-secondary: #94A3B8;
+  --color-border: #334155;
 }

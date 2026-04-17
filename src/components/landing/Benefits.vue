@@ -1,224 +1,578 @@
 <template>
-  <section class="benefits-wrapper">
-    <div class="bg-pattern"></div>
-    
-    <v-container>
-      <v-intersect once>
-        <v-row justify="center" class="mb-12 lg:mb-16">
-          <v-col cols="12" md="8" class="text-center">
-            <v-fade-transition>
-              <div>
-                <h2 class="text-h3 font-weight-bold mb-4">
-                  Why Choose Our <span class="text-gradient">AI Engine?</span>
-                </h2>
-                <p class="text-body-1 text-muted max-w-text">
-                  Built for enterprise-grade performance, reliability, and security.
-                </p>
-              </div>
-            </v-fade-transition>
-          </v-col>
-        </v-row>
-      </v-intersect>
+  <section class="benefits-wrapper" id="benefits">
+    <!-- Animated Background -->
+    <div class="bg-shapes">
+      <div class="shape shape-1"></div>
+      <div class="shape shape-2"></div>
+      <div class="shape shape-3"></div>
+      <div class="shape shape-4"></div>
+    </div>
 
+    <v-container>
+      <!-- Section Header -->
+      <v-row justify="center" class="mb-12 lg:mb-16">
+        <v-col cols="12" md="8" class="text-center">
+          <div class="section-badge mb-4">
+            💪 Why Choose Us
+          </div>
+          <h2 class="section-title mb-4">
+            Why Choose Our 
+            <span class="text-gradient">AI Engine?</span>
+          </h2>
+          <p class="section-subtitle">
+            Built for enterprise-grade performance, reliability, and security.
+            Trusted by leading companies worldwide.
+          </p>
+        </v-col>
+      </v-row>
+
+      <!-- Benefits Grid -->
       <v-row>
         <v-col 
           v-for="(benefit, index) in benefits" 
           :key="index"
-          cols="12" sm="6" lg="3"
+          cols="12" 
+          sm="6" 
+          lg="3"
           class="benefit-col"
         >
-          <v-intersect once :delay="index * 75">
-            <div class="benefit-item h-100 pa-6 rounded-xl bg-surface hover-lift">
-              <div 
-                class="icon-circle d-flex align-center justify-center mb-6 mx-auto"
-                :style="{ backgroundColor: benefit.bgColor }"
-              >
-                <v-icon :color="benefit.color" size="36" class="benefit-icon">
-                  {{ benefit.icon }}
-                </v-icon>
+          <div class="benefit-card">
+            <!-- Icon -->
+            <div class="benefit-icon-wrapper">
+              <div class="benefit-icon-bg" :style="{ background: benefit.gradient }">
+                <v-icon size="32" color="white">{{ benefit.icon }}</v-icon>
               </div>
-
-              <h3 class="text-h6 font-weight-bold mb-4 text-center">
-                {{ benefit.title }}
-              </h3>
-              
-              <p class="text-body-2 text-muted leading-relaxed text-center">
-                {{ benefit.description }}
-              </p>
             </div>
-          </v-intersect>
+
+            <!-- Content -->
+            <h3 class="benefit-title">{{ benefit.title }}</h3>
+            <p class="benefit-description">{{ benefit.description }}</p>
+
+            <!-- Hover Overlay -->
+            <div class="benefit-overlay" :style="{ background: benefit.gradient }">
+              <v-icon size="48" color="white">{{ benefit.icon }}</v-icon>
+              <span>Learn More</span>
+            </div>
+          </div>
         </v-col>
       </v-row>
 
-      <v-intersect once class="mt-12 lg:mt-16">
-        <v-row justify="center">
-          <v-col cols="12" md="8" lg="6" class="text-center">
-            <v-fade-transition>
-              <div class="trust-section">
-                <div class="trust-pill px-8 py-4 d-flex align-center justify-center mx-auto">
-                  <v-icon color="success" size="28" class="mr-4">mdi-shield-check</v-icon>
-                  <div>
-                    <span class="text-body-1 font-weight-bold text-uppercase tracking-widest">
-                      ISO 27001 Certified
-                    </span>
-                    <br>
-                    <span class="text-caption text-muted">GDPR Compliant • SOC2 Type II</span>
-                  </div>
+      <!-- Trust Section -->
+      <v-row justify="center" class="mt-12 lg:mt-16">
+        <v-col cols="12" md="10" lg="8">
+          <div class="trust-section">
+            <!-- Trust Badges -->
+            <div class="trust-badges">
+              <div class="trust-badge">
+                <v-icon color="#10B981" size="28">mdi-shield-check</v-icon>
+                <div class="trust-content">
+                  <div class="trust-title">ISO 27001 Certified</div>
+                  <div class="trust-subtitle">Information Security Management</div>
                 </div>
               </div>
-            </v-fade-transition>
-          </v-col>
-        </v-row>
-      </v-intersect>
+              
+              <div class="trust-badge">
+                <v-icon color="#4F46E5" size="28">mdi-lock-check</v-icon>
+                <div class="trust-content">
+                  <div class="trust-title">GDPR Compliant</div>
+                  <div class="trust-subtitle">Data Protection & Privacy</div>
+                </div>
+              </div>
+              
+              <div class="trust-badge">
+                <v-icon color="#06B6D4" size="28">mdi-certificate</v-icon>
+                <div class="trust-content">
+                  <div class="trust-title">SOC2 Type II</div>
+                  <div class="trust-subtitle">Security & Availability</div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Trust Text -->
+            <div class="trust-text">
+              <p>Enterprise-grade security and compliance for your most sensitive documents</p>
+            </div>
+          </div>
+        </v-col>
+      </v-row>
+
+      <!-- Bottom CTA -->
+      <v-row justify="center" class="mt-12">
+        <v-col cols="auto">
+          <v-btn
+            size="large"
+            class="benefits-cta-btn"
+            @click="scrollToCta"
+          >
+            Start Your Free Trial
+            <v-icon end class="ml-2">mdi-arrow-right</v-icon>
+          </v-btn>
+        </v-col>
+      </v-row>
     </v-container>
   </section>
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue';
-
 interface Benefit {
   title: string;
   description: string;
   icon: string;
+  gradient: string;
   color: string;
-  bgColor: string;
 }
 
-const benefits = ref<Benefit[]>([
+const benefits: Benefit[] = [
   {
     title: 'Lightning Fast',
-    description: 'Process documents in milliseconds using distributed GPU clusters.',
-    icon: 'mdi-bolt-variant',
-    color: '#F59E0B',
-    bgColor: 'rgba(245, 158, 11, 0.12)'
+    description: 'Process documents in milliseconds using distributed GPU clusters with parallel processing.',
+    icon: 'mdi-flash',
+    gradient: 'linear-gradient(135deg, #F59E0B, #D97706)',
+    color: '#F59E0B'
   },
   {
     title: '99.9% Accuracy',
-    description: 'Trained on billions of samples for unmatched extraction precision.',
-    icon: 'mdi-target-precision',
-    color: '#10B981',
-    bgColor: 'rgba(16, 185, 129, 0.12)'
+    description: 'Trained on billions of samples for unmatched extraction precision and reliability.',
+    icon: 'mdi-target',
+    gradient: 'linear-gradient(135deg, #10B981, #059669)',
+    color: '#10B981'
   },
   {
     title: 'Bank-Grade Security',
-    description: 'SOC2 compliant with end-to-end encryption. Your data, your control.',
-    icon: 'mdi-lock-pattern',
-    color: '#4F46E5',
-    bgColor: 'rgba(79, 70, 229, 0.12)'
+    description: 'SOC2 compliant with end-to-end encryption. Your data, your control, always.',
+    icon: 'mdi-shield-lock',
+    gradient: 'linear-gradient(135deg, #4F46E5, #7C3AED)',
+    color: '#4F46E5'
   },
   {
     title: 'Infinite Scale',
-    description: 'Handle single PDFs or enterprise batches automatically.',
-    icon: 'mdi-server-network',
-    color: '#06B6D4',
-    bgColor: 'rgba(6, 182, 212, 0.12)'
+    description: 'Handle single PDFs or enterprise batches automatically without any limits.',
+    icon: 'mdi-cloud-upload',
+    gradient: 'linear-gradient(135deg, #06B6D4, #0891B2)',
+    color: '#06B6D4'
   }
-]);
+];
+
+const scrollToCta = () => {
+  const element = document.getElementById('cta');
+  if (element) {
+    element.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }
+};
 </script>
 
 <style scoped>
 .benefits-wrapper {
-  background: linear-gradient(180deg, #ffffff 0%, #f8fafc 100%);
-  isolation: isolate;
+  position: relative;
+  padding: 5rem 0;
+  background: linear-gradient(135deg, #f8fafc 0%, #ffffff 50%, #f1f5f9 100%);
+  overflow-x: hidden;
 }
 
-.bg-pattern {
+/* Animated Background Shapes */
+.bg-shapes {
   position: absolute;
   top: 0;
   left: 0;
-  right: 0;
-  height: 50%;
-  background-image: 
-    radial-gradient(circle at 25% 25%, rgba(79,70,229,0.03) 0%, transparent 50%),
-    radial-gradient(circle at 75% 75%, rgba(6,182,212,0.03) 0%, transparent 50%);
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
   z-index: 0;
 }
 
+.shape {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(80px);
+  opacity: 0.15;
+  animation: floatShape 20s infinite ease-in-out;
+}
+
+.shape-1 {
+  width: 400px;
+  height: 400px;
+  background: linear-gradient(135deg, #4F46E5, #06B6D4);
+  top: -100px;
+  left: -100px;
+}
+
+.shape-2 {
+  width: 300px;
+  height: 300px;
+  background: linear-gradient(135deg, #F59E0B, #10B981);
+  bottom: -50px;
+  right: -50px;
+  animation-delay: 5s;
+}
+
+.shape-3 {
+  width: 250px;
+  height: 250px;
+  background: linear-gradient(135deg, #8B5CF6, #EC4899);
+  top: 40%;
+  left: 70%;
+  animation-delay: 10s;
+}
+
+.shape-4 {
+  width: 200px;
+  height: 200px;
+  background: linear-gradient(135deg, #06B6D4, #8B5CF6);
+  bottom: 30%;
+  left: 10%;
+  animation-delay: 15s;
+}
+
+@keyframes floatShape {
+  0%, 100% {
+    transform: translate(0, 0) scale(1);
+  }
+  33% {
+    transform: translate(30px, -30px) scale(1.1);
+  }
+  66% {
+    transform: translate(-20px, 20px) scale(0.9);
+  }
+}
+
+/* Section Header */
+.section-badge {
+  display: inline-block;
+  padding: 0.5rem 1.25rem;
+  background: linear-gradient(135deg, rgba(79, 70, 229, 0.1), rgba(6, 182, 212, 0.1));
+  border-radius: 100px;
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: #4F46E5;
+  letter-spacing: 0.025em;
+}
+
+.section-title {
+  font-size: clamp(2rem, 4vw, 2.75rem);
+  font-weight: 800;
+  line-height: 1.2;
+  color: #0F172A;
+}
+
+.text-gradient {
+  background: linear-gradient(135deg, #4F46E5 0%, #06B6D4 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.section-subtitle {
+  font-size: 1.125rem;
+  color: #64748B;
+  max-width: 600px;
+  margin: 0 auto;
+  line-height: 1.6;
+}
+
+/* Benefit Cards */
 .benefit-col {
-  opacity: 0;
-  transform: translateY(40px) scale(0.95);
-  transition: all 0.7s cubic-bezier(0.34, 1.56, 0.64, 1);
+  margin-bottom: 2rem;
 }
 
-.benefit-col .v-intersect--in {
-  opacity: 1 !important;
-  transform: translateY(0) scale(1) !important;
-}
-
-.benefit-item {
-  border: 1px solid rgba(229, 231, 235, 0.6);
-  backdrop-filter: saturate(180%) blur(8px);
-  transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-  cursor: pointer;
+.benefit-card {
   position: relative;
+  background: rgba(255, 255, 255, 0.9);
+  backdrop-filter: blur(10px);
+  border-radius: 24px;
+  padding: 2rem 1.5rem;
+  text-align: center;
+  height: 100%;
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  border: 1px solid rgba(226, 232, 240, 0.8);
+  cursor: pointer;
   overflow: hidden;
 }
 
-.hover-lift {
-  box-shadow: 0 4px 20px rgba(0,0,0,0.06);
+.benefit-card:hover {
+  transform: translateY(-8px);
+  border-color: rgba(79, 70, 229, 0.2);
+  box-shadow: 0 20px 40px -12px rgba(0, 0, 0, 0.15);
 }
 
-.hover-lift:hover {
-  transform: translateY(-16px) scale(1.02) !important;
-  border-color: rgba(79, 70, 229, 0.2) !important;
-  box-shadow: 0 25px 50px rgba(79, 70, 229, 0.15) !important;
+/* Benefit Icon */
+.benefit-icon-wrapper {
+  margin-bottom: 1.5rem;
 }
 
-.icon-circle {
-  width: 72px;
-  height: 72px;
-  border-radius: 50%;
-  transition: all 0.4s ease;
-  box-shadow: 0 10px 30px rgba(0,0,0,0.1);
-}
-
-.hover-lift:hover .icon-circle {
-  transform: scale(1.15) rotate(360deg);
-  box-shadow: 0 0 30px currentColor;
-}
-
-.benefit-icon {
-  filter: drop-shadow(0 4px 12px rgba(0,0,0,0.2));
-}
-
-.trust-section {
-  opacity: 0;
-  transform: scale(0.9);
-  transition: all 0.8s ease;
-}
-
-.trust-section .v-intersect--in {
-  opacity: 1 !important;
-  transform: scale(1) !important;
-}
-
-.trust-pill {
-  background: rgba(255,255,255,0.9) !important;
-  backdrop-filter: blur(20px);
-  border: 1px solid rgba(16,185,129,0.3);
-  border-radius: 50px;
-  max-width: 400px;
-  box-shadow: 0 20px 40px rgba(16,185,129,0.15);
-}
-
-.tracking-widest {
-  letter-spacing: 0.1em;
-}
-
-.max-w-text {
-  max-width: 520px;
+.benefit-icon-bg {
+  width: 80px;
+  height: 80px;
+  border-radius: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   margin: 0 auto;
+  transition: all 0.3s ease;
+  box-shadow: 0 10px 20px -5px rgba(0, 0, 0, 0.1);
 }
 
-.leading-relaxed {
-  line-height: 1.65;
+.benefit-card:hover .benefit-icon-bg {
+  transform: scale(1.05) rotate(5deg);
+  box-shadow: 0 15px 30px -8px rgba(0, 0, 0, 0.15);
 }
 
-/* Mobile */
+/* Benefit Content */
+.benefit-title {
+  font-size: 1.25rem;
+  font-weight: 700;
+  margin-bottom: 0.75rem;
+  color: #0F172A;
+}
+
+.benefit-description {
+  font-size: 0.875rem;
+  line-height: 1.6;
+  color: #64748B;
+  margin: 0;
+}
+
+/* Hover Overlay */
+.benefit-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+  opacity: 0;
+  transition: all 0.3s ease;
+  border-radius: 24px;
+  color: white;
+  font-weight: 600;
+}
+
+.benefit-card:hover .benefit-overlay {
+  opacity: 0.95;
+}
+
+.benefit-overlay span {
+  font-size: 1rem;
+}
+
+/* Trust Section */
+.trust-section {
+  background: rgba(255, 255, 255, 0.9);
+  backdrop-filter: blur(10px);
+  border-radius: 32px;
+  padding: 2rem;
+  border: 1px solid rgba(226, 232, 240, 0.8);
+  box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.1);
+}
+
+.trust-badges {
+  display: flex;
+  justify-content: space-around;
+  flex-wrap: wrap;
+  gap: 2rem;
+  margin-bottom: 1.5rem;
+}
+
+.trust-badge {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 1rem;
+}
+
+.trust-content {
+  text-align: left;
+}
+
+.trust-title {
+  font-size: 1rem;
+  font-weight: 700;
+  color: #0F172A;
+  margin-bottom: 0.25rem;
+}
+
+.trust-subtitle {
+  font-size: 0.75rem;
+  color: #64748B;
+}
+
+.trust-text {
+  text-align: center;
+  padding-top: 1.5rem;
+  border-top: 1px solid rgba(226, 232, 240, 0.8);
+}
+
+.trust-text p {
+  font-size: 0.875rem;
+  color: #64748B;
+  margin: 0;
+}
+
+/* CTA Button */
+.benefits-cta-btn {
+  background: linear-gradient(135deg, #4F46E5, #06B6D4) !important;
+  color: white !important;
+  text-transform: none !important;
+  font-weight: 600 !important;
+  padding: 0 2rem !important;
+  border-radius: 12px !important;
+  box-shadow: 0 4px 14px rgba(79, 70, 229, 0.3) !important;
+  transition: all 0.3s ease !important;
+}
+
+.benefits-cta-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(79, 70, 229, 0.4) !important;
+}
+
+/* Dark Mode Support */
+:deep(.dark) .benefits-wrapper {
+  background: linear-gradient(135deg, #0F172A 0%, #1E293B 50%, #0F172A 100%);
+}
+
+:deep(.dark) .benefit-card {
+  background: rgba(30, 41, 59, 0.9);
+  border-color: rgba(51, 65, 85, 0.8);
+}
+
+:deep(.dark) .section-title {
+  color: #F1F5F9;
+}
+
+:deep(.dark) .section-subtitle {
+  color: #94A3B8;
+}
+
+:deep(.dark) .benefit-title {
+  color: #F1F5F9;
+}
+
+:deep(.dark) .benefit-description {
+  color: #94A3B8;
+}
+
+:deep(.dark) .trust-section {
+  background: rgba(30, 41, 59, 0.9);
+  border-color: rgba(51, 65, 85, 0.8);
+}
+
+:deep(.dark) .trust-title {
+  color: #F1F5F9;
+}
+
+:deep(.dark) .trust-subtitle,
+:deep(.dark) .trust-text p {
+  color: #94A3B8;
+}
+
+:deep(.dark) .trust-text {
+  border-top-color: rgba(51, 65, 85, 0.8);
+}
+
+/* Responsive Design */
+@media (max-width: 1264px) {
+  .benefits-wrapper {
+    padding: 4rem 0;
+  }
+  
+  .trust-badges {
+    gap: 1rem;
+  }
+}
+
+@media (max-width: 960px) {
+  .benefits-wrapper {
+    padding: 3rem 0;
+  }
+  
+  .benefit-card {
+    padding: 1.5rem;
+  }
+  
+  .benefit-icon-bg {
+    width: 64px;
+    height: 64px;
+  }
+  
+  .benefit-icon-bg .v-icon {
+    font-size: 28px !important;
+  }
+  
+  .trust-badges {
+    flex-direction: column;
+    align-items: center;
+  }
+  
+  .trust-badge {
+    width: 100%;
+    max-width: 300px;
+  }
+}
+
 @media (max-width: 600px) {
-  .benefit-item { margin-bottom: 1.5rem; }
-  .trust-pill { flex-direction: column !important; gap: 0.5rem; }
+  .benefits-wrapper {
+    padding: 2rem 0;
+  }
+  
+  .benefit-card {
+    padding: 1.25rem;
+  }
+  
+  .benefit-icon-bg {
+    width: 56px;
+    height: 56px;
+  }
+  
+  .benefit-icon-bg .v-icon {
+    font-size: 24px !important;
+  }
+  
+  .benefit-title {
+    font-size: 1.125rem;
+  }
+  
+  .section-badge {
+    font-size: 0.75rem;
+    padding: 0.375rem 1rem;
+  }
+  
+  .trust-section {
+    padding: 1.5rem;
+  }
+  
+  .trust-badge {
+    padding: 0.5rem;
+  }
+  
+  .benefits-cta-btn {
+    font-size: 0.875rem !important;
+    padding: 0 1.5rem !important;
+  }
 }
-</style>
 
+/* Animation for benefits */
+.benefit-col {
+  opacity: 0;
+  animation: fadeInUp 0.6s ease forwards;
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Stagger animations */
+.benefit-col:nth-child(1) { animation-delay: 0.1s; }
+.benefit-col:nth-child(2) { animation-delay: 0.2s; }
+.benefit-col:nth-child(3) { animation-delay: 0.3s; }
+.benefit-col:nth-child(4) { animation-delay: 0.4s; }
+</style>

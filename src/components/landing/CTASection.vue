@@ -1,212 +1,485 @@
 <template>
-  <section class="cta-wrapper overflow-hidden">
-    <v-container class="py-12 lg:py-20"></v-container>
-    <div class="cta-particles">
+  <section class="cta-wrapper" id="cta">
+    <!-- Animated Background -->
+    <div class="bg-gradient-animation"></div>
+    <div class="bg-particles">
       <div class="particle particle-1"></div>
       <div class="particle particle-2"></div>
       <div class="particle particle-3"></div>
       <div class="particle particle-4"></div>
       <div class="particle particle-5"></div>
+      <div class="particle particle-6"></div>
     </div>
-    
-    <v-container>
-      <v-intersect once>
-        <v-hover v-slot="{ isHovering, props }">
-          <v-card
-            v-bind="props"
-            class="cta-card text-center pa-10 pa-md-16 position-relative rounded-3xl elevation-24"
-            :class="{ 'cta-lift': isHovering }"
-            max-width="1200"
-          >
-            <div class="cta-glow-bg"></div>
-            
-            <v-row justify="center" align="center" class="position-relative z-2">
-              <v-col cols="12" md="10" lg="8">
-                <v-fade-transition appear>
-                  <div>
-                    <div class="cta-badge mb-6 mx-auto">
-                      <v-chip 
-                        color="white" 
-                        class="pa-3 font-weight-bold text-overline text-uppercase tracking-widest elevation-4"
-                      >
-                        Ready to Transform Your Workflow?
-                      </v-chip>
-                    </div>
-                    
-                    <h1 class="text-h2-xl font-weight-black mb-8 text-white leading-tight">
-                      Accelerate Your Document Intelligence 
-                      <span class="d-block d-md-inline">10x Faster</span>
-                    </h1>
-                    
-                    <p class="text-h5 text-white-alpha mb-12 max-w-hero lh-relaxed">
-                      Join thousands of innovative teams processing PDFs smarter, faster, 
-                      and more securely. Enterprise ready. Start free today.
-                    </p>
 
-                    <div class="cta-buttons d-flex flex-column flex-md-row justify-center align-center gap-6">
-                      <v-btn
-                        size="xx-large"
-                        color="white"
-                        class="primary-cta px-16 py-4 font-weight-black text-h6 rounded-xl elevation-8 text-primary"
-                        :class="{ 'cta-scale': isHovering }"
-                      >
-                        <v-icon start class="mr-3">mdi-rocket-launch</v-icon>
-                        Start Free Trial
-                        <v-icon end class="ml-3">mdi-arrow-right</v-icon>
-                      </v-btn>
-                      
-                      <div class="secondary-info d-flex align-center flex-column flex-md-row gap-4 mt-4 mt-md-0">
-                        <v-btn
-                          variant="tonal"
-                          color="white"
-                          size="large"
-                          class="px-8 py-3 rounded-lg font-weight-medium"
-                          flat
-                        >
-                          Watch Demo (2min)
-                        </v-btn>
-                        <span class="text-caption text-white-alpha font-weight-medium text-center text-md-left">
-                          No credit card required • Cancel anytime
-                        </span>
-                      </div>
-                    </div>
-                  </div>
-                </v-fade-transition>
-              </v-col>
-            </v-row>
-          </v-card>
-        </v-hover>
-      </v-intersect>
+    <v-container>
+      <v-row justify="center">
+        <v-col cols="12" lg="10" xl="8">
+          <div class="cta-card">
+            <!-- Decorative Elements -->
+            <div class="cta-decoration decoration-1"></div>
+            <div class="cta-decoration decoration-2"></div>
+            
+            <!-- Content -->
+            <div class="cta-content">
+              <!-- Badge -->
+              <div class="cta-badge mb-6">
+                <v-icon size="20" class="mr-2">mdi-rocket-launch</v-icon>
+                <span>Limited Time Offer</span>
+              </div>
+
+              <!-- Title -->
+              <h2 class="cta-title">
+                Ready to Transform Your 
+                <span class="text-gradient-white">Document Workflow?</span>
+              </h2>
+
+              <!-- Description -->
+              <p class="cta-description">
+                Join thousands of innovative teams processing PDFs smarter, faster, 
+                and more securely. Enterprise ready with bank-grade security.
+              </p>
+
+              <!-- Features List -->
+              <div class="cta-features">
+                <div class="feature">
+                  <v-icon size="20" color="#10B981">mdi-check-circle</v-icon>
+                  <span>No credit card required</span>
+                </div>
+                <div class="feature">
+                  <v-icon size="20" color="#10B981">mdi-check-circle</v-icon>
+                  <span>14-day free trial</span>
+                </div>
+                <div class="feature">
+                  <v-icon size="20" color="#10B981">mdi-check-circle</v-icon>
+                  <span>Cancel anytime</span>
+                </div>
+              </div>
+
+              <!-- CTA Buttons -->
+              <div class="cta-buttons">
+                <v-btn
+                  size="large"
+                  class="cta-primary-btn"
+                  @click="scrollToTop"
+                >
+                  Start Free Trial
+                  <v-icon end class="ml-2">mdi-arrow-right</v-icon>
+                </v-btn>
+                
+                <v-btn
+                  size="large"
+                  variant="outlined"
+                  class="cta-secondary-btn"
+                  @click="watchDemo"
+                >
+                  <v-icon start class="mr-2">mdi-play-circle</v-icon>
+                  Watch Demo (2min)
+                </v-btn>
+              </div>
+
+              <!-- Trust Badges -->
+              <div class="trust-badges">
+                <div class="trust-badge">
+                  <v-icon size="20" color="#F59E0B">mdi-shield-check</v-icon>
+                  <span>ISO 27001 Certified</span>
+                </div>
+                <div class="trust-badge">
+                  <v-icon size="20" color="#F59E0B">mdi-lock-check</v-icon>
+                  <span>GDPR Compliant</span>
+                </div>
+                <div class="trust-badge">
+                  <v-icon size="20" color="#F59E0B">mdi-credit-card-check</v-icon>
+                  <span>SOC2 Type II</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </v-col>
+      </v-row>
     </v-container>
   </section>
 </template>
 
 <script setup lang="ts">
-// Reactive state for hover particles
+const scrollToTop = () => {
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+};
+
+const watchDemo = () => {
+  // Add demo video modal or link
+  window.open('https://www.youtube.com/watch?v=demo', '_blank');
+};
 </script>
 
 <style scoped>
 .cta-wrapper {
-  background: radial-gradient(ellipse at center, #1e3a8a 0%, #1e40af 25%, #1d4ed8 50%, #3730a3 75%, #1e293b 100%);
   position: relative;
+  padding: 5rem 0;
+  background: linear-gradient(135deg, #0F172A 0%, #1E293B 50%, #0F172A 100%);
+  overflow-x: hidden;
 }
 
-.cta-particles {
+/* Animated Background Gradient */
+.bg-gradient-animation {
   position: absolute;
-  inset: 0;
-  pointer-events: none;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: radial-gradient(circle at 20% 50%, rgba(79, 70, 229, 0.3), transparent 50%),
+              radial-gradient(circle at 80% 80%, rgba(6, 182, 212, 0.3), transparent 50%);
+  animation: gradientShift 10s ease infinite;
+}
+
+@keyframes gradientShift {
+  0%, 100% {
+    opacity: 0.5;
+  }
+  50% {
+    opacity: 1;
+  }
+}
+
+/* Floating Particles */
+.bg-particles {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
   z-index: 0;
 }
 
 .particle {
   position: absolute;
-  background: rgba(255,255,255,0.1);
+  background: rgba(255, 255, 255, 0.1);
   border-radius: 50%;
-  backdrop-filter: blur(10px);
-  animation: particleFloat 8s infinite ease-in-out;
+  backdrop-filter: blur(4px);
+  animation: floatParticle 15s infinite ease-in-out;
 }
 
-.particle-1 { width: 12px; height: 12px; top: 20%; left: 10%; animation-delay: 0s; }
-.particle-2 { width: 8px; height: 8px; top: 60%; right: 15%; animation-delay: 2s; }
-.particle-3 { width: 16px; height: 16px; bottom: 30%; left: 20%; animation-delay: 4s; }
-.particle-4 { width: 10px; height: 10px; top: 40%; right: 25%; animation-delay: 5s; }
-.particle-5 { width: 14px; height: 14px; bottom: 10%; left: 70%; animation-delay: 6s; }
+.particle-1 {
+  width: 60px;
+  height: 60px;
+  top: 10%;
+  left: 5%;
+  animation-delay: 0s;
+}
 
-@keyframes particleFloat {
-  0%, 100% { 
-    transform: translateY(0) scale(1); 
-    opacity: 0.6; 
+.particle-2 {
+  width: 40px;
+  height: 40px;
+  top: 70%;
+  right: 8%;
+  animation-delay: 3s;
+}
+
+.particle-3 {
+  width: 80px;
+  height: 80px;
+  bottom: 20%;
+  left: 15%;
+  animation-delay: 6s;
+}
+
+.particle-4 {
+  width: 30px;
+  height: 30px;
+  top: 40%;
+  right: 20%;
+  animation-delay: 9s;
+}
+
+.particle-5 {
+  width: 50px;
+  height: 50px;
+  bottom: 50%;
+  left: 80%;
+  animation-delay: 12s;
+}
+
+.particle-6 {
+  width: 25px;
+  height: 25px;
+  top: 80%;
+  left: 40%;
+  animation-delay: 15s;
+}
+
+@keyframes floatParticle {
+  0%, 100% {
+    transform: translateY(0) translateX(0) scale(1);
+    opacity: 0.3;
   }
-  50% { 
-    transform: translateY(-30px) scale(1.2); 
-    opacity: 1; 
+  33% {
+    transform: translateY(-30px) translateX(20px) scale(1.2);
+    opacity: 0.6;
+  }
+  66% {
+    transform: translateY(20px) translateX(-15px) scale(0.8);
+    opacity: 0.4;
   }
 }
 
+/* CTA Card */
 .cta-card {
-  background: rgba(255,255,255,0.08) !important;
-  backdrop-filter: blur(40px);
-  border: 1px solid rgba(255,255,255,0.15);
-  transition: all 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-}
-
-.cta-lift {
-  transform: translateY(-20px) scale(1.02) !important;
-  box-shadow: 0 60px 120px rgba(30, 58, 138, 0.6) !important;
-  border-color: rgba(255,255,255,0.25) !important;
-}
-
-.cta-glow-bg {
-  position: absolute;
-  inset: 0;
-  background: radial-gradient(circle at 30% 30%, rgba(99,102,241,0.4) 0%, transparent 50%),
-              radial-gradient(circle at 70% 70%, rgba(6,182,212,0.3) 0%, transparent 50%);
-  z-index: -1;
-  opacity: 0;
-  transition: opacity 0.4s ease;
-}
-
-.cta-lift .cta-glow-bg {
-  opacity: 1;
-}
-
-.cta-badge {
-  max-width: 420px;
-}
-
-.text-h2-xl {
-  font-size: clamp(2.5rem, 6vw, 4.5rem) !important;
-}
-
-.text-white-alpha {
-  opacity: 0.85;
-}
-
-.lh-relaxed {
-  line-height: 1.65;
-}
-
-.max-w-hero {
-  max-width: 720px;
-  margin: 0 auto;
-}
-
-.cta-buttons {
-  gap: 24px;
-}
-
-.primary-cta {
-  background: linear-gradient(135deg, white 0%, #f8fafc 100%) !important;
-  transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
   position: relative;
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0.05));
+  backdrop-filter: blur(20px);
+  border-radius: 48px;
+  padding: 4rem;
+  border: 1px solid rgba(255, 255, 255, 0.1);
   overflow: hidden;
+  z-index: 1;
 }
 
-.cta-scale {
-  transform: scale(1.08) !important;
-  box-shadow: 0 25px 50px rgba(255,255,255,0.4) !important;
+/* Decorative Elements */
+.cta-decoration {
+  position: absolute;
+  width: 200px;
+  height: 200px;
+  border-radius: 50%;
+  filter: blur(60px);
+  opacity: 0.3;
+  z-index: -1;
 }
 
-.cta-buttons .v-btn:hover {
-  transform: translateY(-4px) !important;
+.decoration-1 {
+  top: -50px;
+  left: -50px;
+  background: linear-gradient(135deg, #4F46E5, #06B6D4);
+  animation: pulse 4s ease infinite;
 }
 
-/* Mobile Perfection */
+.decoration-2 {
+  bottom: -50px;
+  right: -50px;
+  background: linear-gradient(135deg, #8B5CF6, #EC4899);
+  animation: pulse 4s ease infinite reverse;
+}
+
+@keyframes pulse {
+  0%, 100% {
+    transform: scale(1);
+    opacity: 0.3;
+  }
+  50% {
+    transform: scale(1.2);
+    opacity: 0.5;
+  }
+}
+
+/* CTA Content */
+.cta-content {
+  text-align: center;
+  position: relative;
+  z-index: 2;
+}
+
+/* Badge */
+.cta-badge {
+  display: inline-flex;
+  align-items: center;
+  background: rgba(255, 255, 255, 0.15);
+  backdrop-filter: blur(10px);
+  padding: 0.5rem 1.25rem;
+  border-radius: 100px;
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: white;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+/* Title */
+.cta-title {
+  font-size: clamp(2rem, 5vw, 3.5rem);
+  font-weight: 800;
+  line-height: 1.2;
+  color: white;
+  margin-bottom: 1.5rem;
+}
+
+.text-gradient-white {
+  background: linear-gradient(135deg, #FFFFFF, #94A3B8);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* Description */
+.cta-description {
+  font-size: 1.125rem;
+  line-height: 1.6;
+  color: rgba(255, 255, 255, 0.8);
+  max-width: 600px;
+  margin: 0 auto 2rem auto;
+}
+
+/* Features */
+.cta-features {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 1.5rem;
+  margin-bottom: 2.5rem;
+}
+
+.feature {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.875rem;
+  color: rgba(255, 255, 255, 0.9);
+}
+
+/* Buttons */
+.cta-buttons {
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
+  flex-wrap: wrap;
+  margin-bottom: 3rem;
+}
+
+.cta-primary-btn {
+  background: linear-gradient(135deg, #FFFFFF, #E2E8F0) !important;
+  color: #0F172A !important;
+  text-transform: none !important;
+  font-weight: 700 !important;
+  padding: 0 2rem !important;
+  border-radius: 12px !important;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.1) !important;
+  transition: all 0.3s ease !important;
+}
+
+.cta-primary-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2) !important;
+}
+
+.cta-secondary-btn {
+  border-color: rgba(255, 255, 255, 0.3) !important;
+  color: white !important;
+  text-transform: none !important;
+  font-weight: 600 !important;
+  padding: 0 1.5rem !important;
+  border-radius: 12px !important;
+  transition: all 0.3s ease !important;
+}
+
+.cta-secondary-btn:hover {
+  border-color: rgba(255, 255, 255, 0.6) !important;
+  background: rgba(255, 255, 255, 0.1) !important;
+  transform: translateY(-2px);
+}
+
+/* Trust Badges */
+.trust-badges {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 2rem;
+  padding-top: 2rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.trust-badge {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.75rem;
+  color: rgba(255, 255, 255, 0.7);
+}
+
+/* Responsive Design */
+@media (max-width: 1264px) {
+  .cta-card {
+    padding: 3rem;
+    margin: 1rem;
+  }
+}
+
 @media (max-width: 960px) {
-  .cta-card { margin: 2rem !important; }
-  .text-h2-xl { line-height: 1.2 !important; }
-  .py-20 { padding: 6rem 1rem !important; }
+  .cta-wrapper {
+    padding: 3rem 0;
+  }
+  
+  .cta-card {
+    padding: 2rem;
+    border-radius: 32px;
+  }
+  
+  .cta-title {
+    font-size: clamp(1.75rem, 4vw, 2.5rem);
+  }
+  
+  .cta-description {
+    font-size: 1rem;
+  }
+  
+  .cta-features {
+    gap: 1rem;
+  }
+  
+  .trust-badges {
+    gap: 1rem;
+  }
 }
 
 @media (max-width: 600px) {
-  .secondary-info { 
-    text-align: center !important; 
-    gap: 1rem !important;
+  .cta-wrapper {
+    padding: 2rem 0;
   }
   
-  .text-caption {
-    font-size: 0.875rem !important;
+  .cta-card {
+    padding: 1.5rem;
+    border-radius: 24px;
+  }
+  
+  .cta-badge {
+    font-size: 0.75rem;
+    padding: 0.375rem 1rem;
+  }
+  
+  .cta-title {
+    font-size: 1.5rem;
+  }
+  
+  .cta-description {
+    font-size: 0.875rem;
+    margin-bottom: 1.5rem;
+  }
+  
+  .cta-features {
+    flex-direction: column;
+    align-items: center;
+    gap: 0.75rem;
+    margin-bottom: 1.5rem;
+  }
+  
+  .cta-buttons {
+    flex-direction: column;
+    width: 100%;
+    max-width: 280px;
+    margin-left: auto;
+    margin-right: auto;
+    margin-bottom: 2rem;
+  }
+  
+  .cta-primary-btn,
+  .cta-secondary-btn {
+    width: 100%;
+  }
+  
+  .trust-badges {
+    flex-direction: column;
+    align-items: center;
+    gap: 0.75rem;
+  }
+  
+  .particle {
+    display: none;
   }
 }
 </style>
-

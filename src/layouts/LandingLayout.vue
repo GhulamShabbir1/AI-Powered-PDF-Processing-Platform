@@ -25,7 +25,7 @@
           <CTASection />
         </section>
       </div>
-      <!-- <AppFooter /> -->
+      <AppFooter />
     </v-container>
     
   </v-main>

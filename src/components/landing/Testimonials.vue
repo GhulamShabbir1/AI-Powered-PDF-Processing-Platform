@@ -10,7 +10,7 @@
 
     <v-container>
       <!-- Section Header -->
-      <v-row justify="center" class="mb-12 lg:mb-16">
+      <v-row justify="center">
         <v-col cols="12" md="8" class="text-center">
           <div class="section-badge mb-4">
             ⭐ Client Testimonials
@@ -68,7 +68,7 @@
       </v-row>
 
       <!-- Stats Section -->
-      <v-row justify="center" class="mt-12 lg:mt-16">
+      <v-row justify="center">
         <v-col cols="12">
           <div class="stats-container">
             <div 
@@ -84,16 +84,9 @@
       </v-row>
 
       <!-- Bottom CTA -->
-      <v-row justify="center" class="mt-12">
+      <v-row justify="center">
         <v-col cols="auto">
-          <v-btn
-            size="large"
-            class="testimonials-cta-btn"
-            @click="scrollToCta"
-          >
-            Join Our Community
-            <v-icon end class="ml-2">mdi-arrow-right</v-icon>
-          </v-btn>
+          
         </v-col>
       </v-row>
     </v-container>

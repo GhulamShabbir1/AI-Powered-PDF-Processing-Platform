@@ -10,7 +10,14 @@
     <div class="d-flex flex-column h-100 pa-4">
       <!-- Drawer Header -->
       <div class="d-flex align-center justify-space-between mb-6">
-        <div class="d-flex align-center" @click="scrollTo('hero'); drawer = false" style="cursor: pointer">
+        <div
+          class="d-flex align-center"
+          @click="
+            scrollTo('hero');
+            drawer = false;
+          "
+          style="cursor: pointer"
+        >
           <v-icon color="primary" size="28" class="mr-2">mdi-brain</v-icon>
           <span class="text-h5 font-weight-bold">
             AI PDF<span class="text-primary">.</span>
@@ -35,7 +42,10 @@
           :prepend-icon="item.icon"
           :title="item.title"
           :active="activeSection === item.value"
-          @click="scrollTo(item.value); drawer = false"
+          @click="
+            scrollTo(item.value);
+            drawer = false;
+          "
           class="rounded-lg mb-1"
           active-color="primary"
           link
@@ -56,13 +66,16 @@
         >
           Login
         </v-btn>
-        
+
         <v-btn
           block
           color="primary"
           class="rounded-lg text-none font-weight-bold"
           size="large"
-          @click="scrollTo('cta'); drawer = false"
+          @click="
+            scrollTo('cta');
+            drawer = false;
+          "
         >
           Get Started Free
           <v-icon end size="18" class="ml-2">mdi-rocket-launch</v-icon>
@@ -128,13 +141,9 @@
         >
           Login
         </v-btn>
-        
+
         <!-- Get Started Button -->
-        <v-btn
-          color="primary"
-          class="get-started-btn"
-          @click="scrollTo('cta')"
-        >
+        <v-btn color="primary" class="get-started-btn" @click="scrollTo('cta')">
           Get Started
           <v-icon end size="18" class="ml-1">mdi-arrow-right</v-icon>
         </v-btn>
@@ -167,77 +176,84 @@ const activeSection = ref('hero')
 const isDark = computed({
   get: () => theme.global.current.value.dark,
   set: (val) => {
-    theme.global.name.value = val ? 'dark' : 'light'
-    localStorage.setItem('theme', val ? 'dark' : 'light')
-  }
-})
+    theme.global.name.value = val ? "dark" : "light";
+    localStorage.setItem("theme", val ? "dark" : "light");
+  },
+});
 
 const navLinks = [
-  { title: 'Home', value: 'hero', icon: 'mdi-home-outline' },
-  { title: 'Features', value: 'features', icon: 'mdi-lightning-bolt-outline' },
-  { title: 'How it Works', value: 'how-it-works', icon: 'mdi-cached' },
-  { title: 'Pricing', value: 'pricing', icon: 'mdi-tag-outline' },
-]
+  { title: "Home", value: "hero", icon: "mdi-home-outline" },
+  { title: "Features", value: "features", icon: "mdi-lightning-bolt-outline" },
+  { title: "How it Works", value: "how-it-works", icon: "mdi-cached" },
+  { title: "Pricing", value: "pricing", icon: "mdi-tag-outline" },
+];
 
 // Scroll handler with throttling for performance
-let ticking = false
+let ticking = false;
 const handleScroll = () => {
   if (!ticking) {
     requestAnimationFrame(() => {
-      isScrolled.value = window.scrollY > 50
-      
-      const scrollPosition = window.scrollY + 100
+      isScrolled.value = window.scrollY > 50;
+
+      const scrollPosition = window.scrollY + 100;
       for (const item of navLinks) {
-        const section = document.getElementById(item.value)
+        const section = document.getElementById(item.value);
         if (section) {
-          const { offsetTop, offsetHeight } = section
-          if (scrollPosition >= offsetTop && scrollPosition < offsetTop + offsetHeight) {
-            activeSection.value = item.value
-            break
+          const { offsetTop, offsetHeight } = section;
+          if (
+            scrollPosition >= offsetTop &&
+            scrollPosition < offsetTop + offsetHeight
+          ) {
+            activeSection.value = item.value;
+            break;
           }
         }
       }
-      ticking = false
-    })
-    ticking = true
+      ticking = false;
+    });
+    ticking = true;
   }
-}
+};
 
 const scrollTo = (id: string) => {
-  const element = document.getElementById(id)
+  const element = document.getElementById(id);
   if (element) {
-    const yOffset = -80
-    const y = element.getBoundingClientRect().top + window.scrollY + yOffset
-    window.scrollTo({ top: y, behavior: 'smooth' })
-    drawer.value = false
+    const yOffset = -80;
+    const y = element.getBoundingClientRect().top + window.scrollY + yOffset;
+    window.scrollTo({ top: y, behavior: "smooth" });
+    drawer.value = false;
   }
-}
+};
 
 const navigateToLogin = () => {
   router.push('/login')
 }
 
 const toggleTheme = () => {
-  isDark.value = !isDark.value
-}
+  isDark.value = !isDark.value;
+};
 
 // Watch for theme changes
-watch(isDark, (newVal) => {
-  document.body.classList.toggle('dark', newVal)
-}, { immediate: true })
+watch(
+  isDark,
+  (newVal) => {
+    document.body.classList.toggle("dark", newVal);
+  },
+  { immediate: true }
+);
 
 onMounted(() => {
-  const savedTheme = localStorage.getItem('theme')
+  const savedTheme = localStorage.getItem("theme");
   if (savedTheme) {
-    theme.global.name.value = savedTheme as 'light' | 'dark'
+    theme.global.name.value = savedTheme as "light" | "dark";
   }
-  window.addEventListener('scroll', handleScroll, { passive: true })
-  handleScroll()
-})
+  window.addEventListener("scroll", handleScroll, { passive: true });
+  handleScroll();
+});
 
 onUnmounted(() => {
-  window.removeEventListener('scroll', handleScroll)
-})
+  window.removeEventListener("scroll", handleScroll);
+});
 </script>
 
 <style scoped>
@@ -298,7 +314,7 @@ onUnmounted(() => {
   font-size: 0.9375rem;
   border-radius: 8px;
   padding: 6px 24px !important;
-  background: linear-gradient(135deg, #4F46E5, #06B6D4);
+  background: linear-gradient(135deg, #4f46e5, #06b6d4);
   box-shadow: 0 4px 12px rgba(79, 70, 229, 0.3);
   transition: all 0.3s ease;
 }
@@ -349,7 +365,7 @@ onUnmounted(() => {
   .navbar-main {
     height: 64px !important;
   }
-  
+
   .navbar-scrolled {
     height: 60px !important;
   }

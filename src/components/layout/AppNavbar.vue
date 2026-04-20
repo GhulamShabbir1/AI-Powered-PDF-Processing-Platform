@@ -62,8 +62,7 @@
           color="primary"
           class="mb-3 rounded-lg text-none font-weight-medium"
           size="large"
-          to="/login"
-          @click="drawer = false"
+          @click="navigateToLogin"
         >
           Login
         </v-btn>
@@ -138,7 +137,7 @@
           variant="text"
           color="primary"
           class="login-btn"
-          @click="scrollTo('cta')"
+          @click="navigateToLogin"
         >
           Login
         </v-btn>
@@ -163,13 +162,15 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted, onUnmounted, computed, watch } from "vue";
-import { useTheme } from "vuetify";
+import { ref, onMounted, onUnmounted, computed, watch } from 'vue'
+import { useTheme } from 'vuetify'
+import { useRouter } from 'vue-router'
 
-const theme = useTheme();
-const drawer = ref(false);
-const isScrolled = ref(false);
-const activeSection = ref("hero");
+const theme = useTheme()
+const router = useRouter()
+const drawer = ref(false)
+const isScrolled = ref(false)
+const activeSection = ref('hero')
 
 // Theme management
 const isDark = computed({
@@ -223,6 +224,10 @@ const scrollTo = (id: string) => {
     drawer.value = false;
   }
 };
+
+const navigateToLogin = () => {
+  router.push('/login')
+}
 
 const toggleTheme = () => {
   isDark.value = !isDark.value;

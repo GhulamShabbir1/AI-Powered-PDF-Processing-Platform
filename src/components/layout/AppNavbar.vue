@@ -52,7 +52,7 @@
           color="primary"
           class="mb-3 rounded-lg text-none font-weight-medium"
           size="large"
-          @click="scrollTo('cta'); drawer = false"
+          @click="navigateToLogin"
         >
           Login
         </v-btn>
@@ -124,7 +124,7 @@
           variant="text"
           color="primary"
           class="login-btn"
-          @click="scrollTo('cta')"
+          @click="navigateToLogin"
         >
           Login
         </v-btn>
@@ -155,8 +155,10 @@
 <script setup lang="ts">
 import { ref, onMounted, onUnmounted, computed, watch } from 'vue'
 import { useTheme } from 'vuetify'
+import { useRouter } from 'vue-router'
 
 const theme = useTheme()
+const router = useRouter()
 const drawer = ref(false)
 const isScrolled = ref(false)
 const activeSection = ref('hero')
@@ -209,6 +211,10 @@ const scrollTo = (id: string) => {
     window.scrollTo({ top: y, behavior: 'smooth' })
     drawer.value = false
   }
+}
+
+const navigateToLogin = () => {
+  router.push('/login')
 }
 
 const toggleTheme = () => {

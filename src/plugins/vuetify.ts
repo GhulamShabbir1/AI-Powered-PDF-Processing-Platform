@@ -1,4 +1,9 @@
-// plugins/vuetify.ts
+import 'vuetify/styles'
+import { createVuetify } from 'vuetify'
+import * as components from 'vuetify/components'
+import * as directives from 'vuetify/directives'
+import '@mdi/font/css/materialdesignicons.css' // Icons ke liye zaroori hai
+
 export const theme = {
   defaultTheme: "light",
   themes: {
@@ -13,3 +18,12 @@ export const theme = {
     },
   },
 };
+
+// Yahan Vuetify instance create karein
+const vuetify = createVuetify({
+  components,
+  directives,
+  theme,
+})
+
+export default vuetify

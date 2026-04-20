@@ -1,7 +1,20 @@
+<template>
+  <v-app shadow>
+    <v-main class="bg-grey-lighten-4">
+      
+      <router-view />
+
+    </v-main>
+  </v-app>
+</template>
+
 <script setup lang="ts">
-import HelloWorld from './components/HelloWorld.vue'
 </script>
 
-<template>
-  <HelloWorld />
-</template>
+<style>X
+html, body {
+  margin: 0;
+  padding: 0;
+  overflow-x: hidden;
+}
+</style>

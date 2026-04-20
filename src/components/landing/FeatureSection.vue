@@ -150,7 +150,7 @@ const scrollToCta = () => {
 .features-wrapper {
   position: relative;
   padding: 5rem 0;
-  background: linear-gradient(135deg, #f8fafc 0%, #ffffff 50%, #f1f5f9 100%);
+  /* background: linear-gradient(135deg, #f8fafc 0%, #ffffff 50%, #f1f5f9 100%); */
   overflow-x: hidden;
 }
 

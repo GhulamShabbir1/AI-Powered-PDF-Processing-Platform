@@ -6,6 +6,7 @@
  */
 
 @import "./assets/styles/variables.css";
+@import "https://cdn.jsdelivr.net/npm/@mdi/font@7.4.47/css/materialdesignicons.min.css";
 @import "./assets/styles/main.css";
 
 /* Global Base Styles - Fixed Right Spacing */
@@ -19,6 +20,19 @@
 *::after {
   box-sizing: border-box;
 }
+
+/* Fix clipped headings and icons */
+h1, h2, h3, .section-title {
+  overflow: visible !important;
+}
+
+.v-icon {
+  display: inline-flex !important;
+  align-items: center !important;
+  vertical-align: middle !important;
+  overflow: visible !important;
+}
+
 
 html,
 body,
@@ -36,10 +50,9 @@ body,
 .v-container,
 .v-row,
 .v-col,
-section {
-  overflow-x: hidden !important;
-  max-width: 100% !important;
-}
+  section {
+    max-width: 100% !important;
+  }
 
 /* Image containment */
 img,
@@ -54,7 +67,7 @@ v-img {
 }
 
 /* Landing specific */
-.landing-page * {
+.landing-page {
   overflow-x: hidden !important;
 }
 

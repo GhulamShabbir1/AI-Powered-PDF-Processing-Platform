@@ -234,7 +234,7 @@ const scrollToCta = () => {
   position: absolute;
   border-radius: 50%;
   filter: blur(80px);
-  opacity: 0.3;
+  opacity: 0.7;
   animation: floatBg 20s infinite ease-in-out;
 }
 

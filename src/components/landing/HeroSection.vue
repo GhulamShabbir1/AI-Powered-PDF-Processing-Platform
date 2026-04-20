@@ -100,7 +100,7 @@ const scrollToFeatures = () => {
   justify-content: center;
   overflow: hidden;
   color: white;
-  margin-bottom: -2px; /* Prevents gap between hero and curve */
+  margin-bottom: -2px;
 }
 
 /* Background Image */

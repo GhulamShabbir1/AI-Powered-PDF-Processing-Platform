@@ -1,8 +1,10 @@
 import { createApp } from 'vue'
+import App from './App.vue'
+
+// CSS Imports
 import './style.css'
 import './assets/styles/variables.css'
 import './assets/styles/main.css'
-import App from './App.vue'
 
 // Plugins
 import vuetify from './plugins/vuetify'
@@ -16,4 +18,3 @@ app.use(router)
 app.use(pinia)
 
 app.mount('#app')
-

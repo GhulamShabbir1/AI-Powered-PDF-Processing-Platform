@@ -131,7 +131,7 @@ const scrollToFeatures = () => {
   left: 0;
   right: 0;
   bottom: 0;
-  background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+  background: linear-gradient(145deg, #0e3694 20%, #c50d0d 80%);
   opacity: 0.9;
   z-index: 1;
 }

@@ -9,7 +9,7 @@
 
     <v-container>
       <!-- Section Header -->
-      <v-row justify="center" class="mb-12 lg:mb-16">
+      <v-row justify="center" class="section-header-no-gap">
         <v-col cols="12" md="8" lg="6" class="text-center">
           <div class="section-badge mb-4">
             ✨ Why Choose Us
@@ -25,30 +25,29 @@
         </v-col>
       </v-row>
 
-      <!-- Features Grid -->
-      <v-row>
+      <!-- Features Grid - Fixed spacing -->
+      <v-row class="features-grid">
         <v-col 
           v-for="(feature, index) in features" 
           :key="index"
           cols="12" 
+          sm="6"
           md="4"
           class="feature-col"
-          data-aos="fade-up"
-          :data-aos-delay="index * 100"
         >
           <v-card
             class="feature-card"
             elevation="0"
             rounded="xl"
           >
-            <!-- Icon Container -->
+            <!-- Icon Container - Fixed alignment -->
             <div class="feature-icon-wrapper">
               <div class="feature-icon-bg" :style="{ background: feature.gradient }">
-                <v-icon size="40" color="white">{{ feature.icon }}</v-icon>
+                <v-icon size="36" color="white" class="feature-icon">{{ feature.icon }}</v-icon>
               </div>
             </div>
 
-            <!-- Content -->
+            <!-- Content - Fixed spacing -->
             <div class="feature-content">
               <h3 class="feature-title">
                 {{ feature.title }}
@@ -68,7 +67,7 @@
       </v-row>
 
       <!-- Bottom CTA -->
-      <v-row justify="center" class="mt-12">
+      <v-row justify="center">
         <v-col cols="auto">
           <v-btn
             size="large"
@@ -150,7 +149,7 @@ const scrollToCta = () => {
 .features-wrapper {
   position: relative;
   padding: 5rem 0;
-  /* background: linear-gradient(135deg, #f8fafc 0%, #ffffff 50%, #f1f5f9 100%); */
+  background: linear-gradient(135deg, #f8fafc 0%, #ffffff 50%, #f1f5f9 100%);
   overflow-x: hidden;
 }
 
@@ -163,13 +162,15 @@ const scrollToCta = () => {
   height: 100%;
   overflow: hidden;
   z-index: 0;
+  pointer-events: none;
 }
 
 .shape {
   position: absolute;
   border-radius: 50%;
   filter: blur(60px);
-  opacity: 0.4;
+  opacity: 0.3;
+  pointer-events: none;
 }
 
 .shape-1 {
@@ -206,7 +207,13 @@ const scrollToCta = () => {
   66% { transform: translate(-20px, 20px) rotate(240deg); }
 }
 
-/* Section Header */
+/* Section Header - Fixed spacing */
+.section-header-no-gap {
+  margin-bottom: 0;
+  position: relative;
+  z-index: 1;
+}
+
 .section-badge {
   display: inline-block;
   padding: 0.5rem 1.25rem;
@@ -240,20 +247,30 @@ const scrollToCta = () => {
   line-height: 1.6;
 }
 
-/* Feature Cards */
-.feature-col {
-  margin-bottom: 2rem;
+/* Features Grid - Fixed spacing */
+.features-grid {
+  margin: 0 -12px !important;
+  position: relative;
+  z-index: 1;
 }
 
+.feature-col {
+  padding: 12px !important;
+  margin-bottom: 0;
+}
+
+/* Feature Cards - Fixed height and alignment */
 .feature-card {
-  background: rgba(255, 255, 255, 0.9);
+  background: rgba(255, 255, 255, 0.95);
   backdrop-filter: blur(10px);
   border: 1px solid rgba(226, 232, 240, 0.8);
   border-radius: 24px;
-  padding: 2rem 1.5rem;
-  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  padding: 2rem;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   cursor: pointer;
   height: 100%;
+  display: flex;
+  flex-direction: column;
   position: relative;
   overflow: hidden;
 }
@@ -267,11 +284,11 @@ const scrollToCta = () => {
   height: 4px;
   background: linear-gradient(90deg, #4F46E5, #06B6D4, #8B5CF6);
   transform: scaleX(0);
-  transition: transform 0.4s ease;
+  transition: transform 0.3s ease;
 }
 
 .feature-card:hover {
-  transform: translateY(-8px);
+  transform: translateY(-4px);
   border-color: rgba(79, 70, 229, 0.2);
   box-shadow: 0 20px 40px -12px rgba(0, 0, 0, 0.15);
 }
@@ -280,44 +297,58 @@ const scrollToCta = () => {
   transform: scaleX(1);
 }
 
-/* Feature Icon */
+/* Feature Icon - Fixed alignment */
 .feature-icon-wrapper {
   margin-bottom: 1.5rem;
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
 }
 
 .feature-icon-bg {
-  width: 80px;
-  height: 80px;
-  border-radius: 24px;
+  width: 72px;
+  height: 72px;
+  border-radius: 20px;
   display: flex;
   align-items: center;
   justify-content: center;
   transition: all 0.3s ease;
   box-shadow: 0 10px 20px -5px rgba(0, 0, 0, 0.1);
+  flex-shrink: 0;
+}
+
+.feature-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .feature-card:hover .feature-icon-bg {
-  transform: scale(1.05) rotate(5deg);
+  transform: scale(1.05);
   box-shadow: 0 15px 30px -8px rgba(0, 0, 0, 0.15);
 }
 
-/* Feature Content */
+/* Feature Content - Fixed text alignment */
 .feature-content {
-  text-align: left;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
 }
 
 .feature-title {
-  font-size: 1.5rem;
+  font-size: 1.35rem;
   font-weight: 700;
   margin-bottom: 0.75rem;
   color: #0F172A;
+  line-height: 1.3;
 }
 
 .feature-description {
   font-size: 0.9375rem;
   line-height: 1.6;
   color: #64748B;
-  margin-bottom: 1.25rem;
+  margin-bottom: 1.5rem;
+  flex: 1;
 }
 
 .feature-link {
@@ -327,10 +358,10 @@ const scrollToCta = () => {
   font-weight: 600;
   color: #4F46E5;
   cursor: pointer;
-  transition: all 0.2s ease;
   opacity: 0;
-  transform: translateX(-10px);
+  transform: translateX(-8px);
   transition: all 0.3s ease;
+  padding: 4px 0;
 }
 
 .feature-card:hover .feature-link {
@@ -339,7 +370,7 @@ const scrollToCta = () => {
 }
 
 .feature-link:hover {
-  gap: 4px;
+  gap: 6px;
   color: #06B6D4;
 }
 
@@ -366,7 +397,7 @@ const scrollToCta = () => {
 }
 
 :deep(.dark) .feature-card {
-  background: rgba(30, 41, 59, 0.9);
+  background: rgba(30, 41, 59, 0.95);
   border-color: rgba(51, 65, 85, 0.8);
 }
 
@@ -386,20 +417,14 @@ const scrollToCta = () => {
   color: #94A3B8;
 }
 
-/* Responsive Design */
+/* Responsive Design - Fixed spacing */
 @media (max-width: 1264px) {
   .features-wrapper {
     padding: 4rem 0;
   }
-}
-
-@media (max-width: 960px) {
-  .features-wrapper {
-    padding: 3rem 0;
-  }
   
   .feature-card {
-    padding: 1.5rem;
+    padding: 1.75rem;
   }
   
   .feature-icon-bg {
@@ -407,7 +432,7 @@ const scrollToCta = () => {
     height: 64px;
   }
   
-  .feature-icon-bg .v-icon {
+  .feature-icon {
     font-size: 32px !important;
   }
   
@@ -416,13 +441,40 @@ const scrollToCta = () => {
   }
 }
 
+@media (max-width: 960px) {
+  .features-wrapper {
+    padding: 3rem 0;
+  }
+  
+  .section-header {
+    margin-bottom: 2rem;
+  }
+  
+  .feature-card {
+    padding: 1.5rem;
+  }
+  
+  .feature-icon-bg {
+    width: 60px;
+    height: 60px;
+  }
+  
+  .feature-icon {
+    font-size: 30px !important;
+  }
+}
+
 @media (max-width: 600px) {
   .features-wrapper {
     padding: 2rem 0;
   }
   
+  .section-header {
+    margin-bottom: 1.5rem;
+  }
+  
   .feature-col {
-    margin-bottom: 1rem;
+    padding: 8px !important;
   }
   
   .feature-card {
@@ -434,13 +486,27 @@ const scrollToCta = () => {
     height: 56px;
   }
   
-  .feature-icon-bg .v-icon {
+  .feature-icon {
     font-size: 28px !important;
+  }
+  
+  .feature-title {
+    font-size: 1.125rem;
+    margin-bottom: 0.5rem;
+  }
+  
+  .feature-description {
+    font-size: 0.875rem;
+    margin-bottom: 1rem;
   }
   
   .section-badge {
     font-size: 0.75rem;
     padding: 0.375rem 1rem;
+  }
+  
+  .section-subtitle {
+    font-size: 0.9375rem;
   }
   
   .features-cta-btn {
@@ -449,16 +515,16 @@ const scrollToCta = () => {
   }
 }
 
-/* Animation for cards on scroll */
+/* Animation - Fixed stagger timing */
 .feature-col {
   opacity: 0;
-  animation: fadeInUp 0.6s ease forwards;
+  animation: fadeInUp 0.5s ease forwards;
 }
 
 @keyframes fadeInUp {
   from {
     opacity: 0;
-    transform: translateY(30px);
+    transform: translateY(20px);
   }
   to {
     opacity: 1;
@@ -466,11 +532,11 @@ const scrollToCta = () => {
   }
 }
 
-/* Stagger animations */
-.feature-col:nth-child(1) { animation-delay: 0.1s; }
-.feature-col:nth-child(2) { animation-delay: 0.2s; }
-.feature-col:nth-child(3) { animation-delay: 0.3s; }
-.feature-col:nth-child(4) { animation-delay: 0.4s; }
-.feature-col:nth-child(5) { animation-delay: 0.5s; }
-.feature-col:nth-child(6) { animation-delay: 0.6s; }
+/* Stagger animations - smoother */
+.feature-col:nth-child(1) { animation-delay: 0.05s; }
+.feature-col:nth-child(2) { animation-delay: 0.1s; }
+.feature-col:nth-child(3) { animation-delay: 0.15s; }
+.feature-col:nth-child(4) { animation-delay: 0.2s; }
+.feature-col:nth-child(5) { animation-delay: 0.25s; }
+.feature-col:nth-child(6) { animation-delay: 0.3s; }
 </style>

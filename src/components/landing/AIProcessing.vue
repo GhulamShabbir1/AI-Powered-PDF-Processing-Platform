@@ -10,7 +10,7 @@
 
     <v-container>
       <!-- Section Header -->
-      <v-row justify="center" class="mb-12 lg:mb-16">
+      <v-row justify="center">
         <v-col cols="12" md="8" class="text-center">
           <div class="section-badge mb-4">
             🚀 Advanced AI Technology
@@ -30,7 +30,7 @@
       <v-row 
         v-for="(item, index) in details" 
         :key="index"
-        class="processing-row mb-12"
+        class="processing-row"
         :class="{ 'flex-row-reverse': index % 2 === 1 }"
       >
         <!-- Content Column -->
@@ -117,7 +117,7 @@
       </v-row>
 
       <!-- Bottom Stats Bar -->
-      <v-row justify="center" class="mt-12 pt-8">
+      <v-row justify="center" class="pt-8">
         <v-col cols="12">
           <div class="stats-bar">
             <div class="stat-item">
@@ -323,7 +323,7 @@ const scrollToCta = () => {
 .processing-row {
   position: relative;
   z-index: 1;
-  margin-bottom: 5rem;
+  margin-bottom: 0;
 }
 
 /* Content Styles */

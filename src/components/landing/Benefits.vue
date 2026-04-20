@@ -10,7 +10,7 @@
 
     <v-container>
       <!-- Section Header -->
-      <v-row justify="center" class="mb-12 lg:mb-16">
+      <v-row justify="center">
         <v-col cols="12" md="8" class="text-center">
           <div class="section-badge mb-4">
             💪 Why Choose Us
@@ -27,7 +27,7 @@
       </v-row>
 
       <!-- Benefits Grid -->
-      <v-row>
+      <v-row class="benefits-grid">
         <v-col 
           v-for="(benefit, index) in benefits" 
           :key="index"
@@ -40,7 +40,7 @@
             <!-- Icon -->
             <div class="benefit-icon-wrapper">
               <div class="benefit-icon-bg" :style="{ background: benefit.gradient }">
-                <v-icon size="32" color="white">{{ benefit.icon }}</v-icon>
+                <v-icon size="32" color="white" class="benefit-icon">{{ benefit.icon }}</v-icon>
               </div>
             </div>
 
@@ -58,13 +58,13 @@
       </v-row>
 
       <!-- Trust Section -->
-      <v-row justify="center" class="mt-12 lg:mt-16">
+      <v-row justify="center">
         <v-col cols="12" md="10" lg="8">
           <div class="trust-section">
             <!-- Trust Badges -->
             <div class="trust-badges">
               <div class="trust-badge">
-                <v-icon color="#10B981" size="28">mdi-shield-check</v-icon>
+                <v-icon color="#10B981" size="28" class="trust-icon">mdi-shield-check</v-icon>
                 <div class="trust-content">
                   <div class="trust-title">ISO 27001 Certified</div>
                   <div class="trust-subtitle">Information Security Management</div>
@@ -72,7 +72,7 @@
               </div>
               
               <div class="trust-badge">
-                <v-icon color="#4F46E5" size="28">mdi-lock-check</v-icon>
+                <v-icon color="#4F46E5" size="28" class="trust-icon">mdi-lock-check</v-icon>
                 <div class="trust-content">
                   <div class="trust-title">GDPR Compliant</div>
                   <div class="trust-subtitle">Data Protection & Privacy</div>
@@ -80,7 +80,7 @@
               </div>
               
               <div class="trust-badge">
-                <v-icon color="#06B6D4" size="28">mdi-certificate</v-icon>
+                <v-icon color="#06B6D4" size="28" class="trust-icon">mdi-certificate</v-icon>
                 <div class="trust-content">
                   <div class="trust-title">SOC2 Type II</div>
                   <div class="trust-subtitle">Security & Availability</div>
@@ -93,20 +93,6 @@
               <p>Enterprise-grade security and compliance for your most sensitive documents</p>
             </div>
           </div>
-        </v-col>
-      </v-row>
-
-      <!-- Bottom CTA -->
-      <v-row justify="center" class="mt-12">
-        <v-col cols="auto">
-          <v-btn
-            size="large"
-            class="benefits-cta-btn"
-            @click="scrollToCta"
-          >
-            Start Your Free Trial
-            <v-icon end class="ml-2">mdi-arrow-right</v-icon>
-          </v-btn>
         </v-col>
       </v-row>
     </v-container>
@@ -178,6 +164,7 @@ const scrollToCta = () => {
   height: 100%;
   overflow: hidden;
   z-index: 0;
+  pointer-events: none;
 }
 
 .shape {
@@ -186,6 +173,7 @@ const scrollToCta = () => {
   filter: blur(80px);
   opacity: 0.15;
   animation: floatShape 20s infinite ease-in-out;
+  pointer-events: none;
 }
 
 .shape-1 {
@@ -269,59 +257,77 @@ const scrollToCta = () => {
   line-height: 1.6;
 }
 
-/* Benefit Cards */
-.benefit-col {
-  margin-bottom: 2rem;
+/* Benefits Grid */
+.benefits-grid {
+  margin: 0 -12px;
 }
 
+.benefit-col {
+  padding: 12px;
+  margin-bottom: 0;
+}
+
+/* Benefit Cards */
 .benefit-card {
   position: relative;
-  background: rgba(255, 255, 255, 0.9);
+  background: rgba(255, 255, 255, 0.95);
   backdrop-filter: blur(10px);
   border-radius: 24px;
   padding: 2rem 1.5rem;
   text-align: center;
   height: 100%;
-  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  min-height: 280px;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   border: 1px solid rgba(226, 232, 240, 0.8);
   cursor: pointer;
   overflow: hidden;
+  display: flex;
+  flex-direction: column;
 }
 
 .benefit-card:hover {
-  transform: translateY(-8px);
+  transform: translateY(-6px);
   border-color: rgba(79, 70, 229, 0.2);
   box-shadow: 0 20px 40px -12px rgba(0, 0, 0, 0.15);
 }
 
-/* Benefit Icon */
+/* Benefit Icon - FIXED spacing */
 .benefit-icon-wrapper {
-  margin-bottom: 1.5rem;
+  margin-bottom: 1.75rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
 .benefit-icon-bg {
-  width: 80px;
-  height: 80px;
-  border-radius: 24px;
+  width: 72px;
+  height: 72px;
+  border-radius: 20px;
   display: flex;
   align-items: center;
   justify-content: center;
-  margin: 0 auto;
   transition: all 0.3s ease;
   box-shadow: 0 10px 20px -5px rgba(0, 0, 0, 0.1);
 }
 
+.benefit-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
 .benefit-card:hover .benefit-icon-bg {
-  transform: scale(1.05) rotate(5deg);
+  transform: scale(1.05);
   box-shadow: 0 15px 30px -8px rgba(0, 0, 0, 0.15);
 }
 
-/* Benefit Content */
+/* Benefit Content - FIXED spacing */
 .benefit-title {
   font-size: 1.25rem;
   font-weight: 700;
   margin-bottom: 0.75rem;
   color: #0F172A;
+  line-height: 1.3;
 }
 
 .benefit-description {
@@ -329,6 +335,7 @@ const scrollToCta = () => {
   line-height: 1.6;
   color: #64748B;
   margin: 0;
+  flex: 1;
 }
 
 /* Hover Overlay */
@@ -348,6 +355,7 @@ const scrollToCta = () => {
   border-radius: 24px;
   color: white;
   font-weight: 600;
+  pointer-events: none;
 }
 
 .benefit-card:hover .benefit-overlay {
@@ -356,16 +364,17 @@ const scrollToCta = () => {
 
 .benefit-overlay span {
   font-size: 1rem;
+  font-weight: 600;
 }
 
-/* Trust Section */
+/* Trust Section - FIXED spacing */
 .trust-section {
-  background: rgba(255, 255, 255, 0.9);
+  background: rgba(255, 255, 255, 0.95);
   backdrop-filter: blur(10px);
-  border-radius: 32px;
+  border-radius: 28px;
   padding: 2rem;
   border: 1px solid rgba(226, 232, 240, 0.8);
-  box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.08);
 }
 
 .trust-badges {
@@ -377,10 +386,14 @@ const scrollToCta = () => {
 }
 
 .trust-badge {
-  display: flex;
+  display: inline-flex;
   align-items: center;
   gap: 1rem;
-  padding: 1rem;
+  padding: 0.75rem 1rem;
+}
+
+.trust-icon {
+  flex-shrink: 0;
 }
 
 .trust-content {
@@ -434,7 +447,7 @@ const scrollToCta = () => {
 }
 
 :deep(.dark) .benefit-card {
-  background: rgba(30, 41, 59, 0.9);
+  background: rgba(30, 41, 59, 0.95);
   border-color: rgba(51, 65, 85, 0.8);
 }
 
@@ -455,7 +468,7 @@ const scrollToCta = () => {
 }
 
 :deep(.dark) .trust-section {
-  background: rgba(30, 41, 59, 0.9);
+  background: rgba(30, 41, 59, 0.95);
   border-color: rgba(51, 65, 85, 0.8);
 }
 
@@ -478,8 +491,13 @@ const scrollToCta = () => {
     padding: 4rem 0;
   }
   
-  .trust-badges {
-    gap: 1rem;
+  .benefit-icon-bg {
+    width: 64px;
+    height: 64px;
+  }
+  
+  .benefit-icon {
+    font-size: 28px !important;
   }
 }
 
@@ -490,25 +508,36 @@ const scrollToCta = () => {
   
   .benefit-card {
     padding: 1.5rem;
+    min-height: 260px;
+  }
+  
+  .benefit-icon-wrapper {
+    margin-bottom: 1.5rem;
   }
   
   .benefit-icon-bg {
-    width: 64px;
-    height: 64px;
+    width: 60px;
+    height: 60px;
   }
   
-  .benefit-icon-bg .v-icon {
-    font-size: 28px !important;
+  .benefit-icon {
+    font-size: 26px !important;
+  }
+  
+  .benefit-title {
+    font-size: 1.125rem;
   }
   
   .trust-badges {
     flex-direction: column;
     align-items: center;
+    gap: 1rem;
   }
   
   .trust-badge {
     width: 100%;
-    max-width: 300px;
+    max-width: 320px;
+    justify-content: center;
   }
 }
 
@@ -517,21 +546,39 @@ const scrollToCta = () => {
     padding: 2rem 0;
   }
   
+  .benefits-grid {
+    margin: 0 -8px;
+  }
+  
+  .benefit-col {
+    padding: 8px;
+  }
+  
   .benefit-card {
     padding: 1.25rem;
+    min-height: 240px;
+  }
+  
+  .benefit-icon-wrapper {
+    margin-bottom: 1.25rem;
   }
   
   .benefit-icon-bg {
-    width: 56px;
-    height: 56px;
+    width: 52px;
+    height: 52px;
   }
   
-  .benefit-icon-bg .v-icon {
+  .benefit-icon {
     font-size: 24px !important;
   }
   
   .benefit-title {
-    font-size: 1.125rem;
+    font-size: 1rem;
+    margin-bottom: 0.5rem;
+  }
+  
+  .benefit-description {
+    font-size: 0.8125rem;
   }
   
   .section-badge {
@@ -539,12 +586,29 @@ const scrollToCta = () => {
     padding: 0.375rem 1rem;
   }
   
+  .section-subtitle {
+    font-size: 0.9375rem;
+  }
+  
   .trust-section {
-    padding: 1.5rem;
+    padding: 1.25rem;
   }
   
   .trust-badge {
     padding: 0.5rem;
+    gap: 0.75rem;
+  }
+  
+  .trust-icon {
+    size: 24px;
+  }
+  
+  .trust-title {
+    font-size: 0.875rem;
+  }
+  
+  .trust-subtitle {
+    font-size: 0.6875rem;
   }
   
   .benefits-cta-btn {
@@ -556,13 +620,13 @@ const scrollToCta = () => {
 /* Animation for benefits */
 .benefit-col {
   opacity: 0;
-  animation: fadeInUp 0.6s ease forwards;
+  animation: fadeInUp 0.5s ease forwards;
 }
 
 @keyframes fadeInUp {
   from {
     opacity: 0;
-    transform: translateY(30px);
+    transform: translateY(20px);
   }
   to {
     opacity: 1;
@@ -571,8 +635,8 @@ const scrollToCta = () => {
 }
 
 /* Stagger animations */
-.benefit-col:nth-child(1) { animation-delay: 0.1s; }
-.benefit-col:nth-child(2) { animation-delay: 0.2s; }
-.benefit-col:nth-child(3) { animation-delay: 0.3s; }
-.benefit-col:nth-child(4) { animation-delay: 0.4s; }
+.benefit-col:nth-child(1) { animation-delay: 0.05s; }
+.benefit-col:nth-child(2) { animation-delay: 0.1s; }
+.benefit-col:nth-child(3) { animation-delay: 0.15s; }
+.benefit-col:nth-child(4) { animation-delay: 0.2s; }
 </style>

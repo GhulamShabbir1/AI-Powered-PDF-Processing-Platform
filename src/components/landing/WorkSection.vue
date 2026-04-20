@@ -11,7 +11,7 @@
 
     <v-container>
       <!-- Section Header -->
-      <v-row justify="center" class="mb-12 lg:mb-16">
+      <v-row justify="center" class="section-header-no-gap">
         <v-col cols="12" md="8" class="text-center">
           <div class="section-badge mb-4">
             ⚡ Simple Process
@@ -27,12 +27,13 @@
         </v-col>
       </v-row>
 
-      <!-- Steps -->
-      <v-row class="steps-row">
+      <!-- Steps Grid -->
+      <v-row class="steps-grid">
         <v-col 
           v-for="(step, index) in steps" 
           :key="index"
           cols="12" 
+          sm="6"
           md="3"
           class="step-col"
         >
@@ -45,7 +46,7 @@
             <!-- Icon -->
             <div class="step-icon-wrapper">
               <div class="step-icon-bg" :style="{ background: step.gradient }">
-                <v-icon size="36" color="white">{{ step.icon }}</v-icon>
+                <v-icon size="32" color="white">{{ step.icon }}</v-icon>
               </div>
             </div>
 
@@ -53,11 +54,11 @@
             <h3 class="step-title">{{ step.title }}</h3>
             <p class="step-description">{{ step.description }}</p>
 
-            <!-- Connector Line (except last) -->
-            <div v-if="index < steps.length - 1" class="step-connector">
+            <!-- Connector Line (Desktop only) -->
+            <div v-if="index < steps.length - 1" class="step-connector desktop-only">
               <div class="connector-line"></div>
               <div class="connector-dot">
-                <v-icon size="16" color="primary">mdi-arrow-right</v-icon>
+                <v-icon size="14" color="#4F46E5">mdi-arrow-right</v-icon>
               </div>
             </div>
           </div>
@@ -65,7 +66,7 @@
       </v-row>
 
       <!-- Bottom CTA -->
-      <v-row justify="center" class="mt-12">
+      <v-row justify="center">
         <v-col cols="auto">
           <v-btn
             size="large"
@@ -141,13 +142,15 @@ const scrollToCta = () => {
   height: 100%;
   overflow: hidden;
   z-index: 0;
+  pointer-events: none;
 }
 
 .particle {
   position: absolute;
   border-radius: 50%;
-  opacity: 0.1;
+  opacity: 0.08;
   animation: floatParticle 15s infinite ease-in-out;
+  pointer-events: none;
 }
 
 .particle-1 {
@@ -208,6 +211,12 @@ const scrollToCta = () => {
 }
 
 /* Section Header */
+.section-header-no-gap {
+  margin-bottom: 0;
+  position: relative;
+  z-index: 1;
+}
+
 .section-badge {
   display: inline-block;
   padding: 0.5rem 1.25rem;
@@ -241,46 +250,52 @@ const scrollToCta = () => {
   line-height: 1.6;
 }
 
-/* Steps Row */
-.steps-row {
+/* Steps Grid */
+.steps-grid {
+  margin: 0 -12px !important;
   position: relative;
   z-index: 1;
 }
 
 .step-col {
-  margin-bottom: 2rem;
+  padding: 12px !important;
+  margin-bottom: 0;
 }
 
 /* Step Card */
 .step-card {
   position: relative;
-  background: rgba(255, 255, 255, 0.9);
+  background: rgba(255, 255, 255, 0.95);
   backdrop-filter: blur(10px);
   border-radius: 24px;
   padding: 2rem 1.5rem;
   text-align: center;
   height: 100%;
-  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  min-height: 280px;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   border: 1px solid rgba(226, 232, 240, 0.8);
+  display: flex;
+  flex-direction: column;
 }
 
 .step-card:hover {
-  transform: translateY(-8px);
+  transform: translateY(-4px);
   box-shadow: 0 20px 40px -12px rgba(0, 0, 0, 0.15);
   border-color: rgba(79, 70, 229, 0.2);
 }
 
-/* Step Number */
+/* Step Number - Fixed positioning */
 .step-number-wrapper {
   position: absolute;
-  top: -15px;
+  top: -12px;
   left: 50%;
   transform: translateX(-50%);
+  z-index: 2;
 }
 
 .step-number {
-  width: 40px;
-  height: 40px;
+  width: 36px;
+  height: 36px;
   background: white;
   border: 2px solid #4F46E5;
   border-radius: 50%;
@@ -291,17 +306,25 @@ const scrollToCta = () => {
   font-size: 0.875rem;
   color: #4F46E5;
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  transition: all 0.3s ease;
 }
 
-/* Step Icon */
+.step-card:hover .step-number {
+  transform: scale(1.05);
+  border-color: #06B6D4;
+  color: #06B6D4;
+}
+
+/* Step Icon - Fixed size */
 .step-icon-wrapper {
   margin-bottom: 1.5rem;
+  margin-top: 0.5rem;
 }
 
 .step-icon-bg {
-  width: 80px;
-  height: 80px;
-  border-radius: 24px;
+  width: 72px;
+  height: 72px;
+  border-radius: 20px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -311,7 +334,7 @@ const scrollToCta = () => {
 }
 
 .step-card:hover .step-icon-bg {
-  transform: scale(1.05) rotate(5deg);
+  transform: scale(1.05);
   box-shadow: 0 15px 30px -8px rgba(0, 0, 0, 0.15);
 }
 
@@ -321,6 +344,7 @@ const scrollToCta = () => {
   font-weight: 700;
   margin-bottom: 0.75rem;
   color: #0F172A;
+  line-height: 1.3;
 }
 
 .step-description {
@@ -328,15 +352,20 @@ const scrollToCta = () => {
   line-height: 1.6;
   color: #64748B;
   margin: 0;
+  flex: 1;
 }
 
-/* Connector Line */
+/* Connector Line - Desktop only */
+.desktop-only {
+  display: block;
+}
+
 .step-connector {
   position: absolute;
   top: 50%;
-  right: -30px;
+  right: -24px;
   transform: translateY(-50%);
-  width: 60px;
+  width: 48px;
   z-index: 2;
 }
 
@@ -348,6 +377,7 @@ const scrollToCta = () => {
   height: 2px;
   background: linear-gradient(90deg, #4F46E5, #06B6D4);
   transform: translateY(-50%);
+  border-radius: 2px;
 }
 
 .connector-dot {
@@ -355,8 +385,8 @@ const scrollToCta = () => {
   top: 50%;
   right: 0;
   transform: translateY(-50%);
-  width: 28px;
-  height: 28px;
+  width: 24px;
+  height: 24px;
   background: white;
   border: 2px solid #4F46E5;
   border-radius: 50%;
@@ -364,6 +394,7 @@ const scrollToCta = () => {
   align-items: center;
   justify-content: center;
   animation: pulse 2s infinite;
+  background: white;
 }
 
 @keyframes pulse {
@@ -372,8 +403,8 @@ const scrollToCta = () => {
     opacity: 1;
   }
   50% {
-    transform: translateY(-50%) scale(1.2);
-    opacity: 0.7;
+    transform: translateY(-50%) scale(1.15);
+    opacity: 0.8;
   }
 }
 
@@ -400,7 +431,7 @@ const scrollToCta = () => {
 }
 
 :deep(.dark) .step-card {
-  background: rgba(30, 41, 59, 0.9);
+  background: rgba(30, 41, 59, 0.95);
   border-color: rgba(51, 65, 85, 0.8);
 }
 
@@ -422,14 +453,39 @@ const scrollToCta = () => {
 
 :deep(.dark) .step-number {
   background: #1E293B;
+  border-color: #4F46E5;
   color: #4F46E5;
 }
 
+:deep(.dark) .connector-dot {
+  background: #1E293B;
+  border-color: #4F46E5;
+}
+
 /* Responsive Design */
-@media (max-width: 1264px) {
+@media (min-width: 1265px) and (max-width: 1440px) {
   .step-connector {
     right: -20px;
     width: 40px;
+  }
+  
+  .connector-dot {
+    width: 20px;
+    height: 20px;
+  }
+  
+  .connector-dot .v-icon {
+    font-size: 12px !important;
+  }
+}
+
+@media (max-width: 1264px) {
+  .step-connector {
+    display: none;
+  }
+  
+  .desktop-only {
+    display: none;
   }
 }
 
@@ -438,8 +494,13 @@ const scrollToCta = () => {
     padding: 4rem 0;
   }
   
+  .section-header {
+    margin-bottom: 2rem;
+  }
+  
   .step-card {
     padding: 1.5rem;
+    min-height: 260px;
   }
   
   .step-icon-bg {
@@ -451,8 +512,8 @@ const scrollToCta = () => {
     font-size: 28px !important;
   }
   
-  .step-connector {
-    display: none;
+  .step-title {
+    font-size: 1.125rem;
   }
 }
 
@@ -461,8 +522,17 @@ const scrollToCta = () => {
     padding: 3rem 0;
   }
   
+  .section-header {
+    margin-bottom: 1.5rem;
+  }
+  
+  .step-col {
+    padding: 8px !important;
+  }
+  
   .step-card {
     padding: 1.25rem;
+    min-height: 240px;
   }
   
   .step-icon-bg {
@@ -475,12 +545,27 @@ const scrollToCta = () => {
   }
   
   .step-title {
-    font-size: 1.125rem;
+    font-size: 1rem;
+    margin-bottom: 0.5rem;
+  }
+  
+  .step-description {
+    font-size: 0.8125rem;
+  }
+  
+  .step-number {
+    width: 32px;
+    height: 32px;
+    font-size: 0.75rem;
   }
   
   .section-badge {
     font-size: 0.75rem;
     padding: 0.375rem 1rem;
+  }
+  
+  .section-subtitle {
+    font-size: 0.9375rem;
   }
   
   .steps-cta-btn {
@@ -489,16 +574,16 @@ const scrollToCta = () => {
   }
 }
 
-/* Animation for steps on scroll */
+/* Animation for steps */
 .step-col {
   opacity: 0;
-  animation: fadeInUp 0.6s ease forwards;
+  animation: fadeInUp 0.5s ease forwards;
 }
 
 @keyframes fadeInUp {
   from {
     opacity: 0;
-    transform: translateY(30px);
+    transform: translateY(20px);
   }
   to {
     opacity: 1;
@@ -507,8 +592,8 @@ const scrollToCta = () => {
 }
 
 /* Stagger animations */
-.step-col:nth-child(1) { animation-delay: 0.1s; }
-.step-col:nth-child(2) { animation-delay: 0.2s; }
-.step-col:nth-child(3) { animation-delay: 0.3s; }
-.step-col:nth-child(4) { animation-delay: 0.4s; }
+.step-col:nth-child(1) { animation-delay: 0.05s; }
+.step-col:nth-child(2) { animation-delay: 0.1s; }
+.step-col:nth-child(3) { animation-delay: 0.15s; }
+.step-col:nth-child(4) { animation-delay: 0.2s; }
 </style>

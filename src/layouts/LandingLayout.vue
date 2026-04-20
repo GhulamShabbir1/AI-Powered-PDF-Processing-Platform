@@ -6,22 +6,22 @@
     <v-container fluid class="section-container ">
       <div class="sections-wrapper">
         <HeroSection id="hero" />
-        <section id="features" class="section py-12">
+        <section id="features" class="section">
           <FeatureSection />
         </section>
-        <section id="how-it-works" class="section py-12">
+        <section id="how-it-works" class="section">
           <WorkSection />
         </section>
-        <section id="ai-processing" class="section py-12">
+        <section id="ai-processing" class="section">
           <AIProcessing />
         </section>
-        <section id="benefits" class="section py-12">
+        <section id="benefits" class="section">
           <Benefits />
         </section>
-        <section id="testimonials" class="section py-12">
+        <section id="testimonials" class="section">
           <Testimonials />
         </section>
-        <section id="cta" class="section py-12">
+        <section id="cta" class="section">
           <CTASection />
         </section>
       </div>
@@ -45,16 +45,13 @@ import AppNavbar from '../components/layout/AppNavbar.vue'
 
 <style scoped>
 .landing-page {
-  width: 100% !important;
-  scroll-behavior: smooth;
-  background: white;
   width: 100vw !important;
   max-width: 100vw !important;
-  overflow-x: hidden !important;
-  position: relative;
   margin: 0 !important;
   padding: 0 !important;
-
+  scroll-behavior: smooth;
+  background: white;
+  overflow-x: hidden !important;
 }
 
 .section-container {
@@ -65,11 +62,16 @@ import AppNavbar from '../components/layout/AppNavbar.vue'
 .sections-wrapper {
   display: flex;
   flex-direction: column;
-  gap: 2rem;
+  gap: 0;
+  margin: 0 !important;
+  padding: 0 !important;
 }
 
 .section {
-  scroll-margin-top: 8rem; /* Navbar offset for smooth scroll */
+  scroll-margin-top: 8rem;
+  margin: 0;
+  padding-top: 1rem !important;
+  padding-bottom: 1rem !important;
 }
 
 :deep(.v-main) {
@@ -77,8 +79,8 @@ import AppNavbar from '../components/layout/AppNavbar.vue'
 }
 
 :deep(.section .v-container) {
-  padding-left: 1.5rem !important;
-  padding-right: 1.5rem !important;
+  padding-left: 1rem !important;
+  padding-right: 1rem !important;
   max-width: 1400px !important;
 }
 </style>

@@ -8,16 +8,11 @@
               <v-img src="@/assets/logo.png" height="50" contain class="mx-auto"></v-img>
             </div>
             <h1 class="text-h4 font-weight-bold primary-text mt-6">
-              <span v-if="step === 1">Reset Password</span>
-              <span v-else-if="step === 2">Verify Email</span>
-              <span v-else-if="step === 3">New Password</span>
-              <span v-else>Password Reset!</span>
+              {{ step === 1 ? 'Reset Password' : 'Verify Email' }}
             </h1>
             <p class="text-body-2 text-muted mt-2 px-4">
-              <span v-if="step === 1">Enter your email and check your inbox for instructions</span>
-              <span v-else-if="step === 2">Enter the 6-digit code sent to <strong>{{ form.email }}</strong></span>
-              <span v-else-if="step === 3">Create a strong new password for your account</span>
-              <span v-else>Your password has been successfully updated. You can now log in.</span>
+              <span v-if="step === 1">Enter your email and check your inbox for instructions.</span>
+              <span v-else>Enter the 6-digit code sent to <strong>{{ form.email }}</strong></span>
             </p>
           </div>
 
@@ -68,10 +63,11 @@
                   type="text"
                   variant="outlined" 
                   density="comfortable" 
-                  class="custom-field" 
+                  class="custom-field text-center tracking-widest" 
                   hide-details="auto"
                   prepend-inner-icon="mdi-shield-key-outline"
                   :rules="otpRules"
+                  maxlength="6"
                 ></v-text-field>
               </div>
 
@@ -97,61 +93,9 @@
                 </v-btn>
               </div>
             </v-form>
-
-            <v-form v-else-if="step === 3" @submit.prevent="handleResetPassword" v-model="isPasswordValid" class="auth-form">
-              <div class="form-group">
-                <v-text-field 
-                  v-model="form.newPassword"
-                  label="New Password" 
-                  type="password"
-                  variant="outlined" 
-                  density="comfortable" 
-                  class="custom-field" 
-                  hide-details="auto"
-                  prepend-inner-icon="mdi-lock-outline"
-                  :rules="passwordRules"
-                ></v-text-field>
-              </div>
-
-              <div class="form-group">
-                <v-text-field 
-                  v-model="form.confirmPassword"
-                  label="Confirm Password" 
-                  type="password"
-                  variant="outlined" 
-                  density="comfortable" 
-                  class="custom-field" 
-                  hide-details="auto"
-                  prepend-inner-icon="mdi-lock-check-outline"
-                  :rules="confirmPasswordRules"
-                ></v-text-field>
-              </div>
-
-              <v-btn 
-                type="submit" 
-                class="auth-btn w-100 py-6 font-weight-bold mt-2" 
-                size="large"
-                :loading="isLoading"
-                :disabled="!isPasswordValid || isLoading"
-              >
-                UPDATE PASSWORD
-              </v-btn>
-            </v-form>
-
-            <div v-else class="auth-form text-center">
-              <v-icon color="success" size="80" class="mb-6">mdi-check-circle</v-icon>
-              <v-btn 
-                to="/login"
-                class="auth-btn w-100 py-6 font-weight-bold mt-2" 
-                size="large"
-              >
-                PROCEED TO LOGIN
-              </v-btn>
-            </div>
-
           </v-fade-transition>
 
-          <div class="auth-link-section" v-if="step !== 4">
+          <div class="auth-link-section">
              <span class="text-muted text-body-2">Remember your password?</span>
              <v-btn variant="text" to="/login" class="font-weight-bold text-none px-1">Log In</v-btn>
           </div>
@@ -165,25 +109,23 @@
 
 <script setup lang="ts">
 import { ref, reactive } from 'vue';
-import AuthLayout from '../../layouts/AuthLayout.vue'
-import { validateEmail, validatePassword, validateConfirmPassword } from '../../utils/validators';
+import { useRouter } from 'vue-router';
+import AuthLayout from '../../layouts/AuthLayout.vue';
+import { validateEmail } from '../../utils/validators';
 
+const router = useRouter();
 const step = ref(1);
 const isLoading = ref(false);
 const error = ref<string | null>(null);
 
 const isEmailValid = ref(false);
 const isOtpValid = ref(false);
-const isPasswordValid = ref(false);
 
 const form = reactive({
   email: '',
-  otp: '',
-  newPassword: '',
-  confirmPassword: ''
+  otp: ''
 });
 
-// Validators
 const emailRules = [
   (v: string) => !!v || 'Email is required',
   (v: string) => validateEmail(v) || 'Please enter a valid email address'
@@ -194,23 +136,6 @@ const otpRules = [
   (v: string) => v.length === 6 || 'OTP must be exactly 6 digits'
 ];
 
-const passwordRules = [
-  (v: string) => !!v || 'Password is required',
-  (v: string) => {
-    const result = validatePassword(v);
-    return result.valid || result.error;
-  }
-];
-
-const confirmPasswordRules = [
-  (v: string) => !!v || 'Please confirm your password',
-  (v: string) => {
-    const result = validateConfirmPassword(form.newPassword, v);
-    return result.valid || result.error;
-  }
-];
-
-// Mock API Handlers
 const handleSendOtp = async () => {
   if (!isEmailValid.value) return;
   isLoading.value = true;
@@ -231,23 +156,10 @@ const handleVerifyOtp = async () => {
   error.value = null;
   try {
     await new Promise(resolve => setTimeout(resolve, 1000));
-    step.value = 3;
+    // Route to the Reset Password page with the email in the query
+    router.push({ path: '/reset-password', query: { email: form.email } });
   } catch (err: any) {
     error.value = err.message || 'Invalid OTP.';
-  } finally {
-    isLoading.value = false;
-  }
-};
-
-const handleResetPassword = async () => {
-  if (!isPasswordValid.value) return;
-  isLoading.value = true;
-  error.value = null;
-  try {
-    await new Promise(resolve => setTimeout(resolve, 1000));
-    step.value = 4;
-  } catch (err: any) {
-    error.value = err.message || 'Failed to reset password.';
   } finally {
     isLoading.value = false;
   }
@@ -262,7 +174,6 @@ const handleResetPassword = async () => {
   overflow: hidden;
 }
 
-/* Left Section - Form Area */
 .auth-form-section {
   background: var(--color-surface);
   position: fixed;
@@ -289,7 +200,6 @@ const handleResetPassword = async () => {
   text-align: center;
 }
 
-/* Logo Animation */
 .logo-section {
   animation: slideInDown 0.6s ease-out;
 }
@@ -308,7 +218,6 @@ const handleResetPassword = async () => {
   50% { transform: translateY(-10px); }
 }
 
-/* Text Styles */
 .primary-text {
   color: var(--color-text-primary);
   line-height: 1.3;
@@ -318,7 +227,6 @@ const handleResetPassword = async () => {
   color: var(--color-text-secondary);
 }
 
-/* Form Styling */
 .auth-form {
   text-align: left;
   animation: slideInUp 0.6s ease-out 0.2s both;
@@ -333,10 +241,11 @@ const handleResetPassword = async () => {
   to { opacity: 1; transform: translateY(0); }
 }
 
-/* Custom Input Fields */
+/* Inherited Custom Input Fields */
 :deep(.custom-field .v-field__outline) {
-  --v-field-border-color: var(--color-border);
+  --v-field-border-color: #000000 !important;
   border-radius: var(--radius-md);
+  border: 2px solid #000000 !important;
 }
 
 :deep(.custom-field .v-field__input) {
@@ -368,7 +277,6 @@ const handleResetPassword = async () => {
   margin-right: 8px;
 }
 
-/* Autofill styling */
 :deep(.custom-field .v-field__input:-webkit-autofill),
 :deep(.custom-field .v-field__input:-webkit-autofill:hover),
 :deep(.custom-field .v-field__input:-webkit-autofill:focus) {
@@ -385,7 +293,6 @@ const handleResetPassword = async () => {
   --v-field-border-color: var(--color-primary) !important;
 }
 
-/* Auth Button */
 .auth-btn {
   background: var(--gradient-ai);
   color: white;
@@ -415,7 +322,6 @@ const handleResetPassword = async () => {
   transform: translateY(0);
 }
 
-/* Auth Link Section */
 .auth-link-section {
   margin-top: 32px;
   animation: slideInUp 0.6s ease-out 0.6s both;
@@ -440,7 +346,14 @@ const handleResetPassword = async () => {
   color: var(--color-primary-dark);
 }
 
-/* Responsive */
+/* OTP Specific spacing */
+.tracking-widest :deep(input) {
+  letter-spacing: 0.25em !important;
+  font-size: 1.25rem;
+  font-weight: 600;
+  text-align: center;
+}
+
 @media (max-width: 960px) {
   .form-wrapper { padding: 40px 20px; }
 }

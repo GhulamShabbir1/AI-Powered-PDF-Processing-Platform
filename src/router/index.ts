@@ -1,6 +1,7 @@
 import { createRouter, createWebHistory, type RouteRecordRaw } from 'vue-router'
 import ForgetPassword from '../pages/auth/ForgetPassword.vue'
 import Home from '../pages/landing/Home.vue'
+import ResetPassword from '../pages/auth/ResetPassword.vue'
 
 const routes: Array<RouteRecordRaw> = [
   {
@@ -22,6 +23,11 @@ const routes: Array<RouteRecordRaw> = [
     path: '/forget-password',
     name: 'ForgetPassword',
     component: ForgetPassword,
+  },
+  {
+    path: '/reset-password',
+    name: 'ResetPassword',
+    component: ResetPassword,
   },
   {
     path: '/dashboard',

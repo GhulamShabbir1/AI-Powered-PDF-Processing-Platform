@@ -288,6 +288,7 @@ const handleVerifyOtp = async () => {
   --v-field-border-color: #000000 !important;
   --v-field-border-opacity: 1 !important;
   border-radius: var(--radius-md);
+  /* border: 2px solid #000000 !important; */
 }
 
 /* ⬛ Focused State: Keep it Solid Black */

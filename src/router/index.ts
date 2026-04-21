@@ -30,6 +30,11 @@ const routes: Array<RouteRecordRaw> = [
     component: ResetPassword,
   },
   {
+    path: '/test-upload',
+    name: 'TestUpload',
+    component: () => import('../pages/dashboard/Upload.vue')
+  },
+  {
     path: '/dashboard',
     name: 'Dashboard',
     component: () => import('../pages/dashboard/Dashboard.vue'),

@@ -1,106 +1,128 @@
 <template>
   <div class="auth-container pa-0 ma-0">
     <div class="auth-form-section d-flex align-center justify-center">
-        <div class="form-wrapper">
-          
-          <div class="logo-section mb-10">
-            <div class="logo-animation">
-              <v-img src="@/assets/logo.png" height="50" contain class="mx-auto"></v-img>
-            </div>
-            <h1 class="text-h4 font-weight-bold primary-text mt-6">
-              {{ step === 1 ? 'Reset Password' : 'Verify Email' }}
-            </h1>
-            <p class="text-body-2 text-muted mt-2 px-4">
-              <span v-if="step === 1">Enter your email and check your inbox for instructions.</span>
-              <span v-else>Enter the 6-digit code sent to <strong>{{ form.email }}</strong></span>
-            </p>
+      <div class="form-wrapper">
+        <div class="logo-section mb-10">
+          <div class="logo-animation">
+            <v-img
+              src="@/assets/logo.png"
+              height="50"
+              contain
+              class="mx-auto"
+            ></v-img>
           </div>
-
-          <v-alert 
-            v-if="error" 
-            type="error" 
-            variant="tonal" 
-            class="mb-6 rounded-lg text-left" 
-            closable
-            @click:close="error = null"
-          >
-            {{ error }}
-          </v-alert>
-
-          <v-fade-transition mode="out-in">
-            
-            <v-form v-if="step === 1" @submit.prevent="handleSendOtp" v-model="isEmailValid" class="auth-form">
-              <div class="form-group">
-                <v-text-field 
-                  v-model="form.email"
-                  label="Email Address" 
-                  type="email"
-                  variant="outlined" 
-                  density="comfortable" 
-                  class="custom-field" 
-                  hide-details="auto"
-                  prepend-inner-icon="mdi-email-outline"
-                  :rules="emailRules"
-                ></v-text-field>
-              </div>
-
-              <v-btn 
-                type="submit" 
-                class="auth-btn w-100 py-6 font-weight-bold mt-2" 
-                size="large"
-                :loading="isLoading"
-                :disabled="!isEmailValid || isLoading"
-              >
-                SEND OTP
-              </v-btn>
-            </v-form>
-
-            <v-form v-else-if="step === 2" @submit.prevent="handleVerifyOtp" v-model="isOtpValid" class="auth-form">
-              <div class="form-group">
-                <v-text-field 
-                  v-model="form.otp"
-                  label="6-Digit OTP Code" 
-                  type="text"
-                  variant="outlined" 
-                  density="comfortable" 
-                  class="custom-field text-center tracking-widest" 
-                  hide-details="auto"
-                  prepend-inner-icon="mdi-shield-key-outline"
-                  :rules="otpRules"
-                  maxlength="6"
-                ></v-text-field>
-              </div>
-
-              <v-btn 
-                type="submit" 
-                class="auth-btn w-100 py-6 font-weight-bold mt-2" 
-                size="large"
-                :loading="isLoading"
-                :disabled="!isOtpValid || isLoading"
-              >
-                VERIFY CODE
-              </v-btn>
-              
-              <div class="text-center mt-4">
-                <v-btn 
-                  variant="text" 
-                  color="primary" 
-                  @click="handleSendOtp" 
-                  :disabled="isLoading"
-                  class="font-weight-bold text-none"
-                >
-                  Didn't receive it? Resend
-                </v-btn>
-              </div>
-            </v-form>
-          </v-fade-transition>
-
-          <div class="auth-link-section">
-             <span class="text-muted text-body-2">Remember your password?</span>
-             <v-btn variant="text" to="/login" class="font-weight-bold text-none px-1">Log In</v-btn>
-          </div>
-          
+          <h1 class="text-h4 font-weight-bold primary-text mt-6">
+            {{ step === 1 ? "Reset Password" : "Verify Email" }}
+          </h1>
+          <p class="text-body-2 text-muted mt-2 px-4">
+            <span v-if="step === 1"
+              >Enter your email and check your inbox for instructions.</span
+            >
+            <span v-else
+              >Enter the 6-digit code sent to
+              <strong>{{ form.email }}</strong></span
+            >
+          </p>
         </div>
+
+        <v-alert
+          v-if="error"
+          type="error"
+          variant="tonal"
+          class="mb-6 rounded-lg text-left"
+          closable
+          @click:close="error = null"
+        >
+          {{ error }}
+        </v-alert>
+
+        <v-fade-transition mode="out-in">
+          <v-form
+            v-if="step === 1"
+            @submit.prevent="handleSendOtp"
+            v-model="isEmailValid"
+            class="auth-form"
+          >
+            <div class="form-group">
+              <v-text-field
+                v-model="form.email"
+                label="Email Address"
+                type="email"
+                variant="outlined"
+                density="comfortable"
+                class="custom-field"
+                hide-details="auto"
+                prepend-inner-icon="mdi-email-outline"
+                :rules="emailRules"
+              ></v-text-field>
+            </div>
+
+            <v-btn
+              type="submit"
+              class="auth-btn w-100 py-6 font-weight-bold mt-2"
+              size="large"
+              :loading="isLoading"
+              :disabled="!isEmailValid || isLoading"
+            >
+              SEND OTP
+            </v-btn>
+          </v-form>
+
+          <v-form
+            v-else-if="step === 2"
+            @submit.prevent="handleVerifyOtp"
+            v-model="isOtpValid"
+            class="auth-form"
+          >
+            <div class="form-group">
+              <v-text-field
+                v-model="form.otp"
+                label="6-Digit OTP Code"
+                type="text"
+                variant="outlined"
+                density="comfortable"
+                class="custom-field text-center tracking-widest"
+                hide-details="auto"
+                prepend-inner-icon="mdi-shield-key-outline"
+                :rules="otpRules"
+                maxlength="6"
+              ></v-text-field>
+            </div>
+
+            <v-btn
+              type="submit"
+              class="auth-btn w-100 py-6 font-weight-bold mt-2"
+              size="large"
+              :loading="isLoading"
+              :disabled="!isOtpValid || isLoading"
+            >
+              VERIFY CODE
+            </v-btn>
+
+            <div class="text-center mt-4">
+              <v-btn
+                variant="text"
+                color="primary"
+                @click="handleSendOtp"
+                :disabled="isLoading"
+                class="font-weight-bold text-none"
+              >
+                Didn't receive it? Resend
+              </v-btn>
+            </div>
+          </v-form>
+        </v-fade-transition>
+
+        <div class="auth-link-section">
+          <span class="text-muted text-body-2">Remember your password?</span>
+          <v-btn
+            variant="text"
+            to="/login"
+            class="font-weight-bold text-none px-1"
+            >Log In</v-btn
+          >
+        </div>
+      </div>
     </div>
 
     <AuthLayout />
@@ -108,10 +130,10 @@
 </template>
 
 <script setup lang="ts">
-import { ref, reactive } from 'vue';
-import { useRouter } from 'vue-router';
-import AuthLayout from '../../layouts/AuthLayout.vue';
-import { validateEmail } from '../../utils/validators';
+import { ref, reactive } from "vue";
+import { useRouter } from "vue-router";
+import AuthLayout from "../../layouts/AuthLayout.vue";
+import { validateEmail } from "../../utils/validators";
 
 const router = useRouter();
 const step = ref(1);
@@ -122,18 +144,18 @@ const isEmailValid = ref(false);
 const isOtpValid = ref(false);
 
 const form = reactive({
-  email: '',
-  otp: ''
+  email: "",
+  otp: "",
 });
 
 const emailRules = [
-  (v: string) => !!v || 'Email is required',
-  (v: string) => validateEmail(v) || 'Please enter a valid email address'
+  (v: string) => !!v || "Email is required",
+  (v: string) => validateEmail(v) || "Please enter a valid email address",
 ];
 
 const otpRules = [
-  (v: string) => !!v || 'OTP is required',
-  (v: string) => v.length === 6 || 'OTP must be exactly 6 digits'
+  (v: string) => !!v || "OTP is required",
+  (v: string) => v.length === 6 || "OTP must be exactly 6 digits",
 ];
 
 const handleSendOtp = async () => {
@@ -141,10 +163,10 @@ const handleSendOtp = async () => {
   isLoading.value = true;
   error.value = null;
   try {
-    await new Promise(resolve => setTimeout(resolve, 1000)); 
+    await new Promise((resolve) => setTimeout(resolve, 1000));
     step.value = 2;
   } catch (err: any) {
-    error.value = err.message || 'Failed to send OTP.';
+    error.value = err.message || "Failed to send OTP.";
   } finally {
     isLoading.value = false;
   }
@@ -155,11 +177,10 @@ const handleVerifyOtp = async () => {
   isLoading.value = true;
   error.value = null;
   try {
-    await new Promise(resolve => setTimeout(resolve, 1000));
-    // Route to the Reset Password page with the email in the query
-    router.push({ path: '/reset-password', query: { email: form.email } });
+    await new Promise((resolve) => setTimeout(resolve, 1000));
+    router.push({ path: "/reset-password", query: { email: form.email } });
   } catch (err: any) {
-    error.value = err.message || 'Invalid OTP.';
+    error.value = err.message || "Invalid OTP.";
   } finally {
     isLoading.value = false;
   }
@@ -209,13 +230,24 @@ const handleVerifyOtp = async () => {
 }
 
 @keyframes slideInDown {
-  from { opacity: 0; transform: translateY(-30px); }
-  to { opacity: 1; transform: translateY(0); }
+  from {
+    opacity: 0;
+    transform: translateY(-30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 @keyframes float {
-  0%, 100% { transform: translateY(0); }
-  50% { transform: translateY(-10px); }
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
 }
 
 .primary-text {
@@ -237,17 +269,37 @@ const handleVerifyOtp = async () => {
 }
 
 @keyframes slideInUp {
-  from { opacity: 0; transform: translateY(20px); }
-  to { opacity: 1; transform: translateY(0); }
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
-/* Inherited Custom Input Fields */
+/* =========================================
+   Custom Input Fields
+   ========================================= */
+
+/* ⬛ Default State: Solid Black Outline */
 :deep(.custom-field .v-field__outline) {
   --v-field-border-color: #000000 !important;
+  --v-field-border-opacity: 1 !important;
   border-radius: var(--radius-md);
-  border: 2px solid #000000 !important;
 }
 
+/* ⬛ Focused State: Keep it Solid Black */
+:deep(.custom-field.v-field--focused .v-field__outline) {
+  --v-field-border-color: #000000 !important;
+  --v-field-border-opacity: 1 !important;
+  /* Optional: Adds a very subtle black shadow when clicked, instead of blue */
+  box-shadow: 0 0 0 2px rgba(0, 0, 0, 0.1) !important;
+  transition: all var(--transition-fast);
+}
+
+/* Base Text & Placeholder Formatting */
 :deep(.custom-field .v-field__input) {
   --v-field-input-placeholder-opacity: 1 !important;
   color: var(--color-text-primary) !important;
@@ -266,17 +318,47 @@ const handleVerifyOtp = async () => {
   margin-left: -4px !important;
 }
 
-:deep(.custom-field.v-field--focused .v-field__outline) {
-  --v-field-border-color: var(--color-primary) !important;
-  box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1);
-  transition: all var(--transition-fast);
-}
-
 :deep(.custom-field .v-field__prepend-inner) {
   color: var(--color-text-secondary);
   margin-right: 8px;
 }
 
+/* Chrome Autofill Fixes */
+:deep(.custom-field .v-field__input:-webkit-autofill),
+:deep(.custom-field .v-field__input:-webkit-autofill:hover),
+:deep(.custom-field .v-field__input:-webkit-autofill:focus) {
+  -webkit-box-shadow: 0 0 0 1000px white inset !important;
+  box-shadow: 0 0 0 1000px white inset !important;
+}
+
+:deep(.custom-field .v-field__input:-webkit-autofill) {
+  -webkit-text-fill-color: var(--color-text-primary) !important;
+  color: var(--color-text-primary) !important;
+}
+
+:deep(.custom-field:has(.v-field__input:-webkit-autofill) .v-field__outline) {
+  --v-field-border-color: #000000 !important;
+}
+
+/* ❌ Error State: Solid Red Outline & Text (Placed last to override black) */
+:deep(.custom-field.v-field--error .v-field__outline) {
+  --v-field-border-color: #ef4444 !important;
+  --v-field-border-opacity: 1 !important;
+  box-shadow: 0 0 0 2px rgba(239, 68, 68, 0.15) !important;
+}
+
+:deep(.custom-field.v-field--error .v-label),
+:deep(.custom-field.v-field--error .v-icon),
+:deep(.custom-field.v-field--error input) {
+  color: #ef4444 !important;
+}
+
+:deep(.v-input--error .v-messages__message) {
+  color: #ef4444 !important;
+  font-weight: 500;
+}
+
+/* Chrome Autofill Fixes */
 :deep(.custom-field .v-field__input:-webkit-autofill),
 :deep(.custom-field .v-field__input:-webkit-autofill:hover),
 :deep(.custom-field .v-field__input:-webkit-autofill:focus) {
@@ -293,6 +375,7 @@ const handleVerifyOtp = async () => {
   --v-field-border-color: var(--color-primary) !important;
 }
 
+/* Auth Button */
 .auth-btn {
   background: var(--gradient-ai);
   color: white;
@@ -355,7 +438,9 @@ const handleVerifyOtp = async () => {
 }
 
 @media (max-width: 960px) {
-  .form-wrapper { padding: 40px 20px; }
+  .form-wrapper {
+    padding: 40px 20px;
+  }
 }
 
 @media (max-width: 600px) {
@@ -363,6 +448,8 @@ const handleVerifyOtp = async () => {
     padding: 32px 16px;
     max-width: 100%;
   }
-  .logo-section { margin-bottom: 32px; }
+  .logo-section {
+    margin-bottom: 32px;
+  }
 }
 </style>

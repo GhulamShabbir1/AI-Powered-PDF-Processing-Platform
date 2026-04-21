@@ -339,6 +339,24 @@ const handleResetPassword = async () => {
   border-radius: var(--radius-md);
 }
 
+:deep(.custom-field .v-field__input) {
+  --v-field-input-placeholder-opacity: 1 !important;
+  color: var(--color-text-primary) !important;
+}
+
+:deep(.custom-field .v-field__input::placeholder) {
+  color: var(--color-text-secondary) !important;
+  opacity: 1 !important;
+}
+
+:deep(.custom-field .v-label) {
+  color: var(--color-text-secondary) !important;
+  opacity: 1 !important;
+  background-color: white !important;
+  padding: 0 4px !important;
+  margin-left: -4px !important;
+}
+
 :deep(.custom-field.v-field--focused .v-field__outline) {
   --v-field-border-color: var(--color-primary) !important;
   box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1);
@@ -348,6 +366,23 @@ const handleResetPassword = async () => {
 :deep(.custom-field .v-field__prepend-inner) {
   color: var(--color-text-secondary);
   margin-right: 8px;
+}
+
+/* Autofill styling */
+:deep(.custom-field .v-field__input:-webkit-autofill),
+:deep(.custom-field .v-field__input:-webkit-autofill:hover),
+:deep(.custom-field .v-field__input:-webkit-autofill:focus) {
+  -webkit-box-shadow: 0 0 0 1000px white inset !important;
+  box-shadow: 0 0 0 1000px white inset !important;
+}
+
+:deep(.custom-field .v-field__input:-webkit-autofill) {
+  -webkit-text-fill-color: var(--color-text-primary) !important;
+  color: var(--color-text-primary) !important;
+}
+
+:deep(.custom-field:has(.v-field__input:-webkit-autofill) .v-field__outline) {
+  --v-field-border-color: var(--color-primary) !important;
 }
 
 /* Auth Button */
@@ -360,6 +395,15 @@ const handleResetPassword = async () => {
   transition: all var(--transition-normal);
   box-shadow: var(--shadow-md);
   text-transform: none;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+}
+
+:deep(.auth-btn .v-btn__content) {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
 }
 
 .auth-btn:hover {
@@ -381,6 +425,15 @@ const handleResetPassword = async () => {
   color: var(--color-primary);
   text-decoration: none;
   transition: color var(--transition-fast);
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+}
+
+:deep(.auth-link-section .v-btn .v-btn__content) {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
 }
 
 :deep(.auth-link-section .v-btn:hover) {

@@ -13,28 +13,33 @@
           <v-form class="register-form">
             <div class="form-group">
               <v-text-field 
+                v-model="fullName"
                 label="Full Name" 
                 variant="outlined" 
                 density="comfortable" 
                 class="custom-field" 
                 hide-details
                 prepend-inner-icon="mdi-account-outline"
+                required
               ></v-text-field>
             </div>
 
             <div class="form-group">
               <v-text-field 
+                v-model="email"
                 label="Email" 
                 variant="outlined" 
                 density="comfortable" 
                 class="custom-field" 
                 hide-details
                 prepend-inner-icon="mdi-email-outline"
+                required
               ></v-text-field>
             </div>
 
             <div class="form-group">
               <v-text-field 
+                v-model="password"
                 label="Password" 
                 type="password" 
                 variant="outlined" 
@@ -42,11 +47,13 @@
                 class="custom-field" 
                 hide-details
                 prepend-inner-icon="mdi-lock-outline"
+                required
               ></v-text-field>
             </div>
 
             <div class="form-group">
               <v-text-field 
+                v-model="confirmPassword"
                 label="Confirm Password" 
                 type="password" 
                 variant="outlined" 
@@ -54,11 +61,13 @@
                 class="custom-field" 
                 hide-details
                 prepend-inner-icon="mdi-lock-check-outline"
+                required
               ></v-text-field>
             </div>
 
             <div class="mb-6">
               <v-checkbox 
+                v-model="termsAccepted"
                 label="I agree to the Terms & Conditions" 
                 hide-details 
                 density="compact" 
@@ -66,7 +75,11 @@
               ></v-checkbox>
             </div>
 
-            <v-btn class="register-btn w-100 py-6 font-weight-bold" size="large">
+            <v-btn 
+              class="register-btn w-100 py-6 font-weight-bold" 
+              size="large"
+              @click="validateAndRegister"
+            >
               CREATE ACCOUNT
             </v-btn>
           </v-form>
@@ -80,11 +93,97 @@
 
     <!-- Right Side - Branding Panel -->
     <AuthLayout />
+
+    <!-- Notification Alert -->
+    <v-snackbar 
+      v-model="showAlert"
+      :timeout="5000"
+      location="top start"
+      class="validation-snackbar"
+    >
+      <div class="snackbar-content">
+        <v-icon class="snackbar-icon">mdi-alert-circle</v-icon>
+        <span>{{ alertMessage }}</span>
+      </div>
+    </v-snackbar>
   </div>
 </template>
 
 <script setup lang="ts">
+import { ref } from 'vue'
 import AuthLayout from '../../layouts/AuthLayout.vue'
+
+const fullName = ref('')
+const email = ref('')
+const password = ref('')
+const confirmPassword = ref('')
+const termsAccepted = ref(false)
+const showAlert = ref(false)
+const alertMessage = ref('')
+let alertTimeout: NodeJS.Timeout | null = null
+
+const showErrorAlert = (message: string) => {
+  // Clear any existing timeout
+  if (alertTimeout) clearTimeout(alertTimeout)
+  
+  alertMessage.value = message
+  showAlert.value = true
+  
+  // Auto-dismiss after 5 seconds
+  alertTimeout = setTimeout(() => {
+    showAlert.value = false
+  }, 5000)
+}
+
+const validateAndRegister = () => {
+  // Reset alert
+  showAlert.value = false
+  alertMessage.value = ''
+
+  // Validate full name
+  if (!fullName.value.trim()) {
+    showErrorAlert('Please enter your full name')
+    return
+  }
+
+  // Validate email
+  if (!email.value.trim()) {
+    showErrorAlert('Please enter your email address')
+    return
+  }
+
+  // Validate password
+  if (!password.value.trim()) {
+    showErrorAlert('Please enter a password')
+    return
+  }
+
+  // Validate confirm password
+  if (!confirmPassword.value.trim()) {
+    showErrorAlert('Please confirm your password')
+    return
+  }
+
+  // Check if passwords match
+  if (password.value !== confirmPassword.value) {
+    showErrorAlert('Passwords do not match. Please check and try again.')
+    return
+  }
+
+  // Validate terms acceptance
+  if (!termsAccepted.value) {
+    showErrorAlert('Please agree to the Terms & Conditions')
+    return
+  }
+
+  // If validation passes, proceed with registration
+  console.log('Register with:', { 
+    fullName: fullName.value, 
+    email: email.value, 
+    password: password.value 
+  })
+  // TODO: Call register API
+}
 </script>
 
 <style scoped>
@@ -184,8 +283,27 @@ import AuthLayout from '../../layouts/AuthLayout.vue'
 
 /* Custom Input Fields */
 :deep(.custom-field .v-field__outline) {
-  --v-field-border-color: var(--color-border);
+  --v-field-border-color: #000000 !important;
   border-radius: var(--radius-md);
+  border: 2px solid #000000 !important;
+}
+
+:deep(.custom-field .v-field__input) {
+  --v-field-input-placeholder-opacity: 1 !important;
+  color: var(--color-text-primary) !important;
+}
+
+:deep(.custom-field .v-field__input::placeholder) {
+  color: var(--color-text-secondary) !important;
+  opacity: 1 !important;
+}
+
+:deep(.custom-field .v-label) {
+  color: var(--color-text-secondary) !important;
+  opacity: 1 !important;
+  background-color: white !important;
+  padding: 0 4px !important;
+  margin-left: -4px !important;
 }
 
 :deep(.custom-field.v-field--focused .v-field__outline) {
@@ -199,9 +317,50 @@ import AuthLayout from '../../layouts/AuthLayout.vue'
   margin-right: 8px;
 }
 
+/* Autofill styling */
+:deep(.custom-field .v-field__input:-webkit-autofill),
+:deep(.custom-field .v-field__input:-webkit-autofill:hover),
+:deep(.custom-field .v-field__input:-webkit-autofill:focus) {
+  -webkit-box-shadow: 0 0 0 1000px white inset !important;
+  box-shadow: 0 0 0 1000px white inset !important;
+}
+
+:deep(.custom-field .v-field__input:-webkit-autofill) {
+  -webkit-text-fill-color: var(--color-text-primary) !important;
+  color: var(--color-text-primary) !important;
+}
+
+:deep(.custom-field:has(.v-field__input:-webkit-autofill) .v-field__outline) {
+  --v-field-border-color: var(--color-primary) !important;
+}
+
 /* Checkbox */
 :deep(.v-checkbox .v-selection-control__input) {
   color: var(--color-primary);
+}
+
+/* Alert Styling */
+.validation-snackbar {
+  z-index: 2000;
+}
+
+:deep(.validation-snackbar .v-snackbar__wrapper) {
+  background-color: #d32f2f !important;
+  border-radius: 8px !important;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3) !important;
+}
+
+.snackbar-content {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  color: #fff;
+  font-weight: 600;
+  font-size: 0.95rem;
+}
+
+.snackbar-icon {
+  flex-shrink: 0;
 }
 
 /* Register Button */
@@ -215,6 +374,15 @@ import AuthLayout from '../../layouts/AuthLayout.vue'
   box-shadow: var(--shadow-md);
   text-transform: none;
   animation: slideInUp 0.6s ease-out 0.4s both;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+}
+
+:deep(.register-btn .v-btn__content) {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
 }
 
 .register-btn:hover {
@@ -236,6 +404,15 @@ import AuthLayout from '../../layouts/AuthLayout.vue'
   color: var(--color-primary);
   text-decoration: none;
   transition: color var(--transition-fast);
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+}
+
+:deep(.login-link-section .v-btn .v-btn__content) {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
 }
 
 :deep(.login-link-section .v-btn:hover) {

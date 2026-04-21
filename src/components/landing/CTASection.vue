@@ -114,7 +114,7 @@ const watchDemo = () => {
 <style scoped>
 .cta-wrapper {
   position: relative;
-  padding: 5rem 0;
+  padding: 3rem 0;
   background: linear-gradient(135deg, #0F172A 0%, #1E293B 50%, #0F172A 100%);
   overflow-x: hidden;
 }
@@ -227,8 +227,8 @@ const watchDemo = () => {
   position: relative;
   background: linear-gradient(135deg, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0.05));
   backdrop-filter: blur(20px);
-  border-radius: 48px;
-  padding: 4rem;
+  border-radius: 36px;
+  padding: 2.5rem;
   border: 1px solid rgba(255, 255, 255, 0.1);
   overflow: hidden;
   z-index: 1;
@@ -246,8 +246,8 @@ const watchDemo = () => {
 }
 
 .decoration-1 {
-  top: -50px;
-  left: -50px;
+  top: -35px;
+  left: -35px;
   background: linear-gradient(135deg, #4F46E5, #06B6D4);
   animation: pulse 4s ease infinite;
 }
@@ -293,11 +293,11 @@ const watchDemo = () => {
 
 /* Title */
 .cta-title {
-  font-size: clamp(2rem, 5vw, 3.5rem);
+  font-size: clamp(1.5rem, 3.75vw, 2.5rem);
   font-weight: 800;
   line-height: 1.2;
   color: white;
-  margin-bottom: 1.5rem;
+  margin-bottom: 1.25rem;
 }
 
 .text-gradient-white {
@@ -309,11 +309,11 @@ const watchDemo = () => {
 
 /* Description */
 .cta-description {
-  font-size: 1.125rem;
+  font-size: 0.875rem;
   line-height: 1.6;
   color: rgba(255, 255, 255, 0.8);
-  max-width: 600px;
-  margin: 0 auto 2rem auto;
+  max-width: 400px;
+  margin: 0 auto 1.5rem auto;
 }
 
 /* Features */

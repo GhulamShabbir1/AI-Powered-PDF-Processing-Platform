@@ -214,7 +214,7 @@ const scrollToCta = () => {
 <style scoped>
 .ai-processing {
   position: relative;
-  padding: 5rem 0;
+  padding: 3rem 0;
   background: linear-gradient(135deg, #f8fafc 0%, #ffffff 50%, #f1f5f9 100%);
   overflow-x: hidden;
 }
@@ -239,11 +239,11 @@ const scrollToCta = () => {
 }
 
 .bg-circle-1 {
-  width: 400px;
-  height: 400px;
+  width: 280px;
+  height: 280px;
   background: linear-gradient(135deg, #4F46E5, #06B6D4);
-  top: -100px;
-  left: -100px;
+  top: -80px;
+  left: -80px;
 }
 
 .bg-circle-2 {
@@ -298,7 +298,7 @@ const scrollToCta = () => {
 }
 
 .section-title {
-  font-size: clamp(2rem, 4vw, 2.75rem);
+  font-size: clamp(1.5rem, 3vw, 2.125rem);
   font-weight: 800;
   line-height: 1.2;
   color: #0F172A;
@@ -312,9 +312,9 @@ const scrollToCta = () => {
 }
 
 .section-subtitle {
-  font-size: 1.125rem;
+  font-size: 0.875rem;
   color: #64748B;
-  max-width: 600px;
+  max-width: 400px;
   margin: 0 auto;
   line-height: 1.6;
 }
@@ -354,19 +354,19 @@ const scrollToCta = () => {
 
 /* Processing Title */
 .processing-title {
-  font-size: clamp(1.5rem, 3vw, 2rem);
+  font-size: clamp(1.125rem, 2.25vw, 1.5rem);
   font-weight: 700;
   color: #0F172A;
-  margin-bottom: 1rem;
+  margin-bottom: 0.75rem;
   line-height: 1.3;
 }
 
 /* Processing Description */
 .processing-description {
-  font-size: 1rem;
+  font-size: 0.8125rem;
   line-height: 1.6;
   color: #64748B;
-  margin-bottom: 1.5rem;
+  margin-bottom: 1.25rem;
 }
 
 /* Feature Points */
@@ -515,9 +515,9 @@ const scrollToCta = () => {
   justify-content: space-around;
   align-items: center;
   background: white;
-  border-radius: 80px;
-  padding: 2rem 3rem;
-  box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.1);
+  border-radius: 60px;
+  padding: 1.25rem 2rem;
+  box-shadow: 0 8px 24px -8px rgba(0, 0, 0, 0.1);
   border: 1px solid rgba(226, 232, 240, 0.8);
 }
 
@@ -526,13 +526,13 @@ const scrollToCta = () => {
 }
 
 .stat-value {
-  font-size: 2rem;
+  font-size: 1.375rem;
   font-weight: 800;
   background: linear-gradient(135deg, #4F46E5, #06B6D4);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
-  margin-bottom: 0.25rem;
+  margin-bottom: 0.1875rem;
 }
 
 .stat-label {

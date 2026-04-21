@@ -13,13 +13,13 @@
             <div>
               <!-- Badge -->
               <div class="hero-badge mb-4">
-                <span class="badge-text">✨ AI-Powered Document Processing</span>
+                <span class="badge-text"> AI-Powered Document Processing</span>
               </div>
 
               <!-- Title -->
-              <h1 class="hero-title">
-                Master Your Documents with 
-                <span class="hero-title-gradient">AI-Powered</span> 
+<h1 class="hero-title">
+                Master Your Documents with
+                <span class="hero-title-gradient">AI-Powered</span><br>
                 PDF Processing
               </h1>
               
@@ -93,8 +93,8 @@ const scrollToFeatures = () => {
 <style scoped>
 .hero-wrapper {
   position: relative;
-  min-height: 100vh;
-  padding: 4rem 0 0 0 !important;
+  min-height: 80vh;
+  padding: 2.5rem 0 0 0 !important;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -153,8 +153,8 @@ const scrollToFeatures = () => {
 }
 
 .hero-content {
-  padding: 4rem 2rem !important;
-  max-width: 900px;
+  padding: 1.5rem 0.75rem !important;
+  max-width: 450px;
   margin: 0 auto;
 }
 
@@ -169,17 +169,17 @@ const scrollToFeatures = () => {
 }
 
 .badge-text {
-  font-size: 0.875rem;
+  font-size: 0.75rem;
   font-weight: 500;
   letter-spacing: 0.025em;
 }
 
 /* Title */
 .hero-title {
-  font-size: clamp(2.5rem, 6vw, 5rem);
+  font-size: clamp(1.5rem, 4vw, 2.75rem);
   font-weight: 800;
   line-height: 1.2;
-  margin-bottom: 1.5rem;
+  margin-bottom: 1rem;
   letter-spacing: -0.025em;
 }
 
@@ -192,31 +192,31 @@ const scrollToFeatures = () => {
 
 /* Subtitle */
 .hero-subtitle {
-  font-size: clamp(1rem, 2vw, 1.25rem);
+  font-size: clamp(0.875rem, 1.75vw, 1rem);
   opacity: 0.9;
   line-height: 1.6;
-  max-width: 600px;
-  margin: 0 auto 2rem auto;
+  max-width: 400px;
+  margin: 0 auto 1.5rem auto;
 }
 
 /* CTA Buttons */
 .hero-ctas {
   display: flex;
   flex-wrap: wrap;
-  gap: 1rem;
+  gap: 0.75rem;
   justify-content: center;
-  margin-bottom: 3rem;
+  margin-bottom: 1.75rem;
 }
 
 .hero-primary-btn,
 .hero-secondary-btn {
   font-weight: 600 !important;
-  font-size: 1rem !important;
+  font-size: 0.875rem !important;
   text-transform: none !important;
   letter-spacing: 0.025em !important;
-  border-radius: 12px !important;
-  height: 52px !important;
-  min-width: 180px !important;
+  border-radius: 10px !important;
+  height: 44px !important;
+  min-width: 140px !important;
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
 }
 
@@ -249,9 +249,9 @@ const scrollToFeatures = () => {
   display: flex;
   flex-wrap: wrap;
   justify-content: center;
-  gap: 3rem;
-  margin-top: 2rem;
-  padding-top: 2rem;
+  gap: 1.5rem;
+  margin-top: 1.25rem;
+  padding-top: 1.25rem;
   border-top: 1px solid rgba(255, 255, 255, 0.1);
 }
 
@@ -260,17 +260,17 @@ const scrollToFeatures = () => {
 }
 
 .stat-number {
-  font-size: 2rem;
+  font-size: 1.375rem;
   font-weight: 800;
   background: linear-gradient(135deg, #4F46E5, #06B6D4);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
-  margin-bottom: 0.5rem;
+  margin-bottom: 0.375rem;
 }
 
 .stat-label {
-  font-size: 0.875rem;
+  font-size: 0.75rem;
   opacity: 0.7;
   letter-spacing: 0.025em;
 }

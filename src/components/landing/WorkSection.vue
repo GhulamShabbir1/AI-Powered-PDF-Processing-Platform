@@ -128,7 +128,7 @@ const scrollToCta = () => {
 <style scoped>
 .how-it-works {
   position: relative;
-  padding: 5rem 0;
+  padding: 3rem 0;
   background: linear-gradient(135deg, #f8fafc 0%, #ffffff 50%, #f1f5f9 100%);
   overflow-x: hidden;
 }
@@ -229,7 +229,7 @@ const scrollToCta = () => {
 }
 
 .section-title {
-  font-size: clamp(2rem, 4vw, 2.75rem);
+  font-size: clamp(1.5rem, 3vw, 2.125rem);
   font-weight: 800;
   line-height: 1.2;
   color: #0F172A;
@@ -243,9 +243,9 @@ const scrollToCta = () => {
 }
 
 .section-subtitle {
-  font-size: 1.125rem;
+  font-size: 0.875rem;
   color: #64748B;
-  max-width: 600px;
+  max-width: 400px;
   margin: 0 auto;
   line-height: 1.6;
 }
@@ -267,11 +267,11 @@ const scrollToCta = () => {
   position: relative;
   background: rgba(255, 255, 255, 0.95);
   backdrop-filter: blur(10px);
-  border-radius: 24px;
-  padding: 2rem 1.5rem;
+  border-radius: 20px;
+  padding: 1.5rem 1.25rem;
   text-align: center;
   height: 100%;
-  min-height: 280px;
+  min-height: 220px;
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   border: 1px solid rgba(226, 232, 240, 0.8);
   display: flex;
@@ -322,15 +322,15 @@ const scrollToCta = () => {
 }
 
 .step-icon-bg {
-  width: 72px;
-  height: 72px;
-  border-radius: 20px;
+  width: 56px;
+  height: 56px;
+  border-radius: 16px;
   display: flex;
   align-items: center;
   justify-content: center;
   margin: 0 auto;
   transition: all 0.3s ease;
-  box-shadow: 0 10px 20px -5px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 8px 16px -4px rgba(0, 0, 0, 0.1);
 }
 
 .step-card:hover .step-icon-bg {

@@ -135,18 +135,18 @@ const stats: Stat[] = [
   { number: '5M+', label: 'Documents Processed' }
 ];
 
-const scrollToCta = () => {
-  const element = document.getElementById('cta');
-  if (element) {
-    element.scrollIntoView({ behavior: 'smooth', block: 'start' });
-  }
-};
+// const scrollToCta = () => {
+//   const element = document.getElementById('cta');
+//   if (element) {
+//     element.scrollIntoView({ behavior: 'smooth', block: 'start' });
+//   }
+// };
 </script>
 
 <style scoped>
 .testimonials-wrapper {
   position: relative;
-  padding: 5rem 0;
+  padding: 3rem 0;
   background: linear-gradient(135deg, #f8fafc 0%, #ffffff 50%, #f1f5f9 100%);
   overflow-x: hidden;
 }
@@ -170,11 +170,11 @@ const scrollToCta = () => {
 }
 
 .particle-1 {
-  width: 300px;
-  height: 300px;
+  width: 220px;
+  height: 220px;
   background: linear-gradient(135deg, #4F46E5, #06B6D4);
-  top: -100px;
-  left: -100px;
+  top: -70px;
+  left: -70px;
 }
 
 .particle-2 {
@@ -229,7 +229,7 @@ const scrollToCta = () => {
 }
 
 .section-title {
-  font-size: clamp(2rem, 4vw, 2.75rem);
+  font-size: clamp(1.5rem, 3vw, 2.125rem);
   font-weight: 800;
   line-height: 1.2;
   color: #0F172A;
@@ -243,9 +243,9 @@ const scrollToCta = () => {
 }
 
 .section-subtitle {
-  font-size: 1.125rem;
+  font-size: 0.875rem;
   color: #64748B;
-  max-width: 600px;
+  max-width: 400px;
   margin: 0 auto;
   line-height: 1.6;
 }
@@ -258,8 +258,8 @@ const scrollToCta = () => {
 .testimonial-card {
   background: rgba(255, 255, 255, 0.9);
   backdrop-filter: blur(10px);
-  border-radius: 24px;
-  padding: 2rem;
+  border-radius: 20px;
+  padding: 1.5rem;
   height: 100%;
   transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
   border: 1px solid rgba(226, 232, 240, 0.8);
@@ -295,11 +295,11 @@ const scrollToCta = () => {
 
 /* Feedback Text */
 .testimonial-feedback {
-  font-size: 0.9375rem;
-  line-height: 1.7;
+  font-size: 0.8125rem;
+  line-height: 1.6;
   color: #334155;
-  margin: 1rem 0 1.5rem 0;
-  min-height: 120px;
+  margin: 0.75rem 0 1.25rem 0;
+  min-height: 100px;
 }
 
 /* User Info */
@@ -325,10 +325,10 @@ const scrollToCta = () => {
 }
 
 .user-name {
-  font-size: 1rem;
+  font-size: 0.875rem;
   font-weight: 700;
   color: #0F172A;
-  margin-bottom: 0.25rem;
+  margin-bottom: 0.1875rem;
 }
 
 .user-role {
@@ -341,11 +341,11 @@ const scrollToCta = () => {
   display: flex;
   justify-content: space-around;
   flex-wrap: wrap;
-  gap: 2rem;
+  gap: 1.5rem;
   background: white;
-  border-radius: 80px;
-  padding: 2rem 3rem;
-  box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.1);
+  border-radius: 60px;
+  padding: 1.25rem 2rem;
+  box-shadow: 0 8px 24px -8px rgba(0, 0, 0, 0.1);
   border: 1px solid rgba(226, 232, 240, 0.8);
 }
 
@@ -354,13 +354,13 @@ const scrollToCta = () => {
 }
 
 .stat-number {
-  font-size: 2rem;
+  font-size: 1.375rem;
   font-weight: 800;
   background: linear-gradient(135deg, #4F46E5, #06B6D4);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
-  margin-bottom: 0.25rem;
+  margin-bottom: 0.1875rem;
 }
 
 .stat-label {

@@ -54,12 +54,12 @@
     </div>
 
     <!-- Right Side - Branding Panel -->
-    <AuthBrandingPanel />
+    <AuthLayout />
   </div>
 </template>
 
 <script setup lang="ts">
-import AuthBrandingPanel from '../../components/AuthBrandingPanel.vue'
+import AuthLayout from '../../layouts/AuthLayout.vue'
 </script>
 
 <style scoped>

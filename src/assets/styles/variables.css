@@ -34,7 +34,9 @@
   --spacing-sm: 8px;
   --spacing-md: 16px;
   --spacing-lg: 24px;
-  --spacing-xl: 32px;
+--spacing-xl: 32px;
+
+--sidebar-width: 256px;
 
   /* Border Radius */
   --radius-sm: 6px;

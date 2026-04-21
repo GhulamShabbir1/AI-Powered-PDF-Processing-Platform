@@ -89,7 +89,7 @@
     app
     :flat="!isScrolled"
     :elevation="isScrolled ? 2 : 0"
-    :height="isScrolled ? 64 : 80"
+:height="isScrolled ? 48 : 60"
     class="navbar-main"
     :class="{ 'navbar-scrolled': isScrolled }"
   >
@@ -162,9 +162,9 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted, onUnmounted, computed, watch } from 'vue'
-import { useTheme } from 'vuetify'
+import { computed, onMounted, onUnmounted, ref, watch } from 'vue'
 import { useRouter } from 'vue-router'
+import { useTheme } from 'vuetify'
 
 const theme = useTheme()
 const router = useRouter()
@@ -274,10 +274,10 @@ onUnmounted(() => {
 .nav-link-desktop {
   text-transform: none !important;
   font-weight: 500;
-  font-size: 0.9375rem;
+  font-size: 0.6875rem;
   letter-spacing: normal;
-  border-radius: 8px;
-  padding: 6px 16px !important;
+  border-radius: 6px;
+  padding: 4px 12px !important;
   transition: all 0.2s ease;
 }
 
@@ -296,9 +296,9 @@ onUnmounted(() => {
 .login-btn {
   text-transform: none !important;
   font-weight: 500;
-  font-size: 0.9375rem;
-  border-radius: 8px;
-  padding: 6px 20px !important;
+  font-size: 0.6875rem;
+  border-radius: 6px;
+  padding: 4px 16px !important;
   transition: all 0.2s ease;
 }
 
@@ -311,11 +311,11 @@ onUnmounted(() => {
 .get-started-btn {
   text-transform: none !important;
   font-weight: 600;
-  font-size: 0.9375rem;
-  border-radius: 8px;
-  padding: 6px 24px !important;
+  font-size: 0.6875rem;
+  border-radius: 6px;
+  padding: 4px 20px !important;
   background: linear-gradient(135deg, #4f46e5, #06b6d4);
-  box-shadow: 0 4px 12px rgba(79, 70, 229, 0.3);
+  box-shadow: 0 3px 10px rgba(79, 70, 229, 0.3);
   transition: all 0.3s ease;
 }
 

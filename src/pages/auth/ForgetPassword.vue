@@ -159,13 +159,13 @@
         </div>
     </div>
 
-    <AuthBrandingPanel />
+    <AuthLayout />
   </div>
 </template>
 
 <script setup lang="ts">
 import { ref, reactive } from 'vue';
-import AuthBrandingPanel from '../../components/AuthBrandingPanel.vue';
+import AuthLayout from '../../layouts/AuthLayout.vue'
 import { validateEmail, validatePassword, validateConfirmPassword } from '../../utils/validators';
 
 const step = ref(1);

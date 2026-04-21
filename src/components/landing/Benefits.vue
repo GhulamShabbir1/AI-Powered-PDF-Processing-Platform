@@ -139,12 +139,12 @@ const benefits: Benefit[] = [
   }
 ];
 
-const scrollToCta = () => {
-  const element = document.getElementById('cta');
-  if (element) {
-    element.scrollIntoView({ behavior: 'smooth', block: 'start' });
-  }
-};
+// const scrollToCta = () => {
+//   const element = document.getElementById('cta');
+//   if (element) {
+//     element.scrollIntoView({ behavior: 'smooth', block: 'start' });
+//   }
+// };
 </script>
 
 <style scoped>

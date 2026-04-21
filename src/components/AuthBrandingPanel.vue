@@ -1,4 +1,4 @@
-I am<template>
+<template>
   <v-col 
     cols="12" 
     md="6" 

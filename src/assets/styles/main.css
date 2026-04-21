@@ -54,6 +54,62 @@ a:hover {
   background: rgba(var(--v-border-color), 0.4);
 }
 
+/* Dashboard Specific */
+.dashboard-main {
+  padding: 2rem 1rem;
+  min-height: calc(100vh - 80px);
+  background: rgb(var(--v-theme-surface));
+}
+
+.dashboard-container {
+  padding-bottom: 4rem !important;
+}
+
+.ambient-shadow {
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+}
+
+.tracking-widest {
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.group {
+  position: relative;
+  display: inline-block;
+}
+
+.group > * {
+  transition: all 0.3s ease;
+}
+
+.group:hover .group-hover\\:scale-\\[1\\.02\\] {
+  transform: scale(1.02);
+}
+
+.group:hover .group-hover\\:ml-2 {
+  margin-left: 0.5rem;
+}
+
+.group:hover .group-hover\\:bg-primary\\/20 {
+  background-color: rgba(var(--v-theme-primary), 0.2);
+}
+
+/* Mobile Responsiveness */
+@media (max-width: 1264px) {
+  .v-navigation-drawer {
+    width: 72px !important;
+  }
+  
+  .v-app-bar {
+    margin-left: 72px !important;
+  }
+  
+  .dashboard-main {
+    padding: 1rem 0.5rem;
+  }
+}
+
 /* Utility Classes */
 
 /* Gradient Styling */
@@ -90,7 +146,6 @@ a:hover {
   padding-top: 0;
   padding-bottom: 0;
 }
-
 
 /* Animation Utilities */
 .hover-lift {
@@ -145,19 +200,5 @@ a:hover {
   opacity: 1 !important;
   display: block !important;
   visibility: visible !important;
-}
-
-
-/* Navbar toggle button fixes */
-.v-app-bar-nav-icon {
-  border-radius: var(--radius-xl) !important;
-  padding: 8px 10px !important;
-  margin: 2px !important;
-  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1) !important;
-}
-
-.v-app-bar-nav-icon:hover {
-  background-color: rgba(var(--v-theme-primary), 0.1) !important;
-  transform: scale(1.05) !important;
 }
 

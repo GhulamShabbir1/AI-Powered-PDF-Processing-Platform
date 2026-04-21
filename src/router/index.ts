@@ -1,6 +1,6 @@
 import { createRouter, createWebHistory, type RouteRecordRaw } from 'vue-router'
-import Home from '../pages/landing/Home.vue'
 import ForgetPassword from '../pages/auth/ForgetPassword.vue'
+import Home from '../pages/landing/Home.vue'
 
 const routes: Array<RouteRecordRaw> = [
   {
@@ -22,6 +22,12 @@ const routes: Array<RouteRecordRaw> = [
     path: '/forget-password',
     name: 'ForgetPassword',
     component: ForgetPassword,
+  },
+  {
+    path: '/dashboard',
+    name: 'Dashboard',
+    component: () => import('../pages/dashboard/Dashboard.vue'),
+    meta: { layout: 'dashboard' }
   },
 ]
 

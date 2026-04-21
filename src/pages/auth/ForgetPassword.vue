@@ -245,7 +245,7 @@ const handleVerifyOtp = async () => {
 :deep(.custom-field .v-field__outline) {
   --v-field-border-color: #000000 !important;
   border-radius: var(--radius-md);
-  border: 2px solid #000000 !important;
+  /* border: 2px solid #000000 !important; */
 }
 
 :deep(.custom-field .v-field__input) {

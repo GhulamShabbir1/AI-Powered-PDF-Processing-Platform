@@ -16,6 +16,9 @@ export function validatePassword(password: string): { valid: boolean; error?: st
   if (!/[0-9]/.test(password)) {
     return { valid: false, error: 'Password must contain at least one number' };
   }
+  if (!/[!@#$%^&*\-_=+]/.test(password)) {
+    return { valid: false, error: 'Password must contain at least one symbol (!@#$%^&*-_=+)' };
+  }
   return { valid: true };
 }
 

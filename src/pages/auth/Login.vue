@@ -82,6 +82,7 @@
 <script setup lang="ts">
 import { ref } from 'vue'
 import AuthLayout from '../../layouts/AuthLayout.vue'
+import { validateEmail, validatePassword } from '../../utils/validators'
 
 const email = ref('')
 const password = ref('')
@@ -113,9 +114,22 @@ const validateAndLogin = () => {
     return
   }
 
+  // Validate email format
+  if (!validateEmail(email.value)) {
+    showErrorAlert('Please enter a valid email address')
+    return
+  }
+
   // Validate password
   if (!password.value.trim()) {
     showErrorAlert('Please enter your password')
+    return
+  }
+
+  // Validate password strength
+  const passwordValidation = validatePassword(password.value)
+  if (!passwordValidation.valid) {
+    showErrorAlert(passwordValidation.error || 'Invalid password')
     return
   }
 

@@ -1,7 +1,7 @@
 import { createRouter, createWebHistory, type RouteRecordRaw } from 'vue-router'
 import ForgetPassword from '../pages/auth/ForgetPassword.vue'
-import Home from '../pages/landing/Home.vue'
 import ResetPassword from '../pages/auth/ResetPassword.vue'
+import Home from '../pages/landing/Home.vue'
 
 const routes: Array<RouteRecordRaw> = [
   {
@@ -29,11 +29,12 @@ const routes: Array<RouteRecordRaw> = [
     name: 'ResetPassword',
     component: ResetPassword,
   },
-  {
-    path: '/test-upload',
-    name: 'TestUpload',
-    component: () => import('../pages/dashboard/Upload.vue')
-  },
+  // Removed broken TestUpload route - file doesn't exist
+  // {
+  //   path: '/test-upload',
+  //   name: 'TestUpload',
+  //   component: () => import(\"../pages/dashboard/Upload.vue\")
+  // },
   {
     path: '/dashboard',
     name: 'Dashboard',
@@ -43,30 +44,40 @@ const routes: Array<RouteRecordRaw> = [
     meta: { layout: 'default' }
   },
   {
-    path: '/dashboard/ocr',
-    name: 'Ocr',
+    path: '/dashboard/upload',
+    name: 'Upload',
     components: {
-      default: () => import('../pages/dashboard/Ocr.vue'),
+      default: () => import('../components/upload/FileUploader.vue'),
     },
     meta: { layout: 'default' }
   },
-  {
-    path: '/dashboard/summarizer',
-    name: 'Summarizer',
-    components: {
-      default: () => import('../pages/dashboard/Summarizer.vue'),
-    },
-    meta: { layout: 'default' }
-  },
-  {
-    path: '/dashboard/translator',
-    name: 'Translator',
-    components: {
-      default: () => import('../pages/dashboard/Translator.vue'),
-    },
-    meta: { layout: 'default' }
-  },
-
+  // Commented Ocr route - page doesn't exist
+  // {
+  //   path: '/dashboard/ocr',
+  //   name: 'Ocr',
+  //   components: {
+  //     default: () => import('../pages/dashboard/Ocr.vue'),
+  //   },
+  //   meta: { layout: 'default' }
+  // },
+  // Commented Summarizer route - page doesn't exist
+  // {
+  //   path: '/dashboard/summarizer',
+  //   name: 'Summarizer',
+  //   components: {
+  //     default: () => import('../pages/dashboard/Summarizer.vue'),
+  //   },
+  //   meta: { layout: 'default' }
+  // },
+  // Commented Translator route - page doesn't exist
+  // {
+  //   path: '/dashboard/translator',
+  //   name: 'Translator',
+  //   components: {
+  //     default: () => import('../pages/dashboard/Translator.vue'),
+  //   },
+  //   meta: { layout: 'default' }
+  // },
 ]
 
 const router = createRouter({

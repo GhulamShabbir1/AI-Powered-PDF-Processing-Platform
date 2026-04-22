@@ -2,9 +2,9 @@
     <v-container class="uploader-wrapper d-flex flex-column align-center justify-center text-center fill-height pa-4">
       
       <div class="header-section mb-10">
-        <h1 class="text-h2 font-weight-black text-grey-darken-4 mb-4">{{ title }}</h1>
+        <h1 class="text-h2 font-weight-black text-grey-darken-4 mb-4">{{ props.title }}</h1>
         <p class="text-h5 font-weight-regular text-grey-darken-1 mx-auto description-text">
-          {{ description }}
+          {{ props.description }}
         </p>
       </div>
   
@@ -44,13 +44,18 @@
   </template>
   
   <script setup lang="ts">
-  import { ref } from 'vue';
-  import BaseButton from '../base/BaseButton.vue';
+  import { ref, withDefaults } from 'vue';
+import BaseButton from '../base/BaseButton.vue';
   
-  defineProps<{
-    title: string;
-    description: string;
-  }>();
+  interface Props {
+    title?: string;
+    description?: string;
+  }
+  
+  const props = withDefaults(defineProps<Props>(), {
+    title: 'Upload Your PDF',
+    description: 'Drag and drop your PDF or PNG files to get started with AI processing',
+  });
   
   const emit = defineEmits<{
     'file-selected': [file: File];

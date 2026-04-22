@@ -58,3 +58,18 @@
 .v-dialog .v-card {
   border-radius: var(--radius-lg);
 }
+/* 🚨 Universal Error Alert Fix */
+.v-alert[type="error"] {
+  color: var(--color-error) !important;
+  font-weight: 600 !important;
+}
+
+.v-alert[type="error"] .v-icon {
+  color: var(--color-error) !important;
+  opacity: 1 !important;
+}
+
+/* Slightly deeper background for the tonal variant */
+.v-alert--variant-tonal[type="error"] {
+  background-color: rgba(179, 0, 0, 0.1) !important; 
+}

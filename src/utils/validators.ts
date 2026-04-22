@@ -40,15 +40,16 @@ export function validateConfirmPassword(
 }
 
 export function validateFile(file: File): { valid: boolean; error?: string } {
-  const ALLOWED_TYPES = ['application/pdf'];
-  const MAX_SIZE = 50 * 1024 * 1024;
+  // Allow PDF and Image formats
+  const ALLOWED_TYPES = ['application/pdf', 'image/png', 'image/jpeg', 'image/jpg'];
+  const MAX_SIZE = 50 * 1024 * 1024; // 50MB
 
   if (!ALLOWED_TYPES.includes(file.type)) {
-    return { valid: false, error: 'Only PDF files are allowed' };
+    return { valid: false, error: 'Only PDF, PNG, and JPG/JPEG files are allowed.' };
   }
 
   if (file.size > MAX_SIZE) {
-    return { valid: false, error: 'File size exceeds 50MB limit' };
+    return { valid: false, error: 'File size exceeds the 50MB limit.' };
   }
 
   return { valid: true };

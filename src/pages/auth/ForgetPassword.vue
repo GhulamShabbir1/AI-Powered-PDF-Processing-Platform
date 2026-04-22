@@ -130,10 +130,10 @@
 </template>
 
 <script setup lang="ts">
-import { ref, reactive } from "vue";
-import { useRouter } from "vue-router";
-import AuthLayout from "../../layouts/AuthLayout.vue";
-import { validateEmail } from "../../utils/validators";
+import { ref, reactive } from 'vue';
+import { useRouter } from 'vue-router';
+import AuthLayout from '../../layouts/AuthLayout.vue';
+import { validateEmail, validateRequired } from '../../utils/validators';
 
 const router = useRouter();
 const step = ref(1);
@@ -144,18 +144,25 @@ const isEmailValid = ref(false);
 const isOtpValid = ref(false);
 
 const form = reactive({
-  email: "",
-  otp: "",
+  email: '',
+  otp: ''
 });
 
+// Using centralized validators from validators.ts
 const emailRules = [
-  (v: string) => !!v || "Email is required",
-  (v: string) => validateEmail(v) || "Please enter a valid email address",
+  (v: string) => {
+    const result = validateRequired(v, 'Email');
+    return result.valid || result.error;
+  },
+  (v: string) => validateEmail(v) || 'Please enter a valid email address'
 ];
 
 const otpRules = [
-  (v: string) => !!v || "OTP is required",
-  (v: string) => v.length === 6 || "OTP must be exactly 6 digits",
+  (v: string) => {
+    const result = validateRequired(v, 'OTP code');
+    return result.valid || result.error;
+  },
+  (v: string) => v.length === 6 || 'OTP must be exactly 6 digits'
 ];
 
 const handleSendOtp = async () => {
@@ -163,10 +170,11 @@ const handleSendOtp = async () => {
   isLoading.value = true;
   error.value = null;
   try {
-    await new Promise((resolve) => setTimeout(resolve, 1000));
+    // Mock API Call
+    await new Promise(resolve => setTimeout(resolve, 1000)); 
     step.value = 2;
   } catch (err: any) {
-    error.value = err.message || "Failed to send OTP.";
+    error.value = err.message || 'Failed to send OTP.';
   } finally {
     isLoading.value = false;
   }
@@ -177,10 +185,11 @@ const handleVerifyOtp = async () => {
   isLoading.value = true;
   error.value = null;
   try {
-    await new Promise((resolve) => setTimeout(resolve, 1000));
-    router.push({ path: "/reset-password", query: { email: form.email } });
+    // Mock API Call
+    await new Promise(resolve => setTimeout(resolve, 1000));
+    router.push({ path: '/reset-password', query: { email: form.email } });
   } catch (err: any) {
-    error.value = err.message || "Invalid OTP.";
+    error.value = err.message || 'Invalid OTP.';
   } finally {
     isLoading.value = false;
   }

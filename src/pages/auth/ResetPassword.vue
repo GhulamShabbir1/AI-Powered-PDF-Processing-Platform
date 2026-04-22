@@ -141,16 +141,86 @@
   .auth-form { text-align: left; animation: slideInUp 0.6s ease-out 0.2s both; }
   .form-group { margin-bottom: 20px; }
   @keyframes slideInUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
-  :deep(.custom-field .v-field__outline) { --v-field-border-color: #000000 !important; border-radius: var(--radius-md); border: 2px solid #000000 !important; }
-  :deep(.custom-field .v-field__input) { --v-field-input-placeholder-opacity: 1 !important; color: var(--color-text-primary) !important; }
-  :deep(.custom-field .v-field__input::placeholder) { color: var(--color-text-secondary) !important; opacity: 1 !important; }
-  :deep(.custom-field .v-label) { color: var(--color-text-secondary) !important; opacity: 1 !important; background-color: white !important; padding: 0 4px !important; margin-left: -4px !important; }
-  :deep(.custom-field.v-field--focused .v-field__outline) { --v-field-border-color: var(--color-primary) !important; box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1); transition: all var(--transition-fast); }
-  :deep(.custom-field .v-field__prepend-inner) { color: var(--color-text-secondary); margin-right: 8px; }
-  :deep(.custom-field .v-field__input:-webkit-autofill), :deep(.custom-field .v-field__input:-webkit-autofill:hover), :deep(.custom-field .v-field__input:-webkit-autofill:focus) { -webkit-box-shadow: 0 0 0 1000px white inset !important; box-shadow: 0 0 0 1000px white inset !important; }
-  :deep(.custom-field .v-field__input:-webkit-autofill) { -webkit-text-fill-color: var(--color-text-primary) !important; color: var(--color-text-primary) !important; }
-  :deep(.custom-field:has(.v-field__input:-webkit-autofill) .v-field__outline) { --v-field-border-color: var(--color-primary) !important; }
-  .auth-btn { background: var(--gradient-ai); color: white; border-radius: var(--radius-md); font-weight: 600; letter-spacing: 0.5px; transition: all var(--transition-normal); box-shadow: var(--shadow-md); text-transform: none; display: flex !important; align-items: center !important; justify-content: center !important; }
+/* =========================================
+   Custom Input Fields
+   ========================================= */
+
+/* ⬛ Default State: Bold Black Outline (Native Vuetify) */
+:deep(.custom-field .v-field__outline) {
+  --v-field-border-color: #000000 !important;
+  --v-field-border-opacity: 1 !important;
+  --v-field-border-width: 2px !important; /* 👈 Keeps it bold the right way! */
+  border-radius: var(--radius-md);
+  border: none !important; /* 👈 Kills the broken box cutting through the label */
+}
+
+/* Base Text & Placeholder Formatting */
+:deep(.custom-field .v-field__input) {
+  --v-field-input-placeholder-opacity: 1 !important;
+  color: var(--color-text-primary) !important;
+}
+
+:deep(.custom-field .v-field__input::placeholder) {
+  color: var(--color-text-secondary) !important;
+  opacity: 1 !important;
+}
+
+:deep(.custom-field .v-label) {
+  color: var(--color-text-secondary) !important;
+  opacity: 1 !important;
+  background-color: white !important;
+  padding: 0 4px !important;
+  margin-left: -4px !important;
+}
+
+:deep(.custom-field .v-field__prepend-inner) {
+  color: var(--color-text-secondary);
+  margin-right: 8px;
+}
+
+/* 🔵 Focused State */
+:deep(.custom-field.v-field--focused .v-field__outline) {
+  --v-field-border-color: #000000 !important;
+  --v-field-border-opacity: 1 !important;
+  box-shadow: 0 0 0 2px rgba(0, 0, 0, 0.1) !important;
+  transition: all var(--transition-fast);
+}
+
+/* ❌ Error State: Solid Red Outline & Text */
+:deep(.custom-field.v-field--error .v-field__outline) {
+  --v-field-border-color: #EF4444 !important;
+  --v-field-border-opacity: 1 !important;
+  box-shadow: 0 0 0 2px rgba(239, 68, 68, 0.15) !important;
+}
+
+:deep(.custom-field.v-field--error .v-label),
+:deep(.custom-field.v-field--error .v-icon),
+:deep(.custom-field.v-field--error input) {
+  color: #EF4444 !important;
+}
+
+:deep(.v-input--error .v-messages__message) {
+  color: #EF4444 !important;
+  font-weight: 500;
+}
+
+/* Chrome Autofill Fixes */
+:deep(.custom-field .v-field__input:-webkit-autofill),
+:deep(.custom-field .v-field__input:-webkit-autofill:hover),
+:deep(.custom-field .v-field__input:-webkit-autofill:focus) {
+  -webkit-box-shadow: 0 0 0 1000px white inset !important;
+  box-shadow: 0 0 0 1000px white inset !important;
+}
+
+:deep(.custom-field .v-field__input:-webkit-autofill) {
+  -webkit-text-fill-color: var(--color-text-primary) !important;
+  color: var(--color-text-primary) !important;
+}
+
+:deep(.custom-field:has(.v-field__input:-webkit-autofill) .v-field__outline) {
+  --v-field-border-color: #000000 !important;
+}
+.auth-btn { background: var(--gradient-ai); color: white; border-radius: var(--radius-md); font-weight: 600; letter-spacing: 0.5px; transition: all var(--transition-normal); box-shadow: var(--shadow-md); text-transform: none; display: flex !important; align-items: center !important; justify-content: center !important; }
   :deep(.auth-btn .v-btn__content) { display: flex !important; align-items: center !important; justify-content: center !important; }
   .auth-btn:hover { box-shadow: var(--shadow-lg); transform: translateY(-2px); }
   .auth-btn:active { transform: translateY(0); }

@@ -70,8 +70,9 @@ import AppNavbar from '../components/layout/AppNavbar.vue'
 .section {
   scroll-margin-top: 8rem;
   margin: 0;
-padding-top: 1rem !important;
+padding-top: 2rem !important;
   padding-bottom: 0 !important;
+
 }
 
 :deep(.v-main) {

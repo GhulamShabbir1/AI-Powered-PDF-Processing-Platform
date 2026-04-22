@@ -114,7 +114,7 @@ const watchDemo = () => {
 <style scoped>
 .cta-wrapper {
   position: relative;
-  padding: 3rem 0;
+  padding: 2rem 0;
   background: linear-gradient(135deg, #0F172A 0%, #1E293B 50%, #0F172A 100%);
   overflow-x: hidden;
 }
@@ -228,7 +228,7 @@ const watchDemo = () => {
   background: linear-gradient(135deg, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0.05));
   backdrop-filter: blur(20px);
   border-radius: 36px;
-  padding: 2.5rem;
+  padding: 2rem;
   border: 1px solid rgba(255, 255, 255, 0.1);
   overflow: hidden;
   z-index: 1;
@@ -293,11 +293,11 @@ const watchDemo = () => {
 
 /* Title */
 .cta-title {
-  font-size: clamp(1.5rem, 3.75vw, 2.5rem);
+  font-size: clamp(1.25rem, 3.25vw, 2rem);
   font-weight: 800;
   line-height: 1.2;
   color: white;
-  margin-bottom: 1.25rem;
+  margin-bottom: 1rem;
 }
 
 .text-gradient-white {
@@ -321,8 +321,8 @@ const watchDemo = () => {
   display: flex;
   justify-content: center;
   flex-wrap: wrap;
-  gap: 1.5rem;
-  margin-bottom: 2.5rem;
+  gap: 1.125rem;
+  margin-bottom: 1.875rem;
 }
 
 .feature {
@@ -337,9 +337,9 @@ const watchDemo = () => {
 .cta-buttons {
   display: flex;
   justify-content: center;
-  gap: 1rem;
+  gap: 0.75rem;
   flex-wrap: wrap;
-  margin-bottom: 3rem;
+  margin-bottom: 2.25rem;
 }
 
 .cta-primary-btn {

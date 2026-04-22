@@ -1,6 +1,6 @@
-import { defineStore } from 'pinia';
-import type { RequestState, PDFRequest } from '@/types/request.types';
 import requestService from '@/services/request.service';
+import type { PDFRequest, RequestState } from '@/types/request.types';
+import { defineStore } from 'pinia';
 
 export const useRequestStore = defineStore('request', {
   state: (): RequestState => ({
@@ -22,7 +22,11 @@ export const useRequestStore = defineStore('request', {
       this.error = null;
       try {
         const response = await requestService.getRequests(page, limit);
-        this.requests = response.data;
+        if (page === 1) {
+          this.requests = response.data;
+        } else {
+          this.requests = [...this.requests, ...response.data];
+        }
         return response;
       } catch (error) {
         this.error = (error as Error).message;
@@ -30,6 +34,30 @@ export const useRequestStore = defineStore('request', {
       } finally {
         this.isLoading = false;
       }
+    },
+
+    async fetchAllRequests(limit = 10) {
+      let page = 1;
+      let allRequests = [...this.requests];
+      let hasMore = true;
+
+      while (hasMore) {
+        try {
+          const response = await this.fetchRequests(page, limit);
+          if (response.data.length === 0) {
+            hasMore = false;
+          } else {
+            allRequests = [...allRequests, ...response.data];
+            page++;
+          }
+        } catch (error) {
+          console.error('Error fetching page', page, error);
+          hasMore = false;
+        }
+      }
+
+      this.requests = allRequests;
+      return allRequests;
     },
 
     async fetchRequestById(id: string) {

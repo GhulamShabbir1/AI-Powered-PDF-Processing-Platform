@@ -1,4 +1,5 @@
-<template>
+
+code<template>
   <section class="features-wrapper" id="features">
     <!-- Animated Background Elements -->
     <div class="bg-shapes">
@@ -108,32 +109,11 @@ const features: Feature[] = [
     color: '#06B6D4'
   },
   {
-    title: 'Neural Translation',
+    title: 'Translation',
     description: 'Break language barriers instantly. Translate complex technical documents while maintaining original formatting.',
     icon: 'mdi-translate',
     gradient: 'linear-gradient(135deg, #8B5CF6, #6D28D9)',
     color: '#8B5CF6'
-  },
-  {
-    title: 'Smart Search',
-    description: 'Find any information instantly with AI-powered semantic search across all your documents.',
-    icon: 'mdi-magnify',
-    gradient: 'linear-gradient(135deg, #EC4899, #BE185D)',
-    color: '#EC4899'
-  },
-  {
-    title: 'Data Extraction',
-    description: 'Extract tables, forms, and structured data automatically with 99% accuracy.',
-    icon: 'mdi-database-export',
-    gradient: 'linear-gradient(135deg, #F59E0B, #D97706)',
-    color: '#F59E0B'
-  },
-  {
-    title: 'API Integration',
-    description: 'Seamlessly integrate with your existing workflow using our powerful REST API.',
-    icon: 'mdi-api',
-    gradient: 'linear-gradient(135deg, #10B981, #059669)',
-    color: '#10B981'
   }
 ];
 
@@ -148,7 +128,7 @@ const scrollToCta = () => {
 <style scoped>
 .features-wrapper {
   position: relative;
-  padding: 3rem 0;
+  padding: 2rem 0;
   background: linear-gradient(135deg, #f8fafc 0%, #ffffff 50%, #f1f5f9 100%);
   overflow-x: hidden;
 }
@@ -226,7 +206,7 @@ const scrollToCta = () => {
 }
 
 .section-title {
-  font-size: clamp(1.5rem, 3vw, 2.125rem);
+  font-size: clamp(1.25rem, 2.5vw, 1.75rem);
   font-weight: 800;
   line-height: 1.2;
   color: #0F172A;
@@ -255,7 +235,7 @@ const scrollToCta = () => {
 }
 
 .feature-col {
-  padding: 12px !important;
+  padding: 8px !important;
   margin-bottom: 0;
 }
 
@@ -265,7 +245,7 @@ const scrollToCta = () => {
   backdrop-filter: blur(10px);
   border: 1px solid rgba(226, 232, 240, 0.8);
   border-radius: 16px;
-  padding: 1.25rem;
+  padding: 1rem;
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   cursor: pointer;
   height: 100%;
@@ -299,7 +279,7 @@ const scrollToCta = () => {
 
 /* Feature Icon - Fixed alignment */
 .feature-icon-wrapper {
-  margin-bottom: 1.5rem;
+  margin-bottom: 1.125rem;
   display: flex;
   justify-content: flex-start;
   align-items: center;
@@ -333,10 +313,19 @@ const scrollToCta = () => {
   flex: 1;
   display: flex;
   flex-direction: column;
+  justify-content: space-between;
+  height: 100%;
 }
 
 .feature-title {
-  font-size: 1.125rem;
+  font-size: 0.9375rem;
+  font-weight: 700;
+  margin-bottom: 0.75rem;
+  color: #0F172A;
+  line-height: 1.3;
+}
+.feature-title {
+  font-size: 1rem;
   font-weight: 700;
   margin-bottom: 0.5rem;
   color: #0F172A;
@@ -344,24 +333,25 @@ const scrollToCta = () => {
 }
 
 .feature-description {
-  font-size: 0.8125rem;
+  font-size: 0.75rem;
   line-height: 1.6;
   color: #64748B;
-  margin-bottom: 1.25rem;
+  margin-bottom: 0.5rem;
   flex: 1;
 }
 
 .feature-link {
   display: inline-flex;
   align-items: center;
-  font-size: 0.875rem;
+  font-size: 0.8125rem;
   font-weight: 600;
   color: #4F46E5;
   cursor: pointer;
-  opacity: 0;
-  transform: translateX(-8px);
+  opacity: 1;
+  transform: translateX(0);
   transition: all 0.3s ease;
   padding: 4px 0;
+  margin-top: auto;
 }
 
 .feature-card:hover .feature-link {
@@ -437,7 +427,7 @@ const scrollToCta = () => {
   }
   
   .feature-title {
-    font-size: 1.25rem;
+    font-size: 1.125rem;
   }
 }
 
@@ -496,8 +486,8 @@ const scrollToCta = () => {
   }
   
   .feature-description {
-    font-size: 0.875rem;
-    margin-bottom: 1rem;
+    font-size: 0.8125rem;
+    margin-bottom: 0.5rem;
   }
   
   .section-badge {

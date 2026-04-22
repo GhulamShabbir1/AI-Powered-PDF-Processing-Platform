@@ -32,37 +32,19 @@ const routes: Array<RouteRecordRaw> = [
   {
     path: '/test-upload',
     name: 'TestUpload',
-    component: () => import('../pages/dashboard/Upload.vue')
+    component: () => import('../pages/dashboard/ProcessDocument.vue')
+  },
+  {
+    path: '/dashboard/process/:service', 
+    name: 'ProcessDocument',
+    component: () => import('../pages/dashboard/ProcessDocument.vue'),
+    meta: { layout: 'dashboard' }
   },
   {
     path: '/dashboard',
     name: 'Dashboard',
     components: {
       default: () => import('../pages/dashboard/Dashboard.vue'),
-    },
-    meta: { layout: 'default' }
-  },
-  {
-    path: '/dashboard/ocr',
-    name: 'Ocr',
-    components: {
-      default: () => import('../pages/dashboard/Ocr.vue'),
-    },
-    meta: { layout: 'default' }
-  },
-  {
-    path: '/dashboard/summarizer',
-    name: 'Summarizer',
-    components: {
-      default: () => import('../pages/dashboard/Summarizer.vue'),
-    },
-    meta: { layout: 'default' }
-  },
-  {
-    path: '/dashboard/translator',
-    name: 'Translator',
-    components: {
-      default: () => import('../pages/dashboard/Translator.vue'),
     },
     meta: { layout: 'default' }
   },

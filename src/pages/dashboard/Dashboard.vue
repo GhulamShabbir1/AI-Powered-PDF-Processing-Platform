@@ -1,118 +1,316 @@
 <template>
-  <v-container fluid class="pa-4 pa-md-8">
-    <v-row justify="center">
-      <v-col cols="12">
-        <h1 class="text-h3 text-center font-weight-bold mb-12 text-primary">
-          AI PDF Tools Dashboard
-        </h1>
-        
-        <v-row class="tools-grid">
-          <!-- OCR Card -->
-          <v-col cols="12" md="4">
-            <v-card 
-              class="tool-card pa-6 h-100 elevation-8 hover:elevation-12 transition-all cursor-pointer rounded-xl"
-              color="blue-lighten-5"
-              @click="$router.push({ name: 'Ocr' })"
-            >
-              <v-card-title class="text-h5 font-weight-bold mb-4">
-                <v-icon start size="32" color="blue-darken-2">mdi-scan-helper</v-icon>
-                OCR Extraction
-              </v-card-title>
-              <v-card-text class="text-body1 text-medium-emphasis">
-                Convert scanned PDFs and images into editable text
-              </v-card-text>
-              <v-card-actions>
-                <v-spacer />
-                <v-btn 
-                  variant="flat" 
-                  color="blue" 
-                  :prepend-inner-icon="mdi-arrow-right"
-                >
-                  Start OCR
-                </v-btn>
-              </v-card-actions>
-            </v-card>
-          </v-col>
+  <v-container fluid class="dashboard-page tools-container pa-0 pa-lg-6">
+    <!-- Simple Motto -->
 
-          <!-- Summarizer Card -->
-          <v-col cols="12" md="4">
-            <v-card 
-              class="tool-card pa-6 h-100 elevation-8 hover:elevation-12 transition-all cursor-pointer rounded-xl"
-              color="cyan-lighten-5"
-              @click="$router.push({ name: 'Summarizer' })"
-            >
-              <v-card-title class="text-h5 font-weight-bold mb-4">
-                <v-icon start size="32" color="cyan-darken-2">mdi-auto-fix</v-icon>
-                AI Summarizer
-              </v-card-title>
-              <v-card-text class="text-body1 text-medium-emphasis">
-                Condense long documents into key insights
-              </v-card-text>
-              <v-card-actions>
-                <v-spacer />
-                <v-btn 
-                  variant="flat" 
-                  color="cyan" 
-                  :prepend-inner-icon="mdi-arrow-right"
-                >
-                  Summarize
-                </v-btn>
-              </v-card-actions>
-            </v-card>
-          </v-col>
+    <div class="motto-section text-center mb-6">
+      <h1 class="motto-title mb-2">
+        AI PDF <span class="gradient-text">Tools</span>
+      </h1>
 
-          <!-- Translator Card -->
-          <v-col cols="12" md="4">
-            <v-card 
-              class="tool-card pa-6 h-100 elevation-8 hover:elevation-12 transition-all cursor-pointer rounded-xl"
-              color="purple-lighten-5"
-              @click="$router.push({ name: 'Translator' })"
-            >
-              <v-card-title class="text-h5 font-weight-bold mb-4">
-                <v-icon start size="32" color="purple-darken-2">mdi-translate</v-icon>
-                Translator
-              </v-card-title>
-              <v-card-text class="text-body1 text-medium-emphasis">
-                Translate documents preserving formatting
-              </v-card-text>
-              <v-card-actions>
-                <v-spacer />
-                <v-btn 
-                  variant="flat" 
-                  color="purple" 
-                  :prepend-inner-icon="mdi-arrow-right"
-                >
-                  Translate
-                </v-btn>
-              </v-card-actions>
-            </v-card>
-          </v-col>
-        </v-row>
+      <p class="motto-subtitle">Extract, Summarize & Translate with AI</p>
+    </div>
+
+    <!-- Tools Grid -->
+
+    <v-row class="tools-grid">
+      <v-col
+        v-for="(tool, index) in tools"
+        :key="index"
+        cols="12"
+        sm="6"
+        md="4"
+      >
+        <div class="tool-card" @click="router.push(tool.path)"
+        >
+          <!-- Icon -->
+
+          <div class="icon-wrapper" :style="{ background: tool.gradient }">
+            <v-icon size="28" color="white">{{ tool.icon }}</v-icon>
+          </div>
+
+          <!-- Title -->
+
+          <h3 class="tool-title">{{ tool.title }}</h3>
+
+          <!-- Description -->
+
+          <p class="tool-description">{{ tool.description }}</p>
+
+          <!-- Action -->
+
+          <div class="tool-action">
+            <span>Try Now</span>
+
+            <v-icon size="16">mdi-arrow-right</v-icon>
+          </div>
+        </div>
       </v-col>
     </v-row>
   </v-container>
 </template>
 
 <script setup lang="ts">
-import { useRouter } from 'vue-router';
-const router = useRouter()
+import { useRouter } from "vue-router";
+
+const router = useRouter();
+
+const tools = [
+  {
+    title: "OCR Extraction",
+
+    description: "Convert scanned PDFs to editable text",
+
+    icon: "mdi-scan-helper",
+
+    gradient: "linear-gradient(135deg, #4F46E5, #7C3AED)",
+
+    path: '/dashboard/process/ocr',
+  },
+
+  {
+    title: "AI Summarizer",
+
+    description: "Get instant summaries from long documents",
+
+    icon: "mdi-auto-fix",
+
+    gradient: "linear-gradient(135deg, #06B6D4, #0891B2)",
+
+    path: '/dashboard/process/summarize',
+  },
+
+  {
+    title: "Smart Translator",
+
+    description: "Translate documents while preserving format",
+
+    icon: "mdi-translate",
+
+    gradient: "linear-gradient(135deg, #8B5CF6, #6D28D9)",
+
+    path: '/dashboard/process/translate',
+  },
+];
 </script>
 
 <style scoped>
-.tools-grid {
+.tools-container {
+  display: flex;
+
+  flex-direction: column;
+
+  align-items: center;
+
+  justify-content: center;
+
   gap: 2rem;
+
+  height: 100vh;
+
+  width: 100%;
+
+  background: linear-gradient(135deg, #f8fafc 0%, #ffffff 100%);
 }
 
+/* Simple Motto */
+
+.motto-title {
+  font-size: 2.5rem;
+
+  font-weight: 900;
+
+  color: #0f172a;
+}
+
+.gradient-text {
+  background: linear-gradient(135deg, #4f46e5, #06b6d4);
+
+  -webkit-background-clip: text;
+
+  -webkit-text-fill-color: transparent;
+
+  background-clip: text;
+}
+
+.motto-subtitle {
+  font-size: 1rem;
+
+  color: #3e587c;
+}
+
+/* Tools Grid */
+
+.tools-grid {
+  display: flex;
+
+  flex-wrap: wrap;
+
+  gap: 1.5rem;
+}
+
+/* Compact Cards */
+
 .tool-card {
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+  background: white;
+
+  border: 1px solid #e5e7eb;
+
+  border-radius: 16px;
+
+  padding: 1.25rem;
+
+  cursor: pointer;
+
+  transition: all 0.3s ease;
+
+  display: flex;
+
+  flex-direction: column;
+
+  align-items: center;
+
+  gap: 0.5rem;
 }
 
 .tool-card:hover {
-  transform: translateY(-8px) !important;
+  transform: translateY(-4px);
+
+  border-color: transparent;
+
+  box-shadow: 0px 0px 25px rgba(114, 4, 4, 0.1);
 }
 
-.tool-card:active {
-  transform: translateY(-4px) !important;
+/* Small Icon */
+
+.icon-wrapper {
+  width: 52px;
+
+  height: 52px;
+
+  border-radius: 14px;
+
+  display: flex;
+
+  align-items: center;
+
+  justify-content: center;
+}
+
+/* Small Title */
+
+.tool-title {
+  font-size: 1rem;
+
+  font-weight: 700;
+
+  color: #0f172a;
+
+  margin-bottom: 0.5rem;
+}
+
+/* Small Description */
+
+.tool-description {
+  font-size: 0.75rem;
+
+  line-height: 1.4;
+
+  color: #64748b;
+
+  margin-bottom: 1rem;
+}
+
+/* Simple Action */
+
+.tool-action {
+  display: inline-flex;
+
+  align-items: center;
+
+  gap: 0.25rem;
+
+  font-size: 0.75rem;
+
+  font-weight: 600;
+
+  color: #4f46e5;
+}
+
+.tool-card:hover .tool-action {
+  gap: 0.5rem;
+}
+
+/* Responsive */
+
+@media (max-width: 960px) {
+  .tools-container {
+    padding: 1rem !important;
+  }
+
+  .motto-title {
+    font-size: 1.5rem;
+  }
+
+  .tool-card {
+    padding: 1rem;
+  }
+
+  .icon-wrapper {
+    width: 48px;
+
+    height: 48px;
+  }
+
+  .icon-wrapper .v-icon {
+    font-size: 24px !important;
+  }
+
+  .tool-title {
+    font-size: 0.875rem;
+  }
+
+  .tool-description {
+    font-size: 0.7rem;
+  }
+}
+
+@media (max-width: 600px) {
+  .motto-title {
+    font-size: 1.25rem;
+  }
+
+  .motto-subtitle {
+    font-size: 0.75rem;
+  }
+
+  .tool-card {
+    padding: 0.875rem;
+  }
+
+  .icon-wrapper {
+    width: 44px;
+
+    height: 44px;
+
+    margin-bottom: 0.75rem;
+  }
+
+  .icon-wrapper .v-icon {
+    font-size: 22px !important;
+  }
+
+  .tool-title {
+    font-size: 0.8125rem;
+  }
+
+  .tool-description {
+    font-size: 0.6875rem;
+
+    margin-bottom: 0.75rem;
+  }
+
+  .tool-action {
+    font-size: 0.6875rem;
+  }
 }
 </style>
-

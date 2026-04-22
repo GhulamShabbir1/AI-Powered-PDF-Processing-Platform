@@ -93,8 +93,7 @@ const scrollToFeatures = () => {
 <style scoped>
 .hero-wrapper {
   position: relative;
-  min-height: 80vh;
-  padding: 2.5rem 0 0 0 !important;
+  padding: 0.5rem 0 0 0 !important;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -149,11 +148,11 @@ const scrollToFeatures = () => {
 .hero-row {
   margin: 0 !important;
   width: 100%;
-  min-height: 100vh;
+  min-height: 80vh;
 }
 
 .hero-content {
-  padding: 1.5rem 0.75rem !important;
+  padding: 0.75rem 0.75rem !important;
   max-width: 450px;
   margin: 0 auto;
 }
@@ -176,7 +175,7 @@ const scrollToFeatures = () => {
 
 /* Title */
 .hero-title {
-  font-size: clamp(1.5rem, 4vw, 2.75rem);
+  font-size: clamp(1.25rem, 3.5vw, 2.125rem);
   font-weight: 800;
   line-height: 1.2;
   margin-bottom: 1rem;
@@ -192,20 +191,20 @@ const scrollToFeatures = () => {
 
 /* Subtitle */
 .hero-subtitle {
-  font-size: clamp(0.875rem, 1.75vw, 1rem);
+  font-size: clamp(0.75rem, 1.5vw, 0.875rem);
   opacity: 0.9;
   line-height: 1.6;
   max-width: 400px;
-  margin: 0 auto 1.5rem auto;
+  margin: 0 auto 1.125rem auto;
 }
 
 /* CTA Buttons */
 .hero-ctas {
   display: flex;
   flex-wrap: wrap;
-  gap: 0.75rem;
+  gap: 0.625rem;
   justify-content: center;
-  margin-bottom: 1.75rem;
+  margin-bottom: 1.25rem;
 }
 
 .hero-primary-btn,
@@ -249,9 +248,9 @@ const scrollToFeatures = () => {
   display: flex;
   flex-wrap: wrap;
   justify-content: center;
-  gap: 1.5rem;
-  margin-top: 1.25rem;
-  padding-top: 1.25rem;
+  gap: 1.125rem;
+  margin-top: 1rem;
+  padding-top: 1rem;
   border-top: 1px solid rgba(255, 255, 255, 0.1);
 }
 
@@ -295,7 +294,7 @@ const scrollToFeatures = () => {
 /* Responsive Design */
 @media (max-width: 960px) {
   .hero-content {
-    padding: 3rem 1.5rem !important;
+    padding: 1.5rem 1rem !important;
   }
   
   .hero-stats {
@@ -319,15 +318,15 @@ const scrollToFeatures = () => {
 
 @media (max-width: 600px) {
   .hero-wrapper {
-    min-height: 90vh;
+    min-height: 85vh;
   }
   
   .hero-row {
-    min-height: 90vh;
+    min-height: 85vh;
   }
   
   .hero-content {
-    padding: 2rem 1rem !important;
+    padding: 1rem 1rem !important;
   }
   
   .hero-badge {

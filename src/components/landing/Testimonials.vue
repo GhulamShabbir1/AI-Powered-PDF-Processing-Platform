@@ -146,7 +146,7 @@ const stats: Stat[] = [
 <style scoped>
 .testimonials-wrapper {
   position: relative;
-  padding: 3rem 0;
+  padding: 2rem 0;
   background: linear-gradient(135deg, #f8fafc 0%, #ffffff 50%, #f1f5f9 100%);
   overflow-x: hidden;
 }
@@ -229,7 +229,7 @@ const stats: Stat[] = [
 }
 
 .section-title {
-  font-size: clamp(1.5rem, 3vw, 2.125rem);
+  font-size: clamp(1.25rem, 2.5vw, 1.75rem);
   font-weight: 800;
   line-height: 1.2;
   color: #0F172A;
@@ -252,14 +252,14 @@ const stats: Stat[] = [
 
 /* Testimonial Cards */
 .testimonial-col {
-  margin-bottom: 2rem;
+  margin-bottom: 1.5rem;
 }
 
 .testimonial-card {
   background: rgba(255, 255, 255, 0.9);
   backdrop-filter: blur(10px);
   border-radius: 20px;
-  padding: 1.5rem;
+  padding: 1.25rem;
   height: 100%;
   transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
   border: 1px solid rgba(226, 232, 240, 0.8);
@@ -341,7 +341,7 @@ const stats: Stat[] = [
   display: flex;
   justify-content: space-around;
   flex-wrap: wrap;
-  gap: 1.5rem;
+  gap: 1.125rem;
   background: white;
   border-radius: 60px;
   padding: 1.25rem 2rem;

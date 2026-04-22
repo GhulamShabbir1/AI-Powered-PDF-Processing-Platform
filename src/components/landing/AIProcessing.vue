@@ -214,7 +214,7 @@ const scrollToCta = () => {
 <style scoped>
 .ai-processing {
   position: relative;
-  padding: 3rem 0;
+  padding: 2rem 0;
   background: linear-gradient(135deg, #f8fafc 0%, #ffffff 50%, #f1f5f9 100%);
   overflow-x: hidden;
 }
@@ -298,7 +298,7 @@ const scrollToCta = () => {
 }
 
 .section-title {
-  font-size: clamp(1.5rem, 3vw, 2.125rem);
+  font-size: clamp(1.25rem, 2.5vw, 1.75rem);
   font-weight: 800;
   line-height: 1.2;
   color: #0F172A;
@@ -333,7 +333,7 @@ const scrollToCta = () => {
 }
 
 .processing-content {
-  padding: 2rem;
+  padding: 1.5rem;
 }
 
 .text-right .processing-content {
@@ -349,12 +349,12 @@ const scrollToCta = () => {
   font-size: 0.875rem;
   font-weight: 600;
   color: white;
-  margin-bottom: 1.5rem;
-}
+  margin-bottom: 1.125rem;
 
+}
 /* Processing Title */
 .processing-title {
-  font-size: clamp(1.125rem, 2.25vw, 1.5rem);
+  font-size: clamp(1rem, 2vw, 1.25rem);
   font-weight: 700;
   color: #0F172A;
   margin-bottom: 0.75rem;

@@ -26,9 +26,36 @@ const routes: Array<RouteRecordRaw> = [
   {
     path: '/dashboard',
     name: 'Dashboard',
-    component: () => import('../pages/dashboard/Dashboard.vue'),
-    meta: { layout: 'dashboard' }
+    components: {
+      default: () => import('../pages/dashboard/Dashboard.vue'),
+    },
+    meta: { layout: 'default' }
   },
+  {
+    path: '/dashboard/ocr',
+    name: 'Ocr',
+    components: {
+      default: () => import('../pages/dashboard/Ocr.vue'),
+    },
+    meta: { layout: 'default' }
+  },
+  {
+    path: '/dashboard/summarizer',
+    name: 'Summarizer',
+    components: {
+      default: () => import('../pages/dashboard/Summarizer.vue'),
+    },
+    meta: { layout: 'default' }
+  },
+  {
+    path: '/dashboard/translator',
+    name: 'Translator',
+    components: {
+      default: () => import('../pages/dashboard/Translator.vue'),
+    },
+    meta: { layout: 'default' }
+  },
+
 ]
 
 const router = createRouter({

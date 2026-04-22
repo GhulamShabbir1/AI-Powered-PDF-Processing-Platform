@@ -128,7 +128,7 @@ const scrollToCta = () => {
 <style scoped>
 .how-it-works {
   position: relative;
-  padding: 3rem 0;
+  padding: 2rem 0;
   background: linear-gradient(135deg, #f8fafc 0%, #ffffff 50%, #f1f5f9 100%);
   overflow-x: hidden;
 }
@@ -229,7 +229,7 @@ const scrollToCta = () => {
 }
 
 .section-title {
-  font-size: clamp(1.5rem, 3vw, 2.125rem);
+  font-size: clamp(1.25rem, 2.5vw, 1.75rem);
   font-weight: 800;
   line-height: 1.2;
   color: #0F172A;
@@ -252,13 +252,13 @@ const scrollToCta = () => {
 
 /* Steps Grid */
 .steps-grid {
-  margin: 0 -12px !important;
+  margin: 0 -8px !important;
   position: relative;
   z-index: 1;
 }
 
 .step-col {
-  padding: 12px !important;
+  padding: 8px !important;
   margin-bottom: 0;
 }
 
@@ -317,8 +317,8 @@ const scrollToCta = () => {
 
 /* Step Icon - Fixed size */
 .step-icon-wrapper {
-  margin-bottom: 1.5rem;
-  margin-top: 0.5rem;
+  margin-bottom: 1.125rem;
+  margin-top: 0.375rem;
 }
 
 .step-icon-bg {
@@ -340,7 +340,7 @@ const scrollToCta = () => {
 
 /* Step Content */
 .step-title {
-  font-size: 1.25rem;
+  font-size: 1rem;
   font-weight: 700;
   margin-bottom: 0.75rem;
   color: #0F172A;

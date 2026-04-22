@@ -150,7 +150,7 @@ const benefits: Benefit[] = [
 <style scoped>
 .benefits-wrapper {
   position: relative;
-  padding: 5rem 0;
+  padding: 3rem 0;
   background: linear-gradient(135deg, #f8fafc 0%, #ffffff 50%, #f1f5f9 100%);
   overflow-x: hidden;
 }
@@ -236,7 +236,7 @@ const benefits: Benefit[] = [
 }
 
 .section-title {
-  font-size: clamp(2rem, 4vw, 2.75rem);
+  font-size: clamp(1.625rem, 3.5vw, 2.25rem);
   font-weight: 800;
   line-height: 1.2;
   color: #0F172A;
@@ -259,11 +259,11 @@ const benefits: Benefit[] = [
 
 /* Benefits Grid */
 .benefits-grid {
-  margin: 0 -12px;
+  margin: 0 -8px;
 }
 
 .benefit-col {
-  padding: 12px;
+  padding: 8px;
   margin-bottom: 0;
 }
 
@@ -273,7 +273,7 @@ const benefits: Benefit[] = [
   background: rgba(255, 255, 255, 0.95);
   backdrop-filter: blur(10px);
   border-radius: 24px;
-  padding: 2rem 1.5rem;
+  padding: 1.5rem 1.25rem;
   text-align: center;
   height: 100%;
   min-height: 280px;
@@ -293,7 +293,7 @@ const benefits: Benefit[] = [
 
 /* Benefit Icon - FIXED spacing */
 .benefit-icon-wrapper {
-  margin-bottom: 1.75rem;
+  margin-bottom: 1.25rem;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -323,7 +323,7 @@ const benefits: Benefit[] = [
 
 /* Benefit Content - FIXED spacing */
 .benefit-title {
-  font-size: 1.25rem;
+  font-size: 1rem;
   font-weight: 700;
   margin-bottom: 0.75rem;
   color: #0F172A;

@@ -46,10 +46,10 @@
             </div>
 
             <v-btn 
+            type="button"
               class="login-btn w-100 py-6 font-weight-bold" 
               size="large"
-              @click="validateAndLogin"
-            >
+              @click.prevent="validateAndLogin">
               LOGIN
             </v-btn>
           </v-form>
@@ -81,8 +81,13 @@
 
 <script setup lang="ts">
 import { ref } from 'vue'
+import { useRouter } from 'vue-router'
 import AuthLayout from '../../layouts/AuthLayout.vue'
 import { validateEmail, validatePassword } from '../../utils/validators'
+import { useAuthStore } from '../../stores'
+
+const router = useRouter()
+const authStore = useAuthStore()
 
 const email = ref('')
 const password = ref('')
@@ -103,7 +108,7 @@ const showErrorAlert = (message: string) => {
   }, 5000)
 }
 
-const validateAndLogin = () => {
+const validateAndLogin = async () => {
   // Reset alert
   showAlert.value = false
   alertMessage.value = ''
@@ -133,12 +138,23 @@ const validateAndLogin = () => {
     return
   }
 
-  // If validation passes, proceed with login
-  console.log('Login with:', { email: email.value, password: password.value })
-  // TODO: Call login API
+  // If validation passes, proceed with actual API login
+  try {
+    await authStore.login(email.value, password.value)
+    
+    // If successful, redirect to dashboard
+    router.push('/dashboard')
+    
+  } catch (error: any) {
+    // Show error from Laravel if credentials are wrong
+    showErrorAlert(
+      error.response?.data?.message || 
+      error.message || 
+      'Invalid credentials. Please try again.'
+    )
+  }
 }
 </script>
-
 <style scoped>
 /* Container & Layout */
 .login-container {

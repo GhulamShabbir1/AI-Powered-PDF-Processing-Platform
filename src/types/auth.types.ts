@@ -1,3 +1,5 @@
+// src/types/auth.types.ts
+
 export interface User {
   id: string;
   email: string;
@@ -13,13 +15,15 @@ export interface LoginCredentials {
 
 export interface RegisterData {
   name: string;
+  organization: string; // 👈 New field added
   email: string;
   password: string;
-  confirmPassword: string;
+  confirmPassword: string; 
 }
 
-export interface AuthResponse {
-  token: string;
+// 👇 Updated to match Postman's response.data structure
+export interface AuthResponseData {
+  access_token: string;
   user: User;
 }
 

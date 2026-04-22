@@ -1,5 +1,7 @@
+// src/stores/auth.store.ts
+
 import { defineStore } from 'pinia';
-import type { AuthState, User } from '@/types/auth.types';
+import type { AuthState } from '@/types/auth.types';
 import authService from '@/services/auth.service';
 
 export const useAuthStore = defineStore('auth', {
@@ -19,30 +21,51 @@ export const useAuthStore = defineStore('auth', {
     async login(email: string, password: string) {
       this.isLoading = true;
       try {
-        const response = await authService.login({ email, password });
-        this.token = response.token;
-        this.user = response.user;
+        const data = await authService.login({ email, password });
+    
+        this.token = data.access_token; // 👈 Pulls access_token from Postman response
+        this.user = data.user;
         this.isAuthenticated = true;
-        authService.setToken(response.token);
+        authService.setToken(data.access_token);
       } finally {
         this.isLoading = false;
       }
     },
 
-    async register(name: string, email: string, password: string) {
-      this.isLoading = true;
-      try {
-        const response = await authService.register({ name, email, password, confirmPassword: password });
-        this.token = response.token;
-        this.user = response.user;
-        this.isAuthenticated = true;
-        authService.setToken(response.token);
-      } finally {
-        this.isLoading = false;
-      }
-    },
+   // 👇 Added organization parameter
+   // 1. Ensure it accepts 4 arguments in this exact order:
+   async register(name: string, email: string, organization: string, password: string) {
+    this.isLoading = true;
+    try {
+      // 2. Ensure organization is passed in this object:
+      const data = await authService.register({ 
+        name, 
+        email, 
+        organization, 
+        password, 
+        confirmPassword: password 
+      });
+      
+      this.token = data.access_token;
+      this.user = data.user;
+      this.isAuthenticated = true;
+      authService.setToken(data.access_token);
+    } finally {
+      this.isLoading = false;
+    }
+  },
+  // Add this inside actions
+  async verifyAccount(email: string, token: string) {
+    this.isLoading = true;
+    try {
+      await authService.verifySignup(email, token);
+    } finally {
+      this.isLoading = false;
+    }
+  },
 
     async logout() {
+      this.isLoading = true;
       try {
         await authService.logout();
       } finally {
@@ -50,21 +73,18 @@ export const useAuthStore = defineStore('auth', {
         this.user = null;
         this.isAuthenticated = false;
         authService.removeToken();
-      }
-    },
-
-    async fetchUser() {
-      if (!this.token) return;
-      this.isLoading = true;
-      try {
-        const user = await authService.getCurrentUser();
-        this.user = user;
-      } catch {
-        this.logout();
-      } finally {
         this.isLoading = false;
       }
     },
+
+    async forgotPassword(email: string) {
+      this.isLoading = true;
+      try {
+        await authService.forgotPassword(email);
+      } finally {
+        this.isLoading = false;
+      }
+    }
   },
 });
 

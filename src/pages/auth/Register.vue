@@ -23,6 +23,18 @@
                 required
               ></v-text-field>
             </div>
+            <div class="form-group">
+              <v-text-field 
+                v-model="organization"
+                label="Organization" 
+                variant="outlined" 
+                density="comfortable" 
+                class="custom-field" 
+                hide-details
+                prepend-inner-icon="mdi-domain"
+                required
+              ></v-text-field>
+            </div>
 
             <div class="form-group">
               <v-text-field 
@@ -111,32 +123,41 @@
 
 <script setup lang="ts">
 import { ref } from 'vue'
+import { useRouter } from 'vue-router'
 import AuthLayout from '../../layouts/AuthLayout.vue'
 import { validateEmail, validatePassword } from '../../utils/validators'
+import { useAuthStore } from '../../stores'
 
+const router = useRouter()
+const authStore = useAuthStore()
+
+// Form Data Refs
 const fullName = ref('')
+const organization = ref('')
 const email = ref('')
 const password = ref('')
 const confirmPassword = ref('')
 const termsAccepted = ref(false)
+
+// Alert State
 const showAlert = ref(false)
 const alertMessage = ref('')
 let alertTimeout: NodeJS.Timeout | null = null
 
+// Helper function to show errors
 const showErrorAlert = (message: string) => {
-  // Clear any existing timeout
   if (alertTimeout) clearTimeout(alertTimeout)
   
   alertMessage.value = message
   showAlert.value = true
   
-  // Auto-dismiss after 5 seconds
   alertTimeout = setTimeout(() => {
     showAlert.value = false
   }, 5000)
 }
 
-const validateAndRegister = () => {
+// Main Validation and Registration Function
+const validateAndRegister = async () => {
   // Reset alert
   showAlert.value = false
   alertMessage.value = ''
@@ -144,6 +165,12 @@ const validateAndRegister = () => {
   // Validate full name
   if (!fullName.value.trim()) {
     showErrorAlert('Please enter your full name')
+    return
+  }
+
+  // Validate organization
+  if (!organization.value.trim()) {
+    showErrorAlert('Please enter your organization name')
     return
   }
 
@@ -190,13 +217,20 @@ const validateAndRegister = () => {
     return
   }
 
-  // If validation passes, proceed with registration
-  console.log('Register with:', { 
-    fullName: fullName.value, 
-    email: email.value, 
-    password: password.value 
-  })
-  // TODO: Call register API
+  // If all validation passes, proceed with API call
+  try {
+    await authStore.register(fullName.value, email.value, organization.value, password.value)
+    
+    // Push to the verify page and pass the email in the URL query!
+    router.push({ path: '/verify', query: { email: email.value } })
+    
+  }catch (error: any) {
+    showErrorAlert(
+      error.response?.data?.message || 
+      error.message || 
+      'Failed to create account. Please try again.'
+    )
+  }
 }
 </script>
 

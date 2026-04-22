@@ -20,6 +20,11 @@ const routes: Array<RouteRecordRaw> = [
     component: () => import('../pages/auth/Register.vue')
   },
   {
+  path: '/verify',
+  name: 'Verify',
+  component: () => import('../pages/auth/AccountVerify.vue') 
+  },
+  {
     path: '/forget-password',
     name: 'ForgetPassword',
     component: ForgetPassword,

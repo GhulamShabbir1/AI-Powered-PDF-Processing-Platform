@@ -5,6 +5,8 @@ export interface User {
   email: string;
   name: string;
   role: 'user' | 'admin';
+  organization?: string;
+  organization_name?: string;
   createdAt: string;
 }
 

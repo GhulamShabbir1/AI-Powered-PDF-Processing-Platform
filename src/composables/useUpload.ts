@@ -1,8 +1,6 @@
 import { ref, computed } from 'vue';
 import { useUploadStore } from '@/stores';
 import uploadService from '@/services/upload.service';
-import type { UploadProgress } from '@/types/api.types';
-
 export function useUpload() {
   const uploadStore = useUploadStore();
   const selectedFile = ref<File | null>(null);
@@ -23,7 +21,7 @@ export function useUpload() {
     }
   }
 
-  async function upload(onProgress?: (progress: UploadProgress) => void) {
+  async function upload(userId: string) {
     if (!selectedFile.value) {
       throw new Error('No file selected');
     }
@@ -32,17 +30,9 @@ export function useUpload() {
       throw new Error(validationError.value);
     }
 
-    const uploadId = await uploadStore.uploadFile(selectedFile.value);
+    const uploadedFile = await uploadStore.uploadFile(selectedFile.value, userId);
     
-    if (onProgress) {
-      uploadStore.$subscribe((mutation, state) => {
-        if (state.progress) {
-          onProgress(state.progress);
-        }
-      });
-    }
-
-    return uploadId;
+    return uploadedFile;
   }
 
   function clearFile() {

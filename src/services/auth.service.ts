@@ -28,6 +28,10 @@ export const authService = {
     await apiClient.post('/auth/verify-signup', { email, token });
   },
 
+  async resendOtp(email: string): Promise<void> {
+    await apiClient.post('/auth/resend-signup-otp', { email });
+  },
+
   async logout(): Promise<void> {
     // Hits /api/auth/logout [cite: 1363]
     await apiClient.post('/auth/logout');

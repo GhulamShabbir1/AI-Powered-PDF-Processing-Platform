@@ -96,7 +96,7 @@ export function validateFile(file: File): { valid: boolean; error?: string } {
     'image/jpg',
   ];
 
-  const MAX_SIZE = 50 * 1024 * 1024; // 50MB
+  const MAX_SIZE = 20 * 1024 * 1024; // 20MB
   const MIN_SIZE = 1 * 1024; // 1KB (avoid empty files)
 
   if (!file) {
@@ -108,7 +108,7 @@ export function validateFile(file: File): { valid: boolean; error?: string } {
   }
 
   if (file.size > MAX_SIZE) {
-    return { valid: false, error: 'File exceeds 50MB limit' };
+    return { valid: false, error: 'File exceeds 20MB limit' };
   }
 
   if (file.size < MIN_SIZE) {

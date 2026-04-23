@@ -94,26 +94,14 @@ const router = createRouter({
 /* =========================
    AUTH HELPERS
 ========================= */
-function getAuthToken() {
-  try {
-    const stored = localStorage.getItem('chikolo_tokens')
-    return stored ? JSON.parse(stored) : null
-  } catch (e) {
-    console.warn('Invalid token found, clearing storage')
-    localStorage.removeItem('chikolo_tokens')
-    return null
-  }
-}
-
 function isAuthenticated() {
-  const tokens = getAuthToken()
-  return !!tokens?.access_token
+  return !!localStorage.getItem('token')
 }
 
 /* =========================
    ROUTE GUARD
 ========================= */
-router.beforeEach((to, from, next) => {
+router.beforeEach((to, _from, next) => {
   const publicPages = [
     'Home',
     'Login',

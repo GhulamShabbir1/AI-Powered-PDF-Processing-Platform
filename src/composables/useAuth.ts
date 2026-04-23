@@ -26,7 +26,7 @@ export function useAuth() {
   async function register(data: RegisterData) {
     error.value = null;
     try {
-      await authStore.register(data.name, data.email, data.password);
+      await authStore.register(data.name, data.email, data.organization, data.password);
       router.push('/dashboard');
     } catch (e) {
       error.value = (e as Error).message;
@@ -40,9 +40,7 @@ export function useAuth() {
   }
 
   async function checkAuth() {
-    if (authStore.token && !authStore.user) {
-      await authStore.fetchUser();
-    }
+    return !!authStore.token;
   }
 
   return {

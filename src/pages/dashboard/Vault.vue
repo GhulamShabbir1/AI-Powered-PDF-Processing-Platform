@@ -89,14 +89,13 @@
           <!-- ⚙️ Actions -->
           <template #item.actions="{ item }">
             <div class="d-flex ga-2">
-
               <v-btn
-                icon="mdi-eye-outline"
+                icon="mdi-refresh"
                 size="small"
                 variant="text"
                 color="primary"
                 class="action-btn"
-                :to="`/request/${item.id}`"
+                @click="refreshRequest(item)"
               />
 
               <v-btn
@@ -105,8 +104,17 @@
                 variant="text"
                 color="success"
                 class="action-btn"
-                :href="item.downloadUrl"
+                :href="item.downloadUrl || undefined"
                 :disabled="!item.downloadUrl"
+              />
+
+              <v-btn
+                icon="mdi-delete-outline"
+                size="small"
+                variant="text"
+                color="error"
+                class="action-btn"
+                @click="removeFile(item)"
               />
             </div>
           </template>
@@ -117,11 +125,21 @@
 </template>
 
 <script setup lang="ts">
+import { useAuthStore } from '../../stores'
 import { useRequestStore } from '../../stores/request.store'
 import type { PDFRequest } from '../../types/request.types'
 import { computed, onMounted } from 'vue'
 
+const authStore = useAuthStore()
 const requestStore = useRequestStore()
+const currentUserId = computed(() => authStore.currentUser?.id || localStorage.getItem('user_id') || '')
+const organizationName = computed(
+  () =>
+    authStore.currentUser?.organization_name ||
+    authStore.currentUser?.organization ||
+    localStorage.getItem('organization_name') ||
+    ''
+)
 
 const allRequests = computed(() => requestStore.requests)
 const requestCount = computed(() => allRequests.value.length)
@@ -135,8 +153,26 @@ const headers = [
 ]
 
 onMounted(async () => {
-  await requestStore.fetchAllRequests()
+  if (currentUserId.value && organizationName.value) {
+    await requestStore.fetchAllRequests(currentUserId.value, organizationName.value)
+  }
 })
+
+const refreshRequest = async (item: PDFRequest) => {
+  if (!currentUserId.value) return
+  const latest = await requestStore.fetchRequestById(item.fileId, currentUserId.value, item.serviceType)
+  if (latest) {
+    const index = requestStore.requests.findIndex((request: PDFRequest) => request.id === latest.id)
+    if (index >= 0) {
+      requestStore.requests[index] = latest
+    }
+  }
+}
+
+const removeFile = async (item: PDFRequest) => {
+  if (!currentUserId.value) return
+  await requestStore.deleteRequest(item.fileId, currentUserId.value)
+}
 
 const getStatusColor = (status: PDFRequest['status']) => {
   return {

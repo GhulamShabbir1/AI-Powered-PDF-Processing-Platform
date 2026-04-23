@@ -77,54 +77,76 @@
   </template>
   
   <script setup lang="ts">
-  import { ref, reactive, computed } from 'vue';
-  import { useRoute } from 'vue-router';
-  import AuthLayout from '../../layouts/AuthLayout.vue';
-  import { validatePassword, validateConfirmPassword } from '../../utils/validators';
+import { ref, reactive, computed, onMounted } from 'vue';
+import { useRoute, useRouter } from 'vue-router';
+import { useAuthStore } from '../../stores';
+import AuthLayout from '../../layouts/AuthLayout.vue';
+import { validatePassword, validateConfirmPassword } from '../../utils/validators';
+
+const route = useRoute();
+const router = useRouter();
+const authStore = useAuthStore();
+
+const isLoading = ref(false);
+const error = ref<string | null>(null);
+const isSuccess = ref(false);
+const isFormValid = ref(false);
+
+const displayEmail = computed(() => route.query.email as string || 'your account');
+// Extract the OTP token from the URL query
+const token = computed(() => route.query.token as string);
+
+// Redirect back to forget-password if they arrive here without a token
+onMounted(() => {
+  if (!token.value) {
+    router.push('/forget-password');
+  }
+});
+
+const form = reactive({
+  newPassword: '',
+  confirmPassword: ''
+});
+
+const passwordRules = [
+  (v: string) => !!v || 'Password is required',
+  (v: string) => {
+    const result = validatePassword(v);
+    return result.valid || result.error;
+  }
+];
+
+const confirmPasswordRules = [
+  (v: string) => !!v || 'Please confirm your password',
+  (v: string) => {
+    const result = validateConfirmPassword(form.newPassword, v);
+    return result.valid || result.error;
+  }
+];
+
+const handleResetPassword = async () => {
+  if (!isFormValid.value) return;
   
-  const route = useRoute();
-  const isLoading = ref(false);
-  const error = ref<string | null>(null);
-  const isSuccess = ref(false);
-  const isFormValid = ref(false);
+  isLoading.value = true;
+  error.value = null;
   
-  const displayEmail = computed(() => route.query.email as string || 'your account');
-  
-  const form = reactive({
-    newPassword: '',
-    confirmPassword: ''
-  });
-  
-  const passwordRules = [
-    (v: string) => !!v || 'Password is required',
-    (v: string) => {
-      const result = validatePassword(v);
-      return result.valid || result.error;
-    }
-  ];
-  
-  const confirmPasswordRules = [
-    (v: string) => !!v || 'Please confirm your password',
-    (v: string) => {
-      const result = validateConfirmPassword(form.newPassword, v);
-      return result.valid || result.error;
-    }
-  ];
-  
-  const handleResetPassword = async () => {
-    if (!isFormValid.value) return;
-    isLoading.value = true;
-    error.value = null;
-    try {
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      isSuccess.value = true;
-    } catch (err: any) {
-      error.value = err.message || 'Failed to update password.';
-    } finally {
-      isLoading.value = false;
-    }
-  };
-  </script>
+  try {
+    // Call the actual API endpoint via Pinia store
+    await authStore.resetPassword(
+      token.value, 
+      form.newPassword, 
+      form.confirmPassword
+    );
+    
+    isSuccess.value = true;
+  } catch (err: any) {
+    // Display the exact error message returned from the Laravel backend
+    error.value = err.response?.data?.message || err.message || 'Failed to update password.';
+  } finally {
+    isLoading.value = false;
+  }
+};
+</script>
   
   <style scoped>
   /* Paste the exact same <style scoped> from ForgetPassword.vue above, excluding the .tracking-widest specific class */

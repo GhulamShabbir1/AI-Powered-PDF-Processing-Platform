@@ -38,6 +38,9 @@ export const authService = {
     // Hits /api/auth/forgot-password [cite: 1363]
     await apiClient.post('/auth/forgot-password', { email });
   },
+  async resetPassword(payload: { token: string; password: string; confirm_password: string }): Promise<void> {
+    await apiClient.post('/auth/reset-password', payload);
+  },
 
   setToken(token: string): void {
     localStorage.setItem('token', token);

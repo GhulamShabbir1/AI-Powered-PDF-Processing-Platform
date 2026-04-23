@@ -9,7 +9,7 @@ const apiClient: AxiosInstance = axios.create({
   timeout: 30000,
   headers: {
     'Content-Type': 'application/json',
-    'Accept': 'application/json', // 👈 Added this so Laravel always sends JSON
+    'Accept': 'application/json', 
   },
 });
 
@@ -17,7 +17,7 @@ apiClient.interceptors.request.use(
   (config) => {
     const token = localStorage.getItem('token');
     if (token) {
-      config.headers.Authorization = `Bearer ${token}`;
+      config.headers.Authorization = token ;
     }
     return config;
   },
@@ -29,11 +29,8 @@ apiClient.interceptors.response.use(
   (error: AxiosError<ApiError>) => {
     if (error.response?.status === 401) {
       localStorage.removeItem('token');
-      
-      // 👈 Added this check: Only redirect if they ARE NOT already on the login page
-      if (window.location.pathname !== '/login') {
-        window.location.href = '/login';
-      }
+
+      window.dispatchEvent(new Event('auth-unauthorized'));
     }
     return Promise.reject(error);
   }

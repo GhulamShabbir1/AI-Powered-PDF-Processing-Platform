@@ -16,8 +16,8 @@
 </template>
 
 <script setup lang="ts">
-import DashboardAppbar from '@/components/dashboard/DashboardAppbar.vue'
-import DashboardFooter from '@/components/dashboard/DashboardFooter.vue'
+import DashboardAppbar from '../components/dashboard/DashboardAppbar.vue'
+import DashboardFooter from '../components/dashboard/DashboardFooter.vue'
 </script>
 
 <style scoped>

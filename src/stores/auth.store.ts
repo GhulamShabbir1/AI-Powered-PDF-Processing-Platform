@@ -23,7 +23,7 @@ export const useAuthStore = defineStore('auth', {
       try {
         const data = await authService.login({ email, password });
     
-        this.token = data.access_token; // 👈 Pulls access_token from Postman response
+        this.token = data.access_token; 
         this.user = data.user;
         this.isAuthenticated = true;
         authService.setToken(data.access_token);

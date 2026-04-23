@@ -1,11 +1,13 @@
 // src/stores/auth.store.ts
 
-import { defineStore } from 'pinia'
-import type { AuthState } from '@/types/auth.types'
-import authService from '@/services/auth.service'
 
 const storedUser = localStorage.getItem('user')
 const parsedUser = storedUser ? JSON.parse(storedUser) : null
+
+import { defineStore } from 'pinia';
+import type { AuthState } from '../types/auth.types';
+import authService from '../services/auth.service';
+
 
 export const useAuthStore = defineStore('auth', {
   state: (): AuthState => ({

@@ -1,5 +1,5 @@
-import requestService from '@/services/request.service'
-import type { PDFRequest, RequestListFilters, RequestState } from '@/types/request.types'
+import requestService from '../services/request.service'
+import type { PDFRequest, RequestListFilters, RequestState } from '../types/request.types'
 import { defineStore } from 'pinia'
 
 export const useRequestStore = defineStore('request', {

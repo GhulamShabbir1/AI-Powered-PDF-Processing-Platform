@@ -1,6 +1,6 @@
 import { defineStore } from 'pinia';
-import type { UploadProgress } from '@/types/api.types';
-import uploadService from '@/services/upload.service';
+import type { UploadProgress } from '../types/api.types';
+import uploadService from '../services/upload.service';
 
 interface UploadState {
   currentFile: File | null;

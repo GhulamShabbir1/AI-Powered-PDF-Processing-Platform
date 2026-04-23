@@ -8,3 +8,9 @@
 - [x] 5. Complete task
 
 Current status: Task completed. Vite dev server fixed, cards clickable.
+
+## New Task: Beautiful 404 Page
+- [x] Implemented beautiful light-themed 404 page in `src/pages/NotFound.vue` using Vuetify (hero icon, PDF-themed messaging, responsive CTAs to Home/Dashboard).
+- [x] Added catch-all route `*` → NotFound.vue in `src/router/index.ts`.
+- Ready for testing: `npm run dev`, visit any invalid path like `/invalid`.
+

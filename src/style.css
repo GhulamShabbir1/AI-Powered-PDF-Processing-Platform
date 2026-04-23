@@ -1,80 +1,80 @@
 /* src/style.css */
 
-/* 
- * This is the main entry point for global styles.
- * It imports variables and the main CSS utility/theme file.
- */
-
-@import "./assets/styles/variables.css";
+/* =========================
+   GLOBAL IMPORTS
+========================= */
 @import "https://cdn.jsdelivr.net/npm/@mdi/font@7.4.47/css/materialdesignicons.min.css";
-@import "./assets/styles/main.css";
 
-/* Global Base Styles - Fixed Right Spacing */
+/* =========================
+   ROOT SETTINGS
+========================= */
 :root {
   scroll-behavior: smooth;
 }
 
-/* Universal viewport lock - Fix right spacing */
+/* =========================
+   RESET & BASE FIXES
+========================= */
 *,
 *::before,
 *::after {
   box-sizing: border-box;
 }
 
-/* Fix clipped headings and icons */
-h1, h2, h3, .section-title {
-  overflow: visible !important;
-}
-
-.v-icon {
-  display: inline-flex !important;
-  align-items: center !important;
-  vertical-align: middle !important;
-  overflow: visible !important;
-}
-
-
 html,
 body,
-#app,
-.v-app,
-.v-main {
-  width: 100% !important;
-  overflow-x: hidden !important;
-  padding-right: 0 !important;
-  margin-right: 0 !important;
+#app {
+  width: 100%;
+  margin: 0;
+  padding: 0;
+  overflow-x: hidden;
 }
 
-/* Force all containers to respect viewport */
-.v-container,
-.v-row,
-.v-col,
-  section {
-   width: 100% !important;
-  }
+/* =========================
+   TYPOGRAPHY FIXES
+========================= */
+h1,
+h2,
+h3,
+.section-title {
+  overflow: visible;
+}
 
-/* Image containment */
+/* =========================
+   ICON FIX
+========================= */
+.v-icon {
+  display: inline-flex;
+  align-items: center;
+  vertical-align: middle;
+}
+
+/* =========================
+   IMAGE HANDLING
+========================= */
 img,
-v-img {
-  max-width: 100% !important;
-  height: auto !important;
+.v-img {
+  max-width: 100%;
+  height: auto;
 }
 
-/* Prevent carousel overflow */
+/* =========================
+   CAROUSEL FIX
+========================= */
 .v-carousel {
-  overflow: hidden !important;
+  overflow: hidden;
 }
 
-/* Landing specific */
-.landing-page {
-  overflow-x: hidden !important;
-}
-
-/* Ensure Vuetify works well with our global background */
+/* =========================
+   BACKGROUND HANDLING
+========================= */
 .v-application {
-  background: transparent !important;
+  background-color: #f8fafc;
 }
 
+/* =========================
+   THEME COLORS
+========================= */
 .v-theme--light {
   --v-theme-background: 249, 250, 251;
   --v-theme-surface: 255, 255, 255;
@@ -83,4 +83,18 @@ v-img {
 .v-theme--dark {
   --v-theme-background: 15, 23, 42;
   --v-theme-surface: 30, 41, 59;
+}
+
+/* =========================
+   UTILITY FIXES (SAFE)
+========================= */
+
+/* Remove horizontal scroll issues safely */
+body {
+  overflow-x: hidden;
+}
+
+/* Smooth transitions */
+.transition-all {
+  transition: all 0.2s ease;
 }

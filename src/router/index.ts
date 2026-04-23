@@ -1,7 +1,7 @@
 import { createRouter, createWebHistory, type RouteRecordRaw } from 'vue-router'
 import ForgetPassword from '../pages/auth/ForgetPassword.vue'
-import Home from '../pages/landing/Home.vue'
 import ResetPassword from '../pages/auth/ResetPassword.vue'
+import Home from '../pages/landing/Home.vue'
 
 const routes: Array<RouteRecordRaw> = [
   {
@@ -51,10 +51,21 @@ const routes: Array<RouteRecordRaw> = [
     components: {
       default: () => import('../pages/dashboard/Dashboard.vue'),
     },
-    meta: { layout: 'default' }
+    meta: { layout: 'dashboard' }
   },
-
+  {
+    path: '/dashboard/vault',
+    name: 'Vault',
+    component: () => import('../pages/dashboard/Vault.vue'),
+    meta: { layout: 'dashboard' }
+  }
 ]
+
+routes.push({
+  path: '/:pathMatch(.*)*',
+  name: 'NotFound',
+  component: () => import('../pages/NotFound.vue')
+})
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),

@@ -1,66 +1,100 @@
-/* CSS Variables */
+/* src/assets/styles/variables.css */
+
+/* =========================
+   ROOT VARIABLES
+========================= */
 :root {
-  /* Colors - Primary */
+  /* =========================
+     BRAND COLORS
+  ========================= */
   --color-primary: #4F46E5;
   --color-primary-dark: #4338CA;
   --color-primary-light: #6366F1;
+
   --color-secondary: #06B6D4;
   --color-accent: #8B5CF6;
 
-  /* Colors - Semantic */
+  /* =========================
+     SEMANTIC COLORS
+  ========================= */
   --color-success: #10B981;
   --color-warning: #F59E0B;
   --color-error: #B30000;
 
-  /* Colors - Light Theme */
+  /* =========================
+     BACKGROUND SYSTEM
+  ========================= */
   --color-background: #F9FAFB;
   --color-surface: #FFFFFF;
+  --color-surface-soft: #F1F5F9;
+
+  /* =========================
+     TEXT SYSTEM
+  ========================= */
   --color-text-primary: #111827;
   --color-text-secondary: #6B7280;
+  --color-text-muted: #9CA3AF;
+
+  /* =========================
+     BORDER SYSTEM
+  ========================= */
   --color-border: #E5E7EB;
+  --color-border-light: #F1F5F9;
 
-  /* Colors - Dark Theme */
-  --color-dark-bg: #0F172A;
-  --color-dark-surface: #1E293B;
-  --color-dark-text: #F1F5F9;
-  --color-dark-text-secondary: #94A3B8;
-  --color-dark-border: #334155;
-
-  /* Gradients */
+  /* =========================
+     GRADIENTS
+  ========================= */
   --gradient-ai: linear-gradient(135deg, #4F46E5, #06B6D4);
 
-  /* Spacing */
+  /* =========================
+     SPACING SCALE
+  ========================= */
   --spacing-xs: 4px;
   --spacing-sm: 8px;
   --spacing-md: 16px;
   --spacing-lg: 24px;
---spacing-xl: 32px;
+  --spacing-xl: 32px;
 
---sidebar-width: 256px;
+  /* Layout */
+  --sidebar-width: 256px;
+  --container-max-width: 1280px;
 
-  /* Border Radius */
+  /* =========================
+     BORDER RADIUS
+  ========================= */
   --radius-sm: 6px;
   --radius-md: 12px;
   --radius-lg: 16px;
   --radius-xl: 24px;
 
-  /* Shadows */
-  --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
-  --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1);
-  --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1);
-  --shadow-xl: 0 20px 25px -5px rgb(0 0 0 / 0.1);
+  /* =========================
+     SHADOW SYSTEM
+  ========================= */
+  --shadow-sm: 0 1px 2px rgb(0 0 0 / 0.05);
+  --shadow-md: 0 4px 6px rgb(0 0 0 / 0.1);
+  --shadow-lg: 0 10px 15px rgb(0 0 0 / 0.1);
+  --shadow-xl: 0 20px 25px rgb(0 0 0 / 0.15);
 
-  /* Transitions */
+  /* =========================
+     TRANSITIONS
+  ========================= */
   --transition-fast: 150ms ease;
   --transition-normal: 300ms ease;
   --transition-slow: 500ms ease;
 }
 
-/* Dark Theme Variables */
+/* =========================
+   DARK THEME
+========================= */
 [data-theme="dark"] {
   --color-background: #0F172A;
   --color-surface: #1E293B;
+  --color-surface-soft: #334155;
+
   --color-text-primary: #F1F5F9;
   --color-text-secondary: #94A3B8;
+  --color-text-muted: #64748B;
+
   --color-border: #334155;
+  --color-border-light: #475569;
 }

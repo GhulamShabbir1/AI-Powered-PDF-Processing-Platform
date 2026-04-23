@@ -1,39 +1,53 @@
 /* src/assets/styles/vuetify-overrides.css */
 
-/* Buttons */
+/* =========================
+   BUTTONS
+========================= */
 .v-btn {
   border-radius: var(--radius-sm);
   text-transform: none;
+  letter-spacing: 0;
 }
 
-/* Cards */
+/* =========================
+   CARDS
+========================= */
 .v-card {
   border-radius: var(--radius-md);
   box-shadow: var(--shadow-sm);
 }
 
-/* Inputs */
+/* =========================
+   INPUT FIELDS
+========================= */
 .v-field {
   border-radius: var(--radius-sm);
 }
 
-/* Progress Linear */
+/* =========================
+   PROGRESS LINEAR
+========================= */
 .v-progress-linear {
-  border-radius: 10px;
+  border-radius: 8px;
+  overflow: hidden;
 }
 
-/* Custom AI Progress */
+/* AI Gradient Progress */
 .v-progress-linear.ai-progress .v-progress-linear__background,
 .v-progress-linear.ai-progress .v-progress-linear__determinate {
   background: linear-gradient(90deg, #4F46E5, #06B6D4);
 }
 
-/* Circular Loader Glow */
+/* =========================
+   PROGRESS CIRCULAR
+========================= */
 .v-progress-circular.ai-loader {
-  filter: drop-shadow(0 0 8px #06B6D4);
+  filter: drop-shadow(0 0 6px rgba(6, 182, 212, 0.6));
 }
 
-/* Chips (Status) */
+/* =========================
+   CHIPS (STATUS)
+========================= */
 .v-chip.success {
   background-color: var(--color-success);
   color: white;
@@ -49,27 +63,37 @@
   color: white;
 }
 
-/* Tables */
+/* =========================
+   TABLES
+========================= */
 .v-table {
   border-radius: var(--radius-md);
+  overflow: hidden;
 }
 
-/* Dialog */
+/* =========================
+   DIALOG
+========================= */
 .v-dialog .v-card {
   border-radius: var(--radius-lg);
 }
-/* 🚨 Universal Error Alert Fix */
-.v-alert[type="error"] {
-  color: var(--color-error) !important;
-  font-weight: 600 !important;
+
+/* =========================
+   ALERTS (SAFE FIX)
+========================= */
+
+/* Use class instead of type (Vuetify standard) */
+.v-alert.v-alert--type-error {
+  color: var(--color-error);
+  font-weight: 600;
 }
 
-.v-alert[type="error"] .v-icon {
-  color: var(--color-error) !important;
-  opacity: 1 !important;
+.v-alert.v-alert--type-error .v-icon {
+  color: var(--color-error);
+  opacity: 1;
 }
 
-/* Slightly deeper background for the tonal variant */
-.v-alert--variant-tonal[type="error"] {
-  background-color: rgba(179, 0, 0, 0.1) !important; 
+/* Tonal variant */
+.v-alert.v-alert--variant-tonal.v-alert--type-error {
+  background-color: rgba(179, 0, 0, 0.08);
 }

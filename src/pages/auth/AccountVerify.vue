@@ -71,7 +71,7 @@
   <script setup lang="ts">
   import { ref, onMounted } from 'vue';
   import { useRouter, useRoute } from 'vue-router';
-  import { useAuthStore } from '@/stores'; // Ensure your store index exports useAuthStore
+  import { useAuthStore } from '../../stores'; // Ensure your store index exports useAuthStore
   
   const router = useRouter();
   const route = useRoute();

@@ -132,11 +132,13 @@
 <script setup lang="ts">
 import { ref, reactive } from 'vue';
 import { useRouter } from 'vue-router';
+import { useAuthStore } from '../../stores';
 import AuthLayout from '../../layouts/AuthLayout.vue';
 import { validateEmail, validateRequired } from '../../utils/validators';
 
 const router = useRouter();
 const step = ref(1);
+const authStore = useAuthStore();
 const isLoading = ref(false);
 const error = ref<string | null>(null);
 
@@ -169,12 +171,14 @@ const handleSendOtp = async () => {
   if (!isEmailValid.value) return;
   isLoading.value = true;
   error.value = null;
+  
   try {
-    // Mock API Call
-    await new Promise(resolve => setTimeout(resolve, 1000)); 
-    step.value = 2;
+    // Call the actual API endpoint via Pinia store
+    await authStore.forgotPassword(form.email);
+    step.value = 2; // Move to the OTP verification step
   } catch (err: any) {
-    error.value = err.message || 'Failed to send OTP.';
+    // Display the error message returned from the Laravel backend
+    error.value = err.response?.data?.message || err.message || 'Failed to send OTP.';
   } finally {
     isLoading.value = false;
   }
@@ -182,17 +186,17 @@ const handleSendOtp = async () => {
 
 const handleVerifyOtp = async () => {
   if (!isOtpValid.value) return;
-  isLoading.value = true;
-  error.value = null;
-  try {
-    // Mock API Call
-    await new Promise(resolve => setTimeout(resolve, 1000));
-    router.push({ path: '/reset-password', query: { email: form.email } });
-  } catch (err: any) {
-    error.value = err.message || 'Invalid OTP.';
-  } finally {
-    isLoading.value = false;
-  }
+  
+  // Based on your Postman collection, the OTP (token) is verified at the exact 
+  // same time the new password is submitted. So here, we just pass the email 
+  // and token to the Reset Password page.
+  router.push({ 
+    path: '/reset-password', 
+    query: { 
+      email: form.email, 
+      token: form.otp 
+    } 
+  });
 };
 </script>
 

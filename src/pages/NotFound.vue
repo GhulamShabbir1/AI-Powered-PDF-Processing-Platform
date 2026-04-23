@@ -1,78 +1,61 @@
 <template>
   <v-theme theme="light">
-    <v-container fluid class="fill-height pa-0" style="background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%); min-height: 100vh;">
+    <v-container fluid class="fill-height pa-0 notfound-bg">
       <v-row align="center" justify="center" class="fill-height">
-        <v-col cols="12" md="8" lg="6" xl="4" class="text-center">
-          <div class="pa-8">
-            <v-icon 
-              icon="mdi-file-find-off" 
-              size="200" 
-              color="#4F46E5" 
-              class="mb-6 hover"
+        <v-col cols="12" md="8" lg="6" xl="4">
+          
+          <div class="glass-card text-center pa-8">
+            
+            <!-- Icon -->
+            <v-icon
+              icon="mdi-alert-circle-outline"
+              size="120"
+              class="mb-4 main-icon"
             />
-            
-            <h1 class="text-h2 font-weight-bold mb-4" style="color: #1e293b;">
-              404
-            </h1>
-            
-            <h2 class="text-h5 mb-6" style="color: #475569;">
+
+            <!-- 404 Text -->
+            <h1 class="error-code">404</h1>
+
+            <h2 class="error-title">
               Page Not Found
             </h2>
-            
-            <p class="text-body-1 mb-12" style="color: #64748b; line-height: 1.7; max-width: 500px; margin: 0 auto;">
-              Oops! The page you're looking for seems to have gotten lost in the PDF processing ether. 
-              Don't worry, let's get you back.
+
+            <p class="error-desc">
+              The page you're looking for doesn’t exist or was moved.
+              Let’s get you back on track.
             </p>
-            
-            <v-row justify="center" class="gap-4 flex-wrap">
-              <v-col cols="12" sm="auto">
-                <RouterLink to="/">
-                  <v-btn 
-                    prepend-icon="mdi-home"
-                    size="large"
-                    color="#4F46E5" 
-                    class="text-white rounded-xl shadow-lg v-btn-hover"
-                    style="text-transform: none; font-weight: 600;"
-                  >
-                    Go Home
-                  </v-btn>
-                </RouterLink>
-              </v-col>
+
+            <!-- Buttons -->
+            <div class="d-flex justify-center flex-wrap gap-3 mt-6">
               
-              <v-col cols="12" sm="auto">
-                <RouterLink to="/dashboard">
-                  <v-btn 
-                    prepend-icon="mdi-monitor-dashboard"
-                    size="large" 
-                    color="#06B6D4"
-                    class="text-white rounded-xl shadow-lg v-btn-hover"
-                    style="text-transform: none; font-weight: 600;"
-                    variant="outlined"
-                  >
-                    Dashboard
-                  </v-btn>
-                </RouterLink>
-              </v-col>
-              
-              <v-col cols="12" sm="auto">
-                <v-btn 
-                  prepend-icon="mdi-arrow-left"
-                  size="large" 
-                  color="grey"
-                  class="text-white rounded-xl shadow-lg v-btn-hover"
-                  style="text-transform: none; font-weight: 600;"
-                  variant="outlined"
-                  @click="goBack"
+              <RouterLink to="/">
+                <v-btn
+                  prepend-icon="mdi-home"
+                  size="large"
+                  class="primary-btn"
                 >
-                  Go Back
+                  Go Home
                 </v-btn>
-              </v-col>
-            </v-row>
+              </RouterLink>
+
+              <v-btn
+                prepend-icon="mdi-arrow-left"
+                size="large"
+                variant="outlined"
+                class="secondary-btn"
+                @click="goBack"
+              >
+                Go Back
+              </v-btn>
+
+            </div>
           </div>
-          
-          <div class="mt-auto pa-4 text-caption text-center" style="color: #94a3b8;">
-            PDF Processor © 2024. Let's find that page together.
+
+          <!-- Footer -->
+          <div class="footer-text text-center mt-6">
+            PDF Processor © 2026
           </div>
+
         </v-col>
       </v-row>
     </v-container>
@@ -80,7 +63,7 @@
 </template>
 
 <script setup lang="ts">
-import { RouterLink, useRouter } from 'vue-router'
+import { useRouter, RouterLink } from 'vue-router'
 
 const router = useRouter()
 
@@ -90,22 +73,106 @@ const goBack = () => {
 </script>
 
 <style scoped>
-.v-icon {
-  filter: drop-shadow(0 10px 20px rgba(79, 70, 229, 0.3));
+
+/* 🌈 Animated Background */
+.notfound-bg {
+  min-height: 100vh;
+  background: linear-gradient(135deg, #4f46e5, #7c3aed, #06b6d4);
+  background-size: 300% 300%;
+  animation: gradientMove 8s ease infinite;
 }
 
-.hover, .v-btn-hover {
-  transition: all 0.3s ease !important;
+@keyframes gradientMove {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
 }
 
-.hover:hover, .v-btn-hover:hover {
-  transform: scale(1.05) !important;
+/* 🧊 Glass Card */
+.glass-card {
+  backdrop-filter: blur(16px);
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 24px;
+  box-shadow: 0 20px 40px rgba(0,0,0,0.15);
+  color: white;
 }
 
+/* 🎯 Icon */
+.main-icon {
+  color: white;
+  opacity: 0.9;
+  transition: transform 0.3s ease;
+}
+
+.main-icon:hover {
+  transform: scale(1.1);
+}
+
+/* 🔢 404 */
+.error-code {
+  font-size: 5rem;
+  font-weight: 800;
+  margin: 0;
+  line-height: 1;
+}
+
+/* 📝 Title */
+.error-title {
+  font-size: 1.5rem;
+  font-weight: 600;
+  margin-top: 8px;
+}
+
+/* 📄 Description */
+.error-desc {
+  margin-top: 10px;
+  opacity: 0.85;
+  line-height: 1.6;
+}
+
+/* 🔘 Buttons */
+.primary-btn {
+  background: white;
+  color: #4f46e5;
+  font-weight: 600;
+  border-radius: 12px;
+  text-transform: none;
+  transition: all 0.3s ease;
+}
+
+.primary-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 20px rgba(0,0,0,0.2);
+}
+
+.secondary-btn {
+  border-radius: 12px;
+  color: white;
+  border: 2px solid rgba(255,255,255,0.5);
+  text-transform: none;
+  transition: all 0.3s ease;
+}
+
+.secondary-btn:hover {
+  background: rgba(255,255,255,0.1);
+  transform: translateY(-2px);
+}
+
+/* 📌 Footer */
+.footer-text {
+  color: rgba(255,255,255,0.7);
+  font-size: 0.85rem;
+}
+
+/* 📱 Responsive */
 @media (max-width: 600px) {
-  .v-icon {
-    font-size: 150px !important;
+  .error-code {
+    font-size: 3.5rem;
+  }
+
+  .glass-card {
+    padding: 32px 20px;
   }
 }
-</style>
 
+</style>

@@ -1,38 +1,48 @@
-export type RequestStatus = 'pending' | 'processing' | 'completed' | 'failed';
+export type RequestStatus = 'pending' | 'processing' | 'completed' | 'failed'
+export type ServiceType = 'ocr' | 'summarization' | 'translation'
 
 export interface PDFRequest {
-  id: string;
-  userId: string;
-  fileName: string;
-  fileSize: number;
-  status: RequestStatus;
-  uploadedAt: string;
-  completedAt?: string;
-  result?: string;
-  error?: string;
+  id: string
+  fileId: string
+  userId: string
+  organizationName?: string
+  filename: string
+  status: RequestStatus
+  serviceType: ServiceType
+  createdAt: string
+  updatedAt: string
+  result?: unknown
+  error?: string | null
+  downloadUrl?: string | null
+  targetLanguage?: string | null
 }
 
 export interface CreateRequestData {
-  file: File;
-  options?: RequestOptions;
+  userId: string
+  organizationName: string
+  fileId: string
+  type: ServiceType
+  targetLanguage?: string
 }
 
-export interface RequestOptions {
-  outputFormat?: 'json' | 'text' | 'csv';
-  extractImages?: boolean;
-  extractTables?: boolean;
+export interface RequestListFilters {
+  type?: ServiceType
+  status?: RequestStatus
+}
+
+export interface RequestReadParams {
+  fileId: string
+  userId: string
 }
 
 export interface RequestState {
-  requests: PDFRequest[];
-  currentRequest: PDFRequest | null;
-  isLoading: boolean;
-  error: string | null;
+  requests: PDFRequest[]
+  currentRequest: PDFRequest | null
+  isLoading: boolean
+  error: string | null
 }
 
 export interface RequestListResponse {
-  data: PDFRequest[];
-  total: number;
-  page: number;
-  limit: number;
+  data: PDFRequest[]
+  total: number
 }

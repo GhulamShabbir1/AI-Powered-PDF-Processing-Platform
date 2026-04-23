@@ -4,7 +4,7 @@ import uploadService from '../services/upload.service';
 
 interface UploadState {
   currentFile: File | null;
-  uploadId: string | null;
+  fileId: string | null;
   progress: UploadProgress | null;
   isUploading: boolean;
   error: string | null;
@@ -13,7 +13,7 @@ interface UploadState {
 export const useUploadStore = defineStore('upload', {
   state: (): UploadState => ({
     currentFile: null,
-    uploadId: null,
+    fileId: null,
     progress: null,
     isUploading: false,
     error: null,
@@ -25,11 +25,11 @@ export const useUploadStore = defineStore('upload', {
   },
 
   actions: {
-    async uploadFile(file: File) {
+    async uploadFile(file: File, userId: string) {
       const validation = uploadService.validateFile(file);
       if (!validation.valid) {
         this.error = validation.error || 'Invalid file';
-        throw new Error(this.error);
+        throw new Error(this.error || 'Invalid file');
       }
 
       this.currentFile = file;
@@ -38,11 +38,11 @@ export const useUploadStore = defineStore('upload', {
       this.progress = { loaded: 0, total: file.size, percentage: 0 };
 
       try {
-        const uploadId = await uploadService.uploadFile(file, (progress) => {
+        const uploadedFile = await uploadService.uploadFile(file, userId, (progress: UploadProgress) => {
           this.progress = progress;
         });
-        this.uploadId = uploadId;
-        return uploadId;
+        this.fileId = uploadedFile.fileId;
+        return uploadedFile;
       } catch (error) {
         this.error = (error as Error).message;
         throw error;
@@ -51,14 +51,9 @@ export const useUploadStore = defineStore('upload', {
       }
     },
 
-    async checkUploadStatus(uploadId: string) {
-      const status = await uploadService.getUploadStatus(uploadId);
-      return status;
-    },
-
     reset() {
       this.currentFile = null;
-      this.uploadId = null;
+      this.fileId = null;
       this.progress = null;
       this.isUploading = false;
       this.error = null;

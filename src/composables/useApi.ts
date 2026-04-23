@@ -1,6 +1,6 @@
 import { ref } from 'vue';
 import apiClient from '@/services/apiClient';
-import type { ApiResponse, ApiRequestConfig } from '@/types/api.types';
+import type { ApiRequestConfig } from '@/types/api.types';
 
 export function useApi() {
   const isLoading = ref(false);

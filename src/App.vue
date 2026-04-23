@@ -1,8 +1,12 @@
 <template>
-  <v-app shadow>
-<component :is="layoutComponent">
-    <router-view />
-  </component>
+  <v-app>
+    <DefaultLayout v-if="isDefaultLayout">
+      <router-view />
+    </DefaultLayout>
+    <DashboardLayout v-else-if="isDashboardLayout">
+      <router-view />
+    </DashboardLayout>
+    <router-view v-else />
   </v-app>
 </template>
 
@@ -10,13 +14,12 @@
 import { computed } from 'vue'
 import { useRoute } from 'vue-router'
 import DefaultLayout from './layouts/DefaultLayout.vue'
+import DashboardLayout from './layouts/DashboardLayout.vue'
 
 const route = useRoute()
 
-const layoutComponent = computed(() => {
-  return DefaultLayout
-  // or LandingLayout for home
-})
+const isDefaultLayout = computed(() => route.meta.layout === 'default')
+const isDashboardLayout = computed(() => route.meta.layout === 'dashboard')
 </script>
 
 <style>

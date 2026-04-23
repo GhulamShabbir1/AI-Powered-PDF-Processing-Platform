@@ -1,7 +1,10 @@
 import { createApp } from 'vue'
 import App from './App.vue'
 
-// CSS Imports
+// ✅ MUST be first
+import 'vuetify/styles'
+
+// Your CSS
 import './style.css'
 import './assets/styles/variables.css'
 import './assets/styles/main.css'

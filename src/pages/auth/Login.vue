@@ -15,7 +15,7 @@
         </div>
 
         <!-- FORM -->
-        <v-form ref="formRef" v-model="isFormValid">
+        <v-form ref="formRef" v-model="isFormValid" validate-on="input">
 
           <!-- EMAIL -->
           <v-text-field
@@ -23,6 +23,7 @@
             label="Email"
             variant="outlined"
             prepend-inner-icon="mdi-email-outline"
+            validate-on="input"
             :rules="[rules.required, rules.email]"
           />
 
@@ -35,6 +36,7 @@
             prepend-inner-icon="mdi-lock-outline"
             :append-inner-icon="showPassword ? 'mdi-eye-off' : 'mdi-eye'"
             @click:append-inner="showPassword = !showPassword"
+            validate-on="input"
             :rules="[rules.required]"
           />
 
@@ -95,6 +97,7 @@ import { ref } from 'vue'
 import { useRouter } from 'vue-router'
 import AuthLayout from '../../layouts/AuthLayout.vue'
 import { useAuthStore } from '../../stores'
+import { validateEmail, validateRequired } from '../../utils/validators'
 
 const router = useRouter()
 const authStore = useAuthStore()
@@ -116,10 +119,15 @@ const alertMessage = ref('')
 
 // VALIDATION RULES
 const rules = {
-  required: (v: string) => !!v || 'This field is required',
+  required: (v: string) => {
+    const result = validateRequired(v, 'This field')
+    return result.valid ? true : result.error || 'This field is required'
+  },
 
-  email: (v: string) =>
-    /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v) || 'Invalid email',
+  email: (v: string) => {
+    const result = validateEmail(v)
+    return result.valid ? true : result.error || 'Invalid email'
+  },
 }
 
 // LOGIN
@@ -131,7 +139,7 @@ const validateAndLogin = async () => {
   loading.value = true
 
   try {
-    await authStore.login(email.value, password.value)
+    await authStore.login(email.value.trim(), password.value)
 
     router.push('/dashboard')
 

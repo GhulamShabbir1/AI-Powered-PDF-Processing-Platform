@@ -71,6 +71,28 @@ export function validateRequired(
   return { valid: true };
 }
 
+export function validateName(name: string): { valid: boolean; error?: string } {
+  if (!name || name.trim() === '') {
+    return { valid: false, error: 'Full Name is required' };
+  }
+
+  const trimmedName = name.trim();
+
+  if (trimmedName.length < 2) {
+    return { valid: false, error: 'Full Name is too short' };
+  }
+
+  if (trimmedName.length > 100) {
+    return { valid: false, error: 'Full Name is too long' };
+  }
+
+  if (!/^[a-zA-Z0-9.' -]+$/.test(trimmedName)) {
+    return { valid: false, error: 'Full Name contains invalid characters' };
+  }
+
+  return { valid: true };
+}
+
 // Confirm Password
 export function validateConfirmPassword(
   password: string,

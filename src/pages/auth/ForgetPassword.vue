@@ -43,6 +43,7 @@
             v-if="step === 1"
             @submit.prevent="handleSendOtp"
             v-model="isEmailValid"
+            validate-on="input"
             class="auth-form"
           >
             <div class="form-group">
@@ -55,6 +56,7 @@
                 class="custom-field"
                 hide-details="auto"
                 prepend-inner-icon="mdi-email-outline"
+                validate-on="input"
                 :rules="emailRules"
               />
             </div>
@@ -75,6 +77,7 @@
             v-else
             @submit.prevent="handleVerifyOtp"
             v-model="isOtpValid"
+            validate-on="input"
             class="auth-form"
           >
             <div class="form-group">
@@ -87,6 +90,7 @@
                 hide-details="auto"
                 prepend-inner-icon="mdi-shield-key-outline"
                 :rules="otpRules"
+                validate-on="input"
                 maxlength="6"
                 inputmode="numeric"
                 autofocus

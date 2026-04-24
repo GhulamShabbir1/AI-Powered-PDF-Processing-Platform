@@ -99,10 +99,12 @@ const handleLogout = async () => {
   } catch (error) {
     console.error('Logout API failed:', error)
   } finally {
-  
     localStorage.removeItem('token')
+    localStorage.removeItem('user')
+    localStorage.removeItem('user_id')
+    localStorage.removeItem('organization_name')
     isLoggingOut.value = false
-    router.push('/login')
+    router.replace('/login')
   }
 }
 </script> 

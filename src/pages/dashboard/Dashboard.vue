@@ -13,7 +13,7 @@
     </v-sheet>
 
     <!-- Tools Grid -->
-    <v-row dense justify="center">
+    <v-row density="comfortable" justify="center">
 
       <v-col
         v-for="(tool, index) in tools"

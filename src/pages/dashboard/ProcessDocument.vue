@@ -210,6 +210,12 @@ const authStore = useAuthStore()
 const requestStore = useRequestStore()
 const uploadStore = useUploadStore()
 
+const toSafeText = (value: unknown): string => {
+  if (typeof value === 'string') return value
+  if (typeof value === 'number') return String(value)
+  return ''
+}
+
 const activeService = computed(() => (route.params.service as string) || 'ocr')
 const serviceConfig = {
   ocr: {
@@ -248,11 +254,12 @@ const translateSettings = ref({ target: 'Spanish' })
 
 const currentUserId = computed(() => authStore.currentUser?.id || localStorage.getItem('user_id') || '')
 const organizationName = ref(
-  authStore.currentUser?.organization_name ||
-    authStore.currentUser?.organization ||
-    localStorage.getItem('organization_name') ||
+  toSafeText(authStore.currentUser?.organization_name) ||
+    toSafeText(authStore.currentUser?.organization) ||
+    toSafeText(localStorage.getItem('organization_name')) ||
     ''
 )
+const normalizedOrganizationName = computed(() => toSafeText(organizationName.value).trim())
 
 const isImage = computed(() => selectedFile.value?.type.startsWith('image/'))
 const isPdf = computed(() => selectedFile.value?.type === 'application/pdf')
@@ -381,7 +388,7 @@ const processDocument = async () => {
     return
   }
 
-  if (!organizationName.value.trim()) {
+  if (!normalizedOrganizationName.value) {
     processError.value = 'Organization name is required for service creation.'
     return
   }
@@ -393,14 +400,14 @@ const processDocument = async () => {
 
     const created = await requestStore.createRequest({
       userId: currentUserId.value,
-      organizationName: organizationName.value.trim(),
+      organizationName: normalizedOrganizationName.value,
       fileId,
       type: serviceType.value,
       targetLanguage: serviceType.value === 'translation' ? translateSettings.value.target : undefined,
     })
 
     currentRequest.value = created
-    localStorage.setItem('organization_name', organizationName.value.trim())
+    localStorage.setItem('organization_name', normalizedOrganizationName.value)
     processSuccess.value = `${serviceTitle.value} started successfully.`
 
     if (created.status === 'pending' || created.status === 'processing') {

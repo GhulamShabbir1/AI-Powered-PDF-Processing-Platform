@@ -21,18 +21,19 @@
         </v-alert>
 
         <v-fade-transition mode="out-in">
-          <v-form v-if="!isSuccess" @submit.prevent="handleResetPassword" v-model="isFormValid" class="auth-form">
+          <v-form v-if="!isSuccess" @submit.prevent="handleResetPassword" v-model="isFormValid" validate-on="input" class="auth-form">
 
             <div class="form-group">
               <v-text-field v-model="form.newPassword" label="New Password" type="password" variant="outlined"
                 density="comfortable" class="custom-field" hide-details="auto" prepend-inner-icon="mdi-lock-outline"
+                validate-on="input"
                 :rules="passwordRules"></v-text-field>
             </div>
 
             <div class="form-group">
               <v-text-field v-model="form.confirmPassword" label="Confirm Password" type="password" variant="outlined"
                 density="comfortable" class="custom-field" hide-details="auto"
-                prepend-inner-icon="mdi-lock-check-outline" :rules="confirmPasswordRules"></v-text-field>
+                prepend-inner-icon="mdi-lock-check-outline" validate-on="input" :rules="confirmPasswordRules"></v-text-field>
             </div>
 
             <v-btn type="submit" class="auth-btn w-100 py-6 font-weight-bold mt-2" size="large" :loading="isLoading"

@@ -64,7 +64,7 @@
             size="large"
             block
             :loading="loading"
-            :disabled="!isFormValid"
+            :disabled="!canSubmit"
             @click="validateAndLogin"
           >
             Login
@@ -93,7 +93,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue'
+import { computed, ref } from 'vue'
 import { useRouter } from 'vue-router'
 import AuthLayout from '../../layouts/AuthLayout.vue'
 import { useAuthStore } from '../../stores'
@@ -129,6 +129,13 @@ const rules = {
     return result.valid ? true : result.error || 'Invalid email'
   },
 }
+
+const canSubmit = computed(() => {
+  const isEmailValid = validateEmail(email.value).valid
+  const isPasswordValid = validateRequired(password.value, 'Password').valid
+
+  return isFormValid.value && isEmailValid && isPasswordValid
+})
 
 // LOGIN
 const validateAndLogin = async () => {

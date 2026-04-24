@@ -86,7 +86,11 @@ export function validateName(name: string): { valid: boolean; error?: string } {
     return { valid: false, error: 'Full Name is too long' };
   }
 
-  if (!/^[a-zA-Z0-9.' -]+$/.test(trimmedName)) {
+  if (trimmedName.includes('.')) {
+    return { valid: false, error: 'Invalid Full Name' };
+  }
+
+  if (!/^[a-zA-Z0-9' -]+$/.test(trimmedName)) {
     return { valid: false, error: 'Full Name contains invalid characters' };
   }
 

@@ -102,7 +102,7 @@
             size="large"
             block
             :loading="loading"
-            :disabled="!isFormValid"
+            :disabled="!canSubmit"
             @click="validateAndRegister"
           >
             Create Account
@@ -181,6 +181,25 @@ const rules = {
     return result.valid ? true : result.error || 'Invalid password'
   }
 }
+
+const canSubmit = computed(() => {
+  const isFullNameValid = validateName(fullName.value).valid
+  const isOrganizationValid = validateRequired(organization.value, 'Organization').valid
+  const isEmailValid = validateEmail(email.value).valid
+  const isPasswordValid = validatePassword(password.value).valid
+  const isConfirmPasswordValid =
+    confirmPassword.value.trim().length > 0 && password.value === confirmPassword.value
+
+  return (
+    isFormValid.value &&
+    isFullNameValid &&
+    isOrganizationValid &&
+    isEmailValid &&
+    isPasswordValid &&
+    isConfirmPasswordValid &&
+    termsAccepted.value
+  )
+})
 
 // PASSWORD STRENGTH
 const passwordStrength = computed(() => {

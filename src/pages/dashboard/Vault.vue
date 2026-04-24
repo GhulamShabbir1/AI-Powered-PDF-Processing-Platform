@@ -132,12 +132,17 @@ import { computed, onMounted } from 'vue'
 
 const authStore = useAuthStore()
 const requestStore = useRequestStore()
+const toSafeText = (value: unknown): string => {
+  if (typeof value === 'string') return value
+  if (typeof value === 'number') return String(value)
+  return ''
+}
 const currentUserId = computed(() => authStore.currentUser?.id || localStorage.getItem('user_id') || '')
 const organizationName = computed(
   () =>
-    authStore.currentUser?.organization_name ||
-    authStore.currentUser?.organization ||
-    localStorage.getItem('organization_name') ||
+    toSafeText(authStore.currentUser?.organization_name) ||
+    toSafeText(authStore.currentUser?.organization) ||
+    toSafeText(localStorage.getItem('organization_name')) ||
     ''
 )
 

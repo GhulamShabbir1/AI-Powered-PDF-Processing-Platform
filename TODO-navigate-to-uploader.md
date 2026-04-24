@@ -1,1 +1,0 @@
-# Navigate Dashboard Try Now Cards to FileUploader\n\n## Steps:\n- [x] Add route to router/index.ts\n- [x] Update FileUploader.vue with default props\n- [x] Update Dashboard.vue tool routes\n\n✅ Task completed! Click Try Now cards in dashboard to navigate to FileUploader.

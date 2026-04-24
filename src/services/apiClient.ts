@@ -29,6 +29,9 @@ apiClient.interceptors.response.use(
   (error: AxiosError<ApiError>) => {
     if (error.response?.status === 401) {
       localStorage.removeItem('token');
+      localStorage.removeItem('user');
+      localStorage.removeItem('user_id');
+      localStorage.removeItem('organization_name');
 
       window.dispatchEvent(new Event('auth-unauthorized'));
     }

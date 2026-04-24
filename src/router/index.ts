@@ -45,13 +45,15 @@ const routes: Array<RouteRecordRaw> = [
     component: ResetPassword
   },
 
+  /* =========================
+     PROTECTED ROUTES
+  ========================= */
   {
     path: '/test-upload',
     name: 'TestUpload',
     component: () => import('../pages/dashboard/ProcessDocument.vue'),
     meta: { requiresAuth: true }
   },
-
   {
     path: '/dashboard/process/:service',
     name: 'ProcessDocument',
@@ -61,7 +63,6 @@ const routes: Array<RouteRecordRaw> = [
       requiresAuth: true
     }
   },
-
   {
     path: '/dashboard',
     name: 'Dashboard',
@@ -71,7 +72,6 @@ const routes: Array<RouteRecordRaw> = [
       requiresAuth: true
     }
   },
-
   {
     path: '/dashboard/vault',
     name: 'Vault',
@@ -80,6 +80,15 @@ const routes: Array<RouteRecordRaw> = [
       layout: 'dashboard',
       requiresAuth: true
     }
+  },
+
+  /* =========================
+     NOT FOUND
+  ========================= */
+  {
+    path: '/:pathMatch(.*)*',
+    name: 'NotFound',
+    component: () => import('../pages/NotFound.vue')
   }
 ]
 
@@ -92,16 +101,29 @@ const router = createRouter({
 })
 
 /* =========================
-   AUTH HELPERS
+   AUTH HELPERS (SAFE)
 ========================= */
-function isAuthenticated() {
-  return !!localStorage.getItem('token')
+function getToken(): string | null {
+  try {
+    const token = localStorage.getItem('token')
+    return token ? token : null
+  } catch {
+    return null
+  }
+}
+
+function isAuthenticated(): boolean {
+  const token = getToken()
+  return !!token && token.length > 10 // basic safety check
 }
 
 /* =========================
-   ROUTE GUARD
+   GLOBAL GUARD
 ========================= */
-router.beforeEach((to, _from, next) => {
+router.beforeEach((to) => {
+  const loggedIn = isAuthenticated()
+  const requiresAuth = to.meta?.requiresAuth === true
+
   const publicPages = [
     'Home',
     'Login',
@@ -111,24 +133,24 @@ router.beforeEach((to, _from, next) => {
     'Verify'
   ]
 
-  const requiresAuth = to.meta?.requiresAuth === true
-  const loggedIn = isAuthenticated()
-
-  /* 🔐 Case 1: Protected route */
+  /* -------------------------
+     1. Protect private routes
+  -------------------------- */
   if (requiresAuth && !loggedIn) {
-    return next({
-      name: 'Login',
-      query: { redirect: to.fullPath }
-    })
+    return {
+      name: 'Login'
+    }
   }
 
-  /* 🔁 Case 2: Logged-in user accessing auth pages */
+  /* -------------------------
+     2. Prevent logged-in user
+        from visiting auth pages
+  -------------------------- */
   if (loggedIn && publicPages.includes(to.name as string)) {
-    return next({ name: 'Dashboard' })
+    return { name: 'Dashboard' }
   }
 
-  /* ✅ Case 3: Allow navigation */
-  return next()
+  return true
 })
 
 export default router

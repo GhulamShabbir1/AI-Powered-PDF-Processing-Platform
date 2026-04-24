@@ -268,12 +268,12 @@ const validateAndRegister = async () => {
   background: white;
 }
 
-/* @media (max-width: 960px) {
+@media (max-width: 960px) {
   .register-form-section {
     width: 100%;
     position: relative;
   }
-} */
+}
 
 .form-wrapper {
   width: 100%;

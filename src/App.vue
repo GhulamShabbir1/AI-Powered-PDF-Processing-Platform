@@ -1,12 +1,14 @@
 <template>
   <v-app>
-    <DefaultLayout v-if="isDefaultLayout">
+    <DefaultLayout v-if="isDefaultLayout" class="app-shell">
       <router-view />
     </DefaultLayout>
-    <DashboardLayout v-else-if="isDashboardLayout">
+    <DashboardLayout v-else-if="isDashboardLayout" class="app-shell">
       <router-view />
     </DashboardLayout>
-    <router-view v-else />
+    <div v-else class="app-shell">
+      <router-view />
+    </div>
   </v-app>
 </template>
 
@@ -23,10 +25,18 @@ const isDashboardLayout = computed(() => route.meta.layout === 'dashboard')
 </script>
 
 <style>
-html, body {
+html,
+body,
+#app {
   margin: 0;
   padding: 0;
+  width: 100%;
+  min-height: 100vh;
   overflow-x: hidden;
 }
-</style>
 
+.app-shell {
+  width: 100%;
+  min-height: 100vh;
+}
+</style>

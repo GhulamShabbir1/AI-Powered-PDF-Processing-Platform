@@ -18,8 +18,6 @@ export interface PDFRequest {
 }
 
 export interface CreateRequestData {
-  userId: string
-  organizationName: string
   fileId: string
   type: ServiceType
   targetLanguage?: string
@@ -32,7 +30,6 @@ export interface RequestListFilters {
 
 export interface RequestReadParams {
   fileId: string
-  userId: string
 }
 
 export interface RequestState {

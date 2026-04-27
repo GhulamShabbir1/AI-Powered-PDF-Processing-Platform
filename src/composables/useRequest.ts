@@ -11,28 +11,27 @@ export function useRequest() {
   const isLoading = computed(() => requestStore.isLoading);
   const error = computed(() => requestStore.error);
 
-  async function fetchRequests(userId: string, organizationName: string, filters?: RequestListFilters) {
-    return requestStore.fetchRequests(userId, organizationName, filters);
+  async function fetchRequests(organizationId: string, filters?: RequestListFilters) {
+    return requestStore.fetchRequests(organizationId, filters);
   }
 
-  async function fetchRequestById(fileId: string, userId: string, serviceType?: PDFRequest['serviceType']) {
-    return requestStore.fetchRequestById(fileId, userId, serviceType);
+  async function fetchRequestById(fileId: string, serviceType?: PDFRequest['serviceType']) {
+    return requestStore.fetchRequestById(fileId, serviceType);
   }
 
   async function createRequest(payload: CreateRequestData) {
     return requestStore.createRequest(payload);
   }
 
-  async function deleteRequest(fileId: string, userId: string) {
-    return requestStore.deleteRequest(fileId, userId);
+  async function deleteRequest(fileId: string) {
+    return requestStore.deleteRequest(fileId);
   }
 
   async function checkStatus(
     fileId: string,
-    userId: string,
     serviceType?: PDFRequest['serviceType']
   ): Promise<PDFRequest | null> {
-    return requestService.getRequestStatus({ fileId, userId }, serviceType);
+    return requestService.getRequestStatus({ fileId }, serviceType);
   }
 
   function updateStatus(id: string, status: PDFRequest['status']) {

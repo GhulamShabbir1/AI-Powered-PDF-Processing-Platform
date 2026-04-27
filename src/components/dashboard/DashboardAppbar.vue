@@ -102,6 +102,7 @@ const handleLogout = async () => {
     localStorage.removeItem('token')
     localStorage.removeItem('user')
     localStorage.removeItem('user_id')
+    localStorage.removeItem('organization_id')
     localStorage.removeItem('organization_name')
     isLoggingOut.value = false
     router.replace('/login')

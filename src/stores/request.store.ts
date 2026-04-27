@@ -17,11 +17,11 @@ export const useRequestStore = defineStore('request', {
   },
 
   actions: {
-    async fetchRequests(userId: string, organizationName: string, filters: RequestListFilters = {}) {
+    async fetchRequests(organizationId: string, filters: RequestListFilters = {}) {
       this.isLoading = true
       this.error = null
       try {
-        const response = await requestService.getRequests(userId, organizationName, filters)
+        const response = await requestService.getRequests(organizationId, filters)
         this.requests = response.data
         return response
       } catch (error) {
@@ -32,16 +32,16 @@ export const useRequestStore = defineStore('request', {
       }
     },
 
-    async fetchAllRequests(userId: string, organizationName: string, filters: RequestListFilters = {}) {
-      const response = await this.fetchRequests(userId, organizationName, filters)
+    async fetchAllRequests(organizationId: string, filters: RequestListFilters = {}) {
+      const response = await this.fetchRequests(organizationId, filters)
       return response.data
     },
 
-    async fetchRequestById(fileId: string, userId: string, serviceType?: PDFRequest['serviceType']) {
+    async fetchRequestById(fileId: string, serviceType?: PDFRequest['serviceType']) {
       this.isLoading = true
       this.error = null
       try {
-        const request = await requestService.getRequestById({ fileId, userId }, serviceType)
+        const request = await requestService.getRequestById({ fileId }, serviceType)
         this.currentRequest = request
         return request
       } catch (error) {
@@ -53,8 +53,6 @@ export const useRequestStore = defineStore('request', {
     },
 
     async createRequest(payload: {
-      userId: string
-      organizationName: string
       fileId: string
       type: PDFRequest['serviceType']
       targetLanguage?: string
@@ -73,11 +71,11 @@ export const useRequestStore = defineStore('request', {
       }
     },
 
-    async deleteRequest(fileId: string, userId: string) {
+    async deleteRequest(fileId: string) {
       this.isLoading = true
       this.error = null
       try {
-        await requestService.deleteRequest(fileId, userId)
+        await requestService.deleteRequest(fileId)
         this.requests = this.requests.filter((r: PDFRequest) => r.fileId !== fileId)
       } catch (error) {
         this.error = (error as Error).message

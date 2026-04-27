@@ -21,7 +21,7 @@ export function useUpload() {
     }
   }
 
-  async function upload(userId: string) {
+  async function upload() {
     if (!selectedFile.value) {
       throw new Error('No file selected');
     }
@@ -30,7 +30,7 @@ export function useUpload() {
       throw new Error(validationError.value);
     }
 
-    const uploadedFile = await uploadStore.uploadFile(selectedFile.value, userId);
+    const uploadedFile = await uploadStore.uploadFile(selectedFile.value);
     
     return uploadedFile;
   }

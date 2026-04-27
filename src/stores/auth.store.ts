@@ -34,6 +34,9 @@ export const useAuthStore = defineStore('auth', {
         authService.setToken(data.access_token)
         localStorage.setItem('user', JSON.stringify(data.user))
         localStorage.setItem('user_id', data.user.id)
+        if ((data.user as any).organization_id) {
+          localStorage.setItem('organization_id', (data.user as any).organization_id)
+        }
 
         const organizationName = (data.user as any).organization_name || (data.user as any).organization || ''
         if (organizationName) {
@@ -61,6 +64,9 @@ export const useAuthStore = defineStore('auth', {
         authService.setToken(data.access_token)
         localStorage.setItem('user', JSON.stringify(data.user))
         localStorage.setItem('user_id', data.user.id)
+        if ((data.user as any).organization_id) {
+          localStorage.setItem('organization_id', (data.user as any).organization_id)
+        }
         localStorage.setItem('organization_name', organization)
       } finally {
         this.isLoading = false
@@ -96,6 +102,7 @@ export const useAuthStore = defineStore('auth', {
         authService.removeToken()
         localStorage.removeItem('user')
         localStorage.removeItem('user_id')
+        localStorage.removeItem('organization_id')
         localStorage.removeItem('organization_name')
         this.isLoading = false
       }

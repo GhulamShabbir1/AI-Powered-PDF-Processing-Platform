@@ -137,12 +137,10 @@ const toSafeText = (value: unknown): string => {
   if (typeof value === 'number') return String(value)
   return ''
 }
-const currentUserId = computed(() => authStore.currentUser?.id || localStorage.getItem('user_id') || '')
-const organizationName = computed(
+const organizationId = computed(
   () =>
-    toSafeText(authStore.currentUser?.organization_name) ||
-    toSafeText(authStore.currentUser?.organization) ||
-    toSafeText(localStorage.getItem('organization_name')) ||
+    toSafeText(authStore.currentUser?.organization_id) ||
+    toSafeText(localStorage.getItem('organization_id')) ||
     ''
 )
 
@@ -158,14 +156,13 @@ const headers = [
 ]
 
 onMounted(async () => {
-  if (currentUserId.value && organizationName.value) {
-    await requestStore.fetchAllRequests(currentUserId.value, organizationName.value)
+  if (organizationId.value) {
+    await requestStore.fetchAllRequests(organizationId.value)
   }
 })
 
 const refreshRequest = async (item: PDFRequest) => {
-  if (!currentUserId.value) return
-  const latest = await requestStore.fetchRequestById(item.fileId, currentUserId.value, item.serviceType)
+  const latest = await requestStore.fetchRequestById(item.fileId, item.serviceType)
   if (latest) {
     const index = requestStore.requests.findIndex((request: PDFRequest) => request.id === latest.id)
     if (index >= 0) {
@@ -175,8 +172,7 @@ const refreshRequest = async (item: PDFRequest) => {
 }
 
 const removeFile = async (item: PDFRequest) => {
-  if (!currentUserId.value) return
-  await requestStore.deleteRequest(item.fileId, currentUserId.value)
+  await requestStore.deleteRequest(item.fileId)
 }
 
 const getStatusColor = (status: PDFRequest['status']) => {

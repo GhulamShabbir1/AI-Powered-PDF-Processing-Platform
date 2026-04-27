@@ -15,6 +15,18 @@
             <v-btn variant="text" prepend-icon="mdi-arrow-left" @click="clearFile" class="font-weight-bold text-none text-black">
               Back to Upload
             </v-btn>
+            <v-spacer />
+            <v-btn
+              color="error"
+              variant="tonal"
+              prepend-icon="mdi-delete-outline"
+              class="text-none"
+              :loading="isDeleting"
+              :disabled="isBusy"
+              @click="deleteFileAndReset"
+            >
+              Delete File
+            </v-btn>
           </div>
 
           <div class="canvas-container flex-grow-1 d-flex align-center justify-center pa-6">
@@ -77,17 +89,6 @@
             >
               {{ processSuccess }}
             </v-alert>
-
-            <div class="mb-4">
-              <div class="text-subtitle-2 font-weight-bold mb-2 text-black">Organization</div>
-              <v-text-field
-                v-model="organizationName"
-                variant="outlined"
-                density="comfortable"
-                hide-details="auto"
-                placeholder="Enter organization name"
-              />
-            </div>
 
             <div v-if="activeService === 'ocr'">
               <div class="text-subtitle-2 font-weight-bold mb-2 text-black">Document languages</div>
@@ -200,21 +201,14 @@
 import { computed, onBeforeUnmount, ref, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import FileUploader from '../../components/upload/FileUploader.vue'
-import { useAuthStore, useRequestStore, useUploadStore } from '../../stores'
+import { useRequestStore, useUploadStore } from '../../stores'
 import type { PDFRequest, ServiceType } from '../../types/request.types'
 import { formatFileSize, truncateText } from '../../utils/helpers'
 
 const route = useRoute()
 const router = useRouter()
-const authStore = useAuthStore()
 const requestStore = useRequestStore()
 const uploadStore = useUploadStore()
-
-const toSafeText = (value: unknown): string => {
-  if (typeof value === 'string') return value
-  if (typeof value === 'number') return String(value)
-  return ''
-}
 
 const activeService = computed(() => (route.params.service as string) || 'ocr')
 const serviceConfig = {
@@ -243,6 +237,7 @@ const selectedFile = ref<File | null>(null)
 const previewUrl = ref<string | null>(null)
 const uploadedFileId = ref<string | null>(null)
 const isSubmitting = ref(false)
+const isDeleting = ref(false)
 const processError = ref<string | null>(null)
 const processSuccess = ref<string | null>(null)
 const currentRequest = ref<PDFRequest | null>(null)
@@ -252,15 +247,6 @@ const ocrSettings = ref({ languages: ['English'] })
 const summarizeSettings = ref({ length: 'Medium (Standard)', format: 'Bullet Points' })
 const translateSettings = ref({ target: 'Spanish' })
 
-const currentUserId = computed(() => authStore.currentUser?.id || localStorage.getItem('user_id') || '')
-const organizationName = ref(
-  toSafeText(authStore.currentUser?.organization_name) ||
-    toSafeText(authStore.currentUser?.organization) ||
-    toSafeText(localStorage.getItem('organization_name')) ||
-    ''
-)
-const normalizedOrganizationName = computed(() => toSafeText(organizationName.value).trim())
-
 const isImage = computed(() => selectedFile.value?.type.startsWith('image/'))
 const isPdf = computed(() => selectedFile.value?.type === 'application/pdf')
 const fileMeta = computed(() => {
@@ -268,7 +254,8 @@ const fileMeta = computed(() => {
   return `${selectedFile.value.type || 'Unknown type'} - ${formatFileSize(selectedFile.value.size)}`
 })
 
-const isBusy = computed(() => isSubmitting.value || uploadStore.isUploading)
+const fileIdToDelete = computed(() => currentRequest.value?.fileId || uploadedFileId.value)
+const isBusy = computed(() => isSubmitting.value || isDeleting.value || uploadStore.isUploading)
 const actionLabel = computed(() => {
   if (uploadStore.isUploading) return 'Uploading'
   if (isSubmitting.value) return 'Processing'
@@ -320,13 +307,12 @@ onBeforeUnmount(() => {
 
 const startPolling = () => {
   stopPolling()
-  if (!uploadedFileId.value || !currentUserId.value) return
+  if (!uploadedFileId.value) return
 
   pollingTimer.value = window.setInterval(async () => {
     try {
       const latest = await requestStore.fetchRequestById(
         uploadedFileId.value as string,
-        currentUserId.value,
         serviceType.value
       )
 
@@ -361,15 +347,37 @@ const clearFile = () => {
   stopPolling()
 }
 
+const deleteFileAndReset = async () => {
+  processError.value = null
+  processSuccess.value = null
+
+  if (!fileIdToDelete.value) {
+    clearFile()
+    return
+  }
+
+  isDeleting.value = true
+
+  try {
+    stopPolling()
+    await requestStore.deleteRequest(fileIdToDelete.value)
+    clearFile()
+  } catch (error: any) {
+    processError.value =
+      error?.response?.data?.message ||
+      error?.message ||
+      'Failed to delete file.'
+  } finally {
+    isDeleting.value = false
+  }
+}
+
 const uploadCurrentFile = async () => {
   if (!selectedFile.value) {
     throw new Error('Please choose a file first.')
   }
-  if (!currentUserId.value) {
-    throw new Error('User session is missing. Please log in again.')
-  }
 
-  const uploadedFile = await uploadStore.uploadFile(selectedFile.value, currentUserId.value)
+  const uploadedFile = await uploadStore.uploadFile(selectedFile.value)
   uploadedFileId.value = uploadedFile.fileId
   return uploadedFile.fileId
 }
@@ -383,31 +391,18 @@ const processDocument = async () => {
     return
   }
 
-  if (!currentUserId.value) {
-    processError.value = 'User session is missing. Please log in again.'
-    return
-  }
-
-  if (!normalizedOrganizationName.value) {
-    processError.value = 'Organization name is required for service creation.'
-    return
-  }
-
   isSubmitting.value = true
 
   try {
     const fileId = uploadedFileId.value || (await uploadCurrentFile())
 
     const created = await requestStore.createRequest({
-      userId: currentUserId.value,
-      organizationName: normalizedOrganizationName.value,
       fileId,
       type: serviceType.value,
       targetLanguage: serviceType.value === 'translation' ? translateSettings.value.target : undefined,
     })
 
     currentRequest.value = created
-    localStorage.setItem('organization_name', normalizedOrganizationName.value)
     processSuccess.value = `${serviceTitle.value} started successfully.`
 
     if (created.status === 'pending' || created.status === 'processing') {

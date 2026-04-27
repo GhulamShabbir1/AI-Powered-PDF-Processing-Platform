@@ -2,7 +2,7 @@ import axios from 'axios';
 import type { AxiosInstance, AxiosError } from 'axios';
 import type { ApiError } from '../types/api.types'; // Assuming you export this
 
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://172.16.110.76:8000/api';
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://178.104.58.236:8085/api';
 
 const apiClient: AxiosInstance = axios.create({
   baseURL: API_BASE_URL,
@@ -31,6 +31,7 @@ apiClient.interceptors.response.use(
       localStorage.removeItem('token');
       localStorage.removeItem('user');
       localStorage.removeItem('user_id');
+      localStorage.removeItem('organization_id');
       localStorage.removeItem('organization_name');
 
       window.dispatchEvent(new Event('auth-unauthorized'));

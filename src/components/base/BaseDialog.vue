@@ -1,7 +1,8 @@
 <template>
   <v-dialog
     v-model="isOpen"
-    max-width="500"
+    :max-width="$vuetify.display.mobile ? '95vw' : 500"
+    :width="$vuetify.display.mobile ? '95vw' : undefined"
     transition="dialog-bottom-transition"
     v-bind="$attrs"
   >

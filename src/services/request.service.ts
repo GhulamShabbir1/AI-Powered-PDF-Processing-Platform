@@ -1,4 +1,3 @@
-import apiClient from './apiClient'
 import type {
   CreateRequestData,
   PDFRequest,
@@ -7,6 +6,7 @@ import type {
   RequestReadParams,
   ServiceType,
 } from '@/types/request.types'
+import apiClient from './apiClient'
 
 const toArray = (payload: unknown): Record<string, any>[] => {
   if (Array.isArray(payload)) return payload as Record<string, any>[]
@@ -63,8 +63,12 @@ export const requestService = {
     const response = await apiClient.get('/service/list', {
       params: {
         organization_id: organizationId,
+        ...(filters.search ? { search: filters.search } : {}),
         ...(filters.type ? { type: filters.type } : {}),
         ...(filters.status ? { status: filters.status } : {}),
+        ...(filters.dateFrom ? { date_from: filters.dateFrom } : {}),
+        ...(filters.dateTo ? { date_to: filters.dateTo } : {}),
+        ...(filters.targetLanguage ? { target_language: filters.targetLanguage } : {}),
       },
     })
 

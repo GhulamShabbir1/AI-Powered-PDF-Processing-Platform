@@ -1,9 +1,9 @@
 <template>
   <div class="vault-page">
-    <v-container class="py-6">
+    <v-container class="py-4 py-md-6">
 
       <!-- 🔷 Header -->
-      <div class="vault-header d-flex align-center justify-space-between mb-6">
+      <div class="vault-header d-flex flex-column flex-sm-row align-start align-sm-center justify-space-between mb-4 mb-md-6 ga-2">
         <div>
           <h1 class="text-h5 text-md-h4 font-weight-bold mb-1">Vault</h1>
           <p class="text-body-2 text-medium-emphasis">
@@ -45,7 +45,7 @@
       <!-- 📊 Table -->
       <v-card
         v-else
-        class="vault-card"
+        class="vault-card overflow-x-auto"
         elevation="0"
       >
         <v-data-table
@@ -275,8 +275,8 @@ const formatDate = (dateString: string) =>
 /* 📱 Mobile */
 @media (max-width: 600px) {
   .vault-card {
-    border-radius: 0;
-    padding: 0;
+    border-radius: 12px;
+    padding: 4px;
   }
 }
 

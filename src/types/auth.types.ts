@@ -7,6 +7,7 @@ export interface User {
   role: 'user' | 'admin';
   organization?: string;
   organization_name?: string;
+  organization_id?: string;
   createdAt: string;
 }
 

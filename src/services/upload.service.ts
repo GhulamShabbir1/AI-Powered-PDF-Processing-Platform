@@ -9,12 +9,10 @@ export interface UploadedFileResponse {
 export const uploadService = {
   async uploadFile(
     file: File,
-    userId: string,
     onProgress?: (progress: UploadProgress) => void
   ): Promise<UploadedFileResponse> {
     const formData = new FormData()
     formData.append('file', file)
-    formData.append('user_id', userId)
 
     const response = await apiClient.post('/file/upload', formData, {
       headers: { 'Content-Type': 'multipart/form-data' },
@@ -38,11 +36,10 @@ export const uploadService = {
     }
   },
 
-  async deleteFile(fileId: string, userId: string): Promise<void> {
+  async deleteFile(fileId: string): Promise<void> {
     await apiClient.delete('/file/delete', {
       data: {
         file_id: fileId,
-        user_id: userId,
       },
     })
   },

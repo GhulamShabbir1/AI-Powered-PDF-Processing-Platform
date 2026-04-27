@@ -1,5 +1,5 @@
 <template>
-  <v-container fluid class="fill-height pa-0 bg-grey-lighten-4 overflow-hidden">
+  <v-container fluid class="process-page fill-height pa-0 bg-grey-lighten-4 overflow-hidden">
     <v-slide-y-transition mode="out-in">
       <div v-if="!selectedFile" class="w-100 h-100 d-flex align-center justify-center">
         <FileUploader
@@ -10,16 +10,28 @@
       </div>
 
       <v-row v-else class="ma-0 h-100 w-100">
-        <v-col cols="12" md="8" lg="9" class="preview-area d-flex flex-column bg-grey-lighten-4 position-relative pa-0">
-          <div class="preview-toolbar pa-4 d-flex align-center w-100">
+        <v-col cols="12" md="9" lg="9" class="preview-area d-flex flex-column bg-grey-lighten-4 position-relative pa-0">
+          <div class="preview-toolbar pa-3 d-flex align-center w-100">
             <v-btn variant="text" prepend-icon="mdi-arrow-left" @click="clearFile" class="font-weight-bold text-none text-black">
               Back to Upload
             </v-btn>
+            <v-spacer />
+            <v-btn
+              color="error"
+              variant="tonal"
+              prepend-icon="mdi-delete-outline"
+              class="text-none"
+              :loading="isDeleting"
+              :disabled="isBusy"
+              @click="deleteFileAndReset"
+            >
+              Delete File
+            </v-btn>
           </div>
 
-          <div class="canvas-container flex-grow-1 d-flex align-center justify-center pa-6">
-            <v-card class="document-preview-card elevation-2 rounded-xl d-flex flex-column align-center pa-6 bg-white">
-              <div class="thumbnail-wrapper d-flex align-center justify-center w-100 mb-4 flex-grow-1">
+          <div class="canvas-container flex-grow-1 d-flex align-center justify-center pa-4">
+            <v-card class="document-preview-card elevation-2 rounded-xl d-flex flex-column align-center pa-4 bg-white">
+              <div class="thumbnail-wrapper d-flex align-center justify-center w-100 mb-3 flex-grow-1">
                 <v-img v-if="isImage" :src="previewUrl || undefined" class="thumbnail-img elevation-1" cover></v-img>
 
                 <div v-else-if="isPdf" class="pdf-thumbnail-container elevation-2">
@@ -39,22 +51,22 @@
                 {{ selectedFile.name }}
               </div>
 
-              <div class="text-caption text-medium-emphasis mt-2">
+              <div class="text-caption text-medium-emphasis mt-1">
                 {{ fileMeta }}
               </div>
             </v-card>
           </div>
         </v-col>
 
-        <v-col cols="12" md="4" lg="3" class="options-sidebar bg-surface elevation-2 d-flex flex-column pa-0">
-          <div class="sidebar-header pa-6 border-b">
-            <h2 class="text-h5 font-weight-bold text-black text-capitalize">
+        <v-col cols="12" md="3" lg="3" class="options-sidebar bg-surface elevation-2 d-flex flex-column pa-0">
+          <div class="sidebar-header pa-4 border-b">
+            <h2 class="text-h6 font-weight-bold text-black text-capitalize">
               {{ serviceTitle }} options
             </h2>
           </div>
 
-          <div class="sidebar-content flex-grow-1 pa-6 overflow-y-auto">
-            <v-alert type="info" variant="tonal" class="mb-6 rounded-lg text-body-2 info-alert" density="compact" icon="mdi-information-outline">
+          <div class="sidebar-content flex-grow-1 pa-4">
+            <v-alert type="info" variant="tonal" class="mb-4 rounded-lg text-body-2 info-alert" density="compact" icon="mdi-information-outline">
               {{ currentServiceInfo }}
             </v-alert>
 
@@ -62,7 +74,7 @@
               v-if="processError"
               type="error"
               variant="tonal"
-              class="mb-4 rounded-lg text-body-2"
+              class="mb-3 rounded-lg text-body-2"
               closable
               @click:close="processError = null"
             >
@@ -73,21 +85,10 @@
               v-if="processSuccess"
               type="success"
               variant="tonal"
-              class="mb-4 rounded-lg text-body-2"
+              class="mb-3 rounded-lg text-body-2"
             >
               {{ processSuccess }}
             </v-alert>
-
-            <div class="mb-4">
-              <div class="text-subtitle-2 font-weight-bold mb-2 text-black">Organization</div>
-              <v-text-field
-                v-model="organizationName"
-                variant="outlined"
-                density="comfortable"
-                hide-details="auto"
-                placeholder="Enter organization name"
-              />
-            </div>
 
             <div v-if="activeService === 'ocr'">
               <div class="text-subtitle-2 font-weight-bold mb-2 text-black">Document languages</div>
@@ -128,15 +129,17 @@
               <div class="text-subtitle-2 font-weight-bold mb-2 text-black">Target Language</div>
               <v-autocomplete
                 v-model="translateSettings.target"
-                :items="['English', 'Spanish', 'French', 'German', 'Chinese', 'Japanese']"
+                :items="translationLanguageOptions"
                 variant="outlined"
                 density="comfortable"
+                item-title="title"
+                item-value="value"
                 hide-details
               />
             </div>
 
-            <div v-if="currentRequest" class="result-panel mt-6">
-              <div class="text-subtitle-2 font-weight-bold mb-3 text-black">Latest response</div>
+            <div v-if="currentRequest" class="result-panel mt-4">
+              <div class="text-subtitle-2 font-weight-bold mb-2 text-black">Latest response</div>
 
               <div class="d-flex align-center justify-space-between mb-3">
                 <span class="text-body-2 text-medium-emphasis">Status</span>
@@ -157,7 +160,7 @@
 
               <div v-if="currentRequest.targetLanguage" class="d-flex align-center justify-space-between mb-3">
                 <span class="text-body-2 text-medium-emphasis">Target language</span>
-                <span class="text-caption text-black">{{ currentRequest.targetLanguage }}</span>
+                <span class="text-caption text-black">{{ selectedTranslationLabel }}</span>
               </div>
 
               <div v-if="resultSummary" class="text-body-2 text-medium-emphasis">
@@ -166,10 +169,10 @@
             </div>
           </div>
 
-          <div class="sidebar-footer pa-6 bg-surface border-t">
+          <div class="sidebar-footer pa-4 bg-surface border-t">
             <v-btn
               color="#DC2626"
-              size="x-large"
+              size="large"
               block
               class="action-btn text-none font-weight-bold text-white elevation-2 mb-3"
               :loading="isBusy"
@@ -200,21 +203,14 @@
 import { computed, onBeforeUnmount, ref, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import FileUploader from '../../components/upload/FileUploader.vue'
-import { useAuthStore, useRequestStore, useUploadStore } from '../../stores'
+import { useRequestStore, useUploadStore } from '../../stores'
 import type { PDFRequest, ServiceType } from '../../types/request.types'
 import { formatFileSize, truncateText } from '../../utils/helpers'
 
 const route = useRoute()
 const router = useRouter()
-const authStore = useAuthStore()
 const requestStore = useRequestStore()
 const uploadStore = useUploadStore()
-
-const toSafeText = (value: unknown): string => {
-  if (typeof value === 'string') return value
-  if (typeof value === 'number') return String(value)
-  return ''
-}
 
 const activeService = computed(() => (route.params.service as string) || 'ocr')
 const serviceConfig = {
@@ -238,11 +234,23 @@ const serviceConfig = {
 const serviceTitle = computed(() => serviceConfig[activeService.value as keyof typeof serviceConfig]?.title || 'Process')
 const currentServiceInfo = computed(() => serviceConfig[activeService.value as keyof typeof serviceConfig]?.info || '')
 const serviceType = computed<ServiceType>(() => serviceConfig[activeService.value as keyof typeof serviceConfig]?.type || 'ocr')
+const translationLanguageOptions = [
+  { title: 'English', value: 'eng' },
+  { title: 'Spanish', value: 'spa' },
+  { title: 'French', value: 'fra' },
+  { title: 'German', value: 'deu' },
+  { title: 'Chinese', value: 'zho' },
+  { title: 'Japanese', value: 'jpn' },
+]
+const translationLanguageMap = Object.fromEntries(
+  translationLanguageOptions.map((item) => [item.value, item.title])
+) as Record<string, string>
 
 const selectedFile = ref<File | null>(null)
 const previewUrl = ref<string | null>(null)
 const uploadedFileId = ref<string | null>(null)
 const isSubmitting = ref(false)
+const isDeleting = ref(false)
 const processError = ref<string | null>(null)
 const processSuccess = ref<string | null>(null)
 const currentRequest = ref<PDFRequest | null>(null)
@@ -250,16 +258,7 @@ const pollingTimer = ref<number | null>(null)
 
 const ocrSettings = ref({ languages: ['English'] })
 const summarizeSettings = ref({ length: 'Medium (Standard)', format: 'Bullet Points' })
-const translateSettings = ref({ target: 'Spanish' })
-
-const currentUserId = computed(() => authStore.currentUser?.id || localStorage.getItem('user_id') || '')
-const organizationName = ref(
-  toSafeText(authStore.currentUser?.organization_name) ||
-    toSafeText(authStore.currentUser?.organization) ||
-    toSafeText(localStorage.getItem('organization_name')) ||
-    ''
-)
-const normalizedOrganizationName = computed(() => toSafeText(organizationName.value).trim())
+const translateSettings = ref({ target: 'eng' })
 
 const isImage = computed(() => selectedFile.value?.type.startsWith('image/'))
 const isPdf = computed(() => selectedFile.value?.type === 'application/pdf')
@@ -268,11 +267,16 @@ const fileMeta = computed(() => {
   return `${selectedFile.value.type || 'Unknown type'} - ${formatFileSize(selectedFile.value.size)}`
 })
 
-const isBusy = computed(() => isSubmitting.value || uploadStore.isUploading)
+const fileIdToDelete = computed(() => currentRequest.value?.fileId || uploadedFileId.value)
+const isBusy = computed(() => isSubmitting.value || isDeleting.value || uploadStore.isUploading)
 const actionLabel = computed(() => {
   if (uploadStore.isUploading) return 'Uploading'
   if (isSubmitting.value) return 'Processing'
   return activeService.value.toUpperCase()
+})
+const selectedTranslationLabel = computed(() => {
+  if (!currentRequest.value?.targetLanguage) return ''
+  return translationLanguageMap[currentRequest.value.targetLanguage] || currentRequest.value.targetLanguage
 })
 
 const statusColor = computed(() => {
@@ -320,13 +324,12 @@ onBeforeUnmount(() => {
 
 const startPolling = () => {
   stopPolling()
-  if (!uploadedFileId.value || !currentUserId.value) return
+  if (!uploadedFileId.value) return
 
   pollingTimer.value = window.setInterval(async () => {
     try {
       const latest = await requestStore.fetchRequestById(
         uploadedFileId.value as string,
-        currentUserId.value,
         serviceType.value
       )
 
@@ -361,15 +364,37 @@ const clearFile = () => {
   stopPolling()
 }
 
+const deleteFileAndReset = async () => {
+  processError.value = null
+  processSuccess.value = null
+
+  if (!fileIdToDelete.value) {
+    clearFile()
+    return
+  }
+
+  isDeleting.value = true
+
+  try {
+    stopPolling()
+    await requestStore.deleteRequest(fileIdToDelete.value)
+    clearFile()
+  } catch (error: any) {
+    processError.value =
+      error?.response?.data?.message ||
+      error?.message ||
+      'Failed to delete file.'
+  } finally {
+    isDeleting.value = false
+  }
+}
+
 const uploadCurrentFile = async () => {
   if (!selectedFile.value) {
     throw new Error('Please choose a file first.')
   }
-  if (!currentUserId.value) {
-    throw new Error('User session is missing. Please log in again.')
-  }
 
-  const uploadedFile = await uploadStore.uploadFile(selectedFile.value, currentUserId.value)
+  const uploadedFile = await uploadStore.uploadFile(selectedFile.value)
   uploadedFileId.value = uploadedFile.fileId
   return uploadedFile.fileId
 }
@@ -383,36 +408,26 @@ const processDocument = async () => {
     return
   }
 
-  if (!currentUserId.value) {
-    processError.value = 'User session is missing. Please log in again.'
-    return
-  }
-
-  if (!normalizedOrganizationName.value) {
-    processError.value = 'Organization name is required for service creation.'
-    return
-  }
-
   isSubmitting.value = true
 
   try {
     const fileId = uploadedFileId.value || (await uploadCurrentFile())
 
     const created = await requestStore.createRequest({
-      userId: currentUserId.value,
-      organizationName: normalizedOrganizationName.value,
       fileId,
       type: serviceType.value,
       targetLanguage: serviceType.value === 'translation' ? translateSettings.value.target : undefined,
     })
 
     currentRequest.value = created
-    localStorage.setItem('organization_name', normalizedOrganizationName.value)
     processSuccess.value = `${serviceTitle.value} started successfully.`
-
-    if (created.status === 'pending' || created.status === 'processing') {
-      startPolling()
-    }
+    await router.push({
+      name: 'RequestDetails',
+      params: {
+        fileId,
+        serviceType: created.serviceType,
+      },
+    })
   } catch (error: any) {
     processError.value =
       error?.response?.data?.message ||
@@ -425,8 +440,14 @@ const processDocument = async () => {
 </script>
 
 <style scoped>
+.process-page {
+  height: 100%;
+  min-height: 100%;
+}
+
 .preview-area {
-  height: 100vh;
+  height: 100%;
+  min-height: 100%;
   overflow: hidden;
 }
 
@@ -439,12 +460,12 @@ const processDocument = async () => {
 
 .canvas-container {
   height: 100%;
-  padding-top: 64px !important;
+  padding-top: 56px !important;
 }
 
 .document-preview-card {
-  width: 260px;
-  height: 340px;
+  width: min(100%, 520px);
+  height: 290px;
   border: 1px solid rgba(0, 0, 0, 0.05);
 }
 
@@ -453,14 +474,14 @@ const processDocument = async () => {
 }
 
 .thumbnail-img {
-  width: 150px;
-  height: 200px;
+  width: 230px;
+  height: 150px;
   border-radius: 4px;
 }
 
 .pdf-thumbnail-container {
-  width: 150px;
-  height: 200px;
+  width: 280px;
+  height: 150px;
   position: relative;
   overflow: hidden;
   background: white;
@@ -468,8 +489,8 @@ const processDocument = async () => {
 }
 
 .pdf-thumbnail {
-  width: 300px;
-  height: 400px;
+  width: 560px;
+  height: 300px;
   transform: scale(0.5);
   transform-origin: top left;
   border: none;
@@ -489,8 +510,13 @@ const processDocument = async () => {
 }
 
 .options-sidebar {
-  height: 100vh;
+  height: 100%;
+  min-height: 100%;
   border-left: 1px solid rgba(0, 0, 0, 0.08);
+}
+
+.sidebar-content {
+  overflow: hidden;
 }
 
 .info-alert {
@@ -504,7 +530,7 @@ const processDocument = async () => {
 }
 
 .result-panel {
-  padding: 16px;
+  padding: 12px;
   border-radius: 12px;
   background: #f8fafc;
   border: 1px solid rgba(15, 23, 42, 0.08);
@@ -522,8 +548,13 @@ const processDocument = async () => {
 }
 
 @media (max-width: 960px) {
+  .process-page {
+    min-height: auto;
+  }
+
   .preview-area {
-    height: 60vh;
+    height: 48vh;
+    min-height: 48vh;
   }
 
   .options-sidebar {
@@ -531,6 +562,30 @@ const processDocument = async () => {
     min-height: 40vh;
     border-left: none;
     border-top: 1px solid rgba(0, 0, 0, 0.08);
+  }
+
+  .sidebar-content {
+    overflow: visible;
+  }
+
+  .document-preview-card {
+    width: min(100%, 420px);
+    height: 250px;
+  }
+
+  .pdf-thumbnail-container {
+    width: 220px;
+    height: 120px;
+  }
+
+  .thumbnail-img {
+    width: 220px;
+    height: 120px;
+  }
+
+  .pdf-thumbnail {
+    width: 440px;
+    height: 240px;
   }
 }
 </style>

@@ -64,6 +64,15 @@ const routes: Array<RouteRecordRaw> = [
     }
   },
   {
+    path: '/dashboard/results/:fileId/:serviceType',
+    name: 'RequestDetails',
+    component: () => import('../pages/request/RequestDetails.vue'),
+    meta: {
+      layout: 'dashboard',
+      requiresAuth: true
+    }
+  },
+  {
     path: '/dashboard',
     name: 'Dashboard',
     component: () => import('../pages/dashboard/Dashboard.vue'),

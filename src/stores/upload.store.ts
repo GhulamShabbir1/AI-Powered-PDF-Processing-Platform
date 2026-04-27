@@ -25,7 +25,7 @@ export const useUploadStore = defineStore('upload', {
   },
 
   actions: {
-    async uploadFile(file: File, userId: string) {
+    async uploadFile(file: File) {
       const validation = uploadService.validateFile(file);
       if (!validation.valid) {
         this.error = validation.error || 'Invalid file';
@@ -38,7 +38,7 @@ export const useUploadStore = defineStore('upload', {
       this.progress = { loaded: 0, total: file.size, percentage: 0 };
 
       try {
-        const uploadedFile = await uploadService.uploadFile(file, userId, (progress: UploadProgress) => {
+        const uploadedFile = await uploadService.uploadFile(file, (progress: UploadProgress) => {
           this.progress = progress;
         });
         this.fileId = uploadedFile.fileId;

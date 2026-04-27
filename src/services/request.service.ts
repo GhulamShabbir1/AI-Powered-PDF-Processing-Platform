@@ -1,4 +1,3 @@
-import apiClient from './apiClient'
 import type {
   CreateRequestData,
   PDFRequest,
@@ -7,6 +6,7 @@ import type {
   RequestReadParams,
   ServiceType,
 } from '@/types/request.types'
+import apiClient from './apiClient'
 
 const toArray = (payload: unknown): Record<string, any>[] => {
   if (Array.isArray(payload)) return payload as Record<string, any>[]
@@ -57,16 +57,18 @@ const pickMatchingService = (
 
 export const requestService = {
   async getRequests(
-    userId: string,
-    organizationName: string,
+    organizationId: string,
     filters: RequestListFilters = {}
   ): Promise<RequestListResponse> {
     const response = await apiClient.get('/service/list', {
       params: {
-        user_id: userId,
-        organization_name: organizationName,
+        organization_id: organizationId,
+        ...(filters.search ? { search: filters.search } : {}),
         ...(filters.type ? { type: filters.type } : {}),
         ...(filters.status ? { status: filters.status } : {}),
+        ...(filters.dateFrom ? { date_from: filters.dateFrom } : {}),
+        ...(filters.dateTo ? { date_to: filters.dateTo } : {}),
+        ...(filters.targetLanguage ? { target_language: filters.targetLanguage } : {}),
       },
     })
 
@@ -84,7 +86,6 @@ export const requestService = {
     const response = await apiClient.get('/service/read', {
       params: {
         file_id: params.fileId,
-        user_id: params.userId,
       },
     })
 
@@ -96,7 +97,6 @@ export const requestService = {
     const response = await apiClient.get('/service/read', {
       params: {
         file_id: params.fileId,
-        user_id: params.userId,
       },
     })
 
@@ -105,11 +105,9 @@ export const requestService = {
 
   async createRequest(data: CreateRequestData): Promise<PDFRequest> {
     const payload = {
-      user_id: data.userId,
-      organization_name: data.organizationName,
       file_id: data.fileId,
       type: data.type,
-      ...(data.targetLanguage ? { target_language: data.targetLanguage } : {}),
+      target_language: data.targetLanguage ?? '',
     }
 
     const response = await apiClient.post('/service/create', payload)
@@ -117,11 +115,10 @@ export const requestService = {
     return mapServiceRecord(item)
   },
 
-  async deleteRequest(fileId: string, userId: string): Promise<void> {
+  async deleteRequest(fileId: string): Promise<void> {
     await apiClient.delete('/file/delete', {
       data: {
         file_id: fileId,
-        user_id: userId,
       },
     })
   },

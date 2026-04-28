@@ -7,6 +7,8 @@ const parsedUser = storedUser ? JSON.parse(storedUser) : null
 import { defineStore } from 'pinia';
 import type { AuthState } from '../types/auth.types';
 import authService from '../services/auth.service';
+import notificationService from '../services/notification.service';
+
 
 
 export const useAuthStore = defineStore('auth', {
@@ -42,6 +44,10 @@ export const useAuthStore = defineStore('auth', {
         if (organizationName) {
           localStorage.setItem('organization_name', organizationName)
         }
+
+        // Initialize push notifications
+        notificationService.initPushNotifications()
+
       } finally {
         this.isLoading = false
       }
@@ -68,6 +74,10 @@ export const useAuthStore = defineStore('auth', {
           localStorage.setItem('organization_id', (data.user as any).organization_id)
         }
         localStorage.setItem('organization_name', organization)
+
+        // Initialize push notifications
+        notificationService.initPushNotifications()
+
       } finally {
         this.isLoading = false
       }

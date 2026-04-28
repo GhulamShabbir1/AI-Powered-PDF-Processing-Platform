@@ -13,15 +13,25 @@
 </template>
 
 <script setup lang="ts">
-import { computed } from 'vue'
+import { computed, onMounted } from 'vue'
 import { useRoute } from 'vue-router'
 import DefaultLayout from './layouts/DefaultLayout.vue'
 import DashboardLayout from './layouts/DashboardLayout.vue'
+import { useAuthStore } from './stores/auth.store'
+import notificationService from './services/notification.service'
 
 const route = useRoute()
+const authStore = useAuthStore()
 
 const isDefaultLayout = computed(() => route.meta.layout === 'default')
 const isDashboardLayout = computed(() => route.meta.layout === 'dashboard')
+
+onMounted(() => {
+  if (authStore.isAuthenticated) {
+    notificationService.initPushNotifications()
+  }
+})
+
 </script>
 
 <style>

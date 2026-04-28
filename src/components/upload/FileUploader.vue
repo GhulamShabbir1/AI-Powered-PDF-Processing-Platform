@@ -76,6 +76,21 @@
       class="d-none"
       @change="handleFileChange"
     />
+
+    <!-- FILE VALIDATION LOADER -->
+    <v-dialog v-model="isValidating" width="auto" persistent>
+      <v-card class="d-flex flex-column align-center justify-center pa-8 rounded-xl" min-width="300">
+        <v-progress-circular
+          indeterminate
+          size="60"
+          color="primary"
+          class="mb-4"
+        />
+        <p class="text-body-2 text-center text-medium-emphasis">
+          Validating your file...
+        </p>
+      </v-card>
+    </v-dialog>
   </v-container>
 </template>
 
@@ -98,6 +113,7 @@ const emit = defineEmits<{
 const fileInput = ref<HTMLInputElement | null>(null);
 const isDragging = ref(false);
 const errorMessage = ref<string | null>(null); // State to hold validation errors
+const isValidating = ref(false); // State for skeleton loader during validation
 
 // Trigger hidden input click
 const triggerFileInput = () => {
@@ -107,15 +123,22 @@ const triggerFileInput = () => {
 
 // 🛡️ Centralized function to process and validate the file
 const processFile = (file: File) => {
-  const result = validateFile(file);
+  isValidating.value = true;
   
-  if (result.valid) {
-    errorMessage.value = null;
-    emit('file-selected', file);
-  } else {
-    // If validation fails, show the exact error from validators.ts in the UI
-    errorMessage.value = result.error || 'Invalid file type.';
-  }
+  // Simulate validation time for better UX (100ms minimum)
+  setTimeout(() => {
+    const result = validateFile(file);
+    
+    if (result.valid) {
+      errorMessage.value = null;
+      emit('file-selected', file);
+    } else {
+      // If validation fails, show the exact error from validators.ts in the UI
+      errorMessage.value = result.error || 'Invalid file type.';
+    }
+    
+    isValidating.value = false;
+  }, 100);
 };
 
 // Handle traditional click upload

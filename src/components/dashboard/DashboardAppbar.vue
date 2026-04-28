@@ -60,8 +60,8 @@
                     <v-list-item-title>Main Services</v-list-item-title>
                   </v-list-item>
 
-                  <v-list-item prepend-icon="mdi-folder-outline" @click="goToVault">
-                    <v-list-item-title>Vault</v-list-item-title>
+                  <v-list-item prepend-icon="mdi-folder-outline" @click="goToHistory">
+                    <v-list-item-title>History</v-list-item-title>
                   </v-list-item>
 
                   <v-list-item
@@ -112,8 +112,8 @@
               <v-list-item-title>Main Services</v-list-item-title>
             </v-list-item>
 
-            <v-list-item @click="goToVault">
-              <v-list-item-title>Vault</v-list-item-title>
+            <v-list-item @click="goToHistory">
+              <v-list-item-title>History</v-list-item-title>
             </v-list-item>
 
             <v-list-item v-if="authStore.isLoggedIn" @click="handleLogout" :disabled="isLoggingOut">
@@ -144,8 +144,8 @@ const goToServices = () => {
   router.push({ name: 'Dashboard' })
 }
 
-const goToVault = () => {
-  router.push({ name: 'Vault' })
+const goToHistory = () => {
+  router.push({ name: 'History' })
 }
 
 const handleLogout = async () => {

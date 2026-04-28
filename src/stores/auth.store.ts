@@ -68,6 +68,8 @@ export const useAuthStore = defineStore('auth', {
           localStorage.setItem('organization_id', (data.user as any).organization_id)
         }
         localStorage.setItem('organization_name', organization)
+      } catch (error) {
+        throw error
       } finally {
         this.isLoading = false
       }

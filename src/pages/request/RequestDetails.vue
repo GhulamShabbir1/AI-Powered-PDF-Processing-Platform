@@ -23,9 +23,9 @@
               variant="tonal"
               prepend-icon="mdi-folder-outline"
               class="text-none"
-              :to="{ name: 'Vault' }"
+              :to="{ name: 'History' }"
             >
-              Open Vault
+              Open History
             </v-btn>
             <v-btn
               color="success"
@@ -126,11 +126,8 @@
                   </v-chip>
                 </div>
 
-                <div v-if="isLoading && !requestDetails" class="state-box">
-                  <v-progress-circular indeterminate color="primary" />
-                  <p class="text-body-2 text-medium-emphasis mt-3 mb-0">
-                    Loading request details...
-                  </p>
+                <div v-if="isLoading && !requestDetails">
+                  <v-skeleton-loader type="card" />
                 </div>
 
                 <div v-else-if="requestDetails?.error" class="state-box error-box">

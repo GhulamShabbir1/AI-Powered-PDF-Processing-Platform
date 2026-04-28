@@ -72,6 +72,7 @@ class NotificationService {
 
   /**
    * Get token and send it to backend (only if it changed or not yet sent).
+   * Only marks as "sent" if the backend actually succeeds.
    */
   async getAndSaveToken(): Promise<string | null> {
     const currentToken = await this.getCurrentToken();
@@ -82,24 +83,34 @@ class NotificationService {
     }
 
     const previouslySent = localStorage.getItem(TOKEN_VALUE_KEY);
-    if (previouslySent === currentToken) {
-      console.log('FCM token unchanged, skipping backend update.');
+    const wasSuccessfullySent = localStorage.getItem(TOKEN_SENT_KEY) === 'true';
+
+    if (previouslySent === currentToken && wasSuccessfullySent) {
+      console.log('FCM token unchanged and already confirmed by backend. Skipping.');
       return currentToken;
     }
 
-    await this.sendTokenToBackend(currentToken);
-    localStorage.setItem(TOKEN_VALUE_KEY, currentToken);
-    localStorage.setItem(TOKEN_SENT_KEY, 'true');
+    const success = await this.sendTokenToBackend(currentToken);
+
+    if (success) {
+      localStorage.setItem(TOKEN_VALUE_KEY, currentToken);
+      localStorage.setItem(TOKEN_SENT_KEY, 'true');
+    } else {
+      // Don't save as "sent" — will retry on next init
+      console.warn('FCM token NOT saved to localStorage because backend call failed. Will retry next time.');
+    }
 
     return currentToken;
   }
 
   /**
    * Send token to backend so the server can push to this device.
+   * Returns true if the backend confirmed receipt (2xx), false otherwise.
    */
-  async sendTokenToBackend(token: string): Promise<void> {
+  async sendTokenToBackend(token: string): Promise<boolean> {
+    const endpoint = import.meta.env.VITE_FCM_TOKEN_ENDPOINT || '/fcm/token';
+
     try {
-      const endpoint = import.meta.env.VITE_FCM_TOKEN_ENDPOINT || '/fcm/token';
       const deviceInfo = this.getDeviceInfo();
       const userId = localStorage.getItem('user_id') || undefined;
 
@@ -108,41 +119,84 @@ class NotificationService {
         userId,
         deviceInfo,
       });
-      console.log('Token sent to backend successfully:', response.data);
+      console.log('✅ Token sent to backend successfully:', response.data);
+      return true;
     } catch (error: any) {
       const status = error?.response?.status;
+      const url = error?.config?.url || endpoint;
+
       if (status === 404) {
         console.warn(
-          `[Push Notifications] Backend endpoint "${error?.config?.url || '/fcm/token'}" not found (404). ` +
-          'Please implement this endpoint on your server to receive FCM tokens. ' +
-          'The app will continue to work normally without push notifications.'
+          `[Push Notifications] Backend endpoint "${url}" not found (404). Please implement this endpoint on your server to receive FCM tokens. The app will continue to work normally without push notifications.`
         );
       } else if (status === 401) {
-        console.warn('[Push Notifications] Unauthorized — token not sent. User may need to re-login.');
+        console.warn(
+          `[Push Notifications] Unauthorized (401) when sending token to "${url}". The user may need to re-login, or the endpoint may require different auth.`
+        );
+      } else if (status >= 500) {
+        console.warn(
+          `[Push Notifications] Backend server error (${status}) at "${url}". Your backend endpoint exists but crashed. Check your server logs. The app will retry on next page load.`
+        );
+      } else if (status >= 400) {
+        console.warn(
+          `[Push Notifications] Backend rejected the request (${status}) at "${url}". Check that your payload format matches what the backend expects.`
+        );
       } else {
-        console.error('Error sending token to backend:', error?.message || error);
+        console.warn(
+          `[Push Notifications] Network or unknown error sending token to "${url}". ${error?.message || 'No details available.'}`
+        );
       }
+
+      return false;
     }
   }
 
   /**
    * Unregister the current token from the backend.
    * Call this on logout so the server stops sending pushes to this device.
+   * Tries DELETE first (REST standard), falls back to POST if backend doesn't support DELETE.
    */
   async unregisterToken(): Promise<void> {
     const token = localStorage.getItem(TOKEN_VALUE_KEY);
     if (!token) return;
 
+    const endpoint = import.meta.env.VITE_FCM_TOKEN_ENDPOINT || '/fcm/token';
+    let unregistered = false;
+
+    // Try 1: DELETE (standard REST)
     try {
-      const endpoint = import.meta.env.VITE_FCM_TOKEN_ENDPOINT || '/fcm/token';
       await apiClient.delete(`${endpoint}?token=${encodeURIComponent(token)}`);
-      console.log('Token unregistered from backend successfully.');
-    } catch (error) {
-      // Non-blocking: backend may not have the endpoint yet
-      console.warn('Failed to unregister token from backend:', error);
-    } finally {
-      await this.deleteToken();
+      console.log('Token unregistered from backend via DELETE.');
+      unregistered = true;
+    } catch (error: any) {
+      const status = error?.response?.status;
+      if (status === 405) {
+        console.log('[Push Notifications] DELETE not supported (405). Will try POST fallback...');
+      } else if (status === 404) {
+        console.warn(`[Push Notifications] Unregister endpoint not found (404). Token will only be deleted locally.`);
+      } else {
+        console.warn(`[Push Notifications] Backend error (${status || 'unknown'}) during unregister. Token will only be deleted locally.`);
+      }
     }
+
+    // Try 2: POST fallback (for backends that don't support DELETE)
+    if (!unregistered) {
+      try {
+        await apiClient.post(`${endpoint}/unregister`, { token });
+        console.log('Token unregistered from backend via POST fallback.');
+        unregistered = true;
+      } catch (error: any) {
+        const status = error?.response?.status;
+        if (status === 404) {
+          console.warn(`[Push Notifications] POST fallback endpoint not found (404). Token will only be deleted locally.`);
+        } else {
+          console.warn(`[Push Notifications] POST fallback also failed (${status || 'unknown'}). Token will only be deleted locally.`);
+        }
+      }
+    }
+
+    // Always clean up locally, regardless of backend success
+    await this.deleteToken();
   }
 
   /**
@@ -272,3 +326,4 @@ class NotificationService {
 
 export const notificationService = new NotificationService();
 export default notificationService;
+

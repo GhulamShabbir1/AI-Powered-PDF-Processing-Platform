@@ -76,17 +76,14 @@ export const useAuthStore = defineStore('auth', {
           localStorage.setItem('organization_id', (data.user as any).organization_id)
         }
         localStorage.setItem('organization_name', organization)
-<<<<<<< HEAD
 
         // Initialize push notifications (fire-and-forget, non-blocking)
         notificationService.initPushNotifications().catch((e) => {
           console.warn('Push notification init failed after register:', e)
         })
 
-=======
       } catch (error) {
         throw error
->>>>>>> ammar-feature
       } finally {
         this.isLoading = false
       }

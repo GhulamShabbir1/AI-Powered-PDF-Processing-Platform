@@ -66,10 +66,6 @@
           </div>
 
           <div class="sidebar-content flex-grow-1 pa-4">
-            <v-alert type="info" variant="tonal" class="mb-4 rounded-lg text-body-2 info-alert" density="compact" icon="mdi-information-outline">
-              {{ currentServiceInfo }}
-            </v-alert>
-
             <v-alert
               v-if="processError"
               type="error"
@@ -141,31 +137,39 @@
             <div v-if="currentRequest" class="result-panel mt-4">
               <div class="text-subtitle-2 font-weight-bold mb-2 text-black">Latest response</div>
 
-              <div class="d-flex align-center justify-space-between mb-3">
-                <span class="text-body-2 text-medium-emphasis">Status</span>
-                <v-chip :color="statusColor" size="small" variant="flat">
-                  {{ currentRequest.status }}
-                </v-chip>
-              </div>
+              <v-skeleton-loader
+                v-if="currentRequest.status === 'processing'"
+                type="card"
+                class="mb-3"
+              ></v-skeleton-loader>
 
-              <div class="d-flex align-center justify-space-between mb-3">
-                <span class="text-body-2 text-medium-emphasis">File ID</span>
-                <span class="text-caption text-black">{{ currentRequest.fileId }}</span>
-              </div>
+              <template v-else>
+                <div class="d-flex align-center justify-space-between mb-3">
+                  <span class="text-body-2 text-medium-emphasis">Status</span>
+                  <v-chip :color="statusColor" size="small" variant="flat">
+                    {{ currentRequest.status }}
+                  </v-chip>
+                </div>
 
-              <div class="d-flex align-center justify-space-between mb-3">
-                <span class="text-body-2 text-medium-emphasis">Service ID</span>
-                <span class="text-caption text-black">{{ currentRequest.id }}</span>
-              </div>
+                <div class="d-flex align-center justify-space-between mb-3">
+                  <span class="text-body-2 text-medium-emphasis">File ID</span>
+                  <span class="text-caption text-black">{{ currentRequest.fileId }}</span>
+                </div>
 
-              <div v-if="currentRequest.targetLanguage" class="d-flex align-center justify-space-between mb-3">
-                <span class="text-body-2 text-medium-emphasis">Target language</span>
-                <span class="text-caption text-black">{{ selectedTranslationLabel }}</span>
-              </div>
+                <div class="d-flex align-center justify-space-between mb-3">
+                  <span class="text-body-2 text-medium-emphasis">Service ID</span>
+                  <span class="text-caption text-black">{{ currentRequest.id }}</span>
+                </div>
 
-              <div v-if="resultSummary" class="text-body-2 text-medium-emphasis">
-                {{ resultSummary }}
-              </div>
+                <div v-if="currentRequest.targetLanguage" class="d-flex align-center justify-space-between mb-3">
+                  <span class="text-body-2 text-medium-emphasis">Target language</span>
+                  <span class="text-caption text-black">{{ selectedTranslationLabel }}</span>
+                </div>
+
+                <div v-if="resultSummary" class="text-body-2 text-medium-emphasis">
+                  {{ resultSummary }}
+                </div>
+              </template>
             </div>
           </div>
 
@@ -188,9 +192,9 @@
               variant="tonal"
               block
               class="text-none"
-              @click="router.push({ name: 'Vault' })"
+              @click="router.push({ name: 'History' })"
             >
-              Open Vault
+              Open History
             </v-btn>
           </div>
         </v-col>

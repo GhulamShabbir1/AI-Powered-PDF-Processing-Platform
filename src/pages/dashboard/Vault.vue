@@ -1,13 +1,13 @@
 <template>
-  <div class="vault-page">
+  <div class="history-page">
     <v-container class="py-4 py-md-6">
 
       <!-- 🔷 Header -->
-      <div class="vault-header d-flex flex-column flex-sm-row align-start align-sm-center justify-space-between mb-4 mb-md-6 ga-2">
+      <div class="history-header d-flex flex-column flex-sm-row align-start align-sm-center justify-space-between mb-4 mb-md-6 ga-2">
         <div>
-          <h1 class="text-h5 text-md-h4 font-weight-bold mb-1">Vault</h1>
+          <h1 class="text-h5 text-md-h4 font-weight-bold mb-1">History</h1>
           <p class="text-body-2 text-medium-emphasis">
-            All uploaded files ({{ requestCount }})
+            All processed files ({{ requestCount }})
           </p>
         </div>
 
@@ -23,8 +23,8 @@
       </div>
 
       <!-- 🔄 Loading -->
-      <div v-if="requestStore.isLoading" class="loader-wrapper">
-        <v-progress-circular indeterminate color="primary" size="60" />
+      <div v-if="requestStore.isLoading">
+        <v-skeleton-loader type="table" />
       </div>
 
       <!-- 📭 Empty State -->
@@ -45,7 +45,7 @@
       <!-- 📊 Table -->
       <v-card
         v-else
-        class="vault-card overflow-x-auto"
+        class="history-card overflow-x-auto"
         elevation="0"
       >
         <v-data-table
@@ -53,7 +53,7 @@
           :items="allRequests"
           item-value="id"
           density="comfortable"
-          class="vault-table"
+          class="history-table"
         >
 
           <!-- 📄 File -->
@@ -200,13 +200,13 @@ const formatDate = (dateString: string) =>
 <style scoped>
 
 /* 🌫 Background */
-.vault-page {
+.history-page {
   background: linear-gradient(135deg, #f8fafc, #eef2ff);
   min-height: 100vh;
 }
 
 /* 🔝 Header */
-.vault-header {
+.history-header {
   padding: 0 4px;
 }
 
@@ -229,7 +229,7 @@ const formatDate = (dateString: string) =>
 }
 
 /* 📦 Card */
-.vault-card {
+.history-card {
   border-radius: 18px;
   background: white;
   padding: 10px;
@@ -237,15 +237,15 @@ const formatDate = (dateString: string) =>
 }
 
 /* 📊 Table */
-.vault-table :deep(.v-data-table-header__row) {
+.history-table :deep(.v-data-table-header__row) {
   background: #f8fafc !important;
 }
 
-.vault-table :deep(.v-data-table-row) {
+.history-table :deep(.v-data-table-row) {
   transition: all 0.2s ease;
 }
 
-.vault-table :deep(.v-data-table-row:hover) {
+.history-table :deep(.v-data-table-row:hover) {
   background: #f1f5f9 !important;
 }
 
@@ -274,7 +274,7 @@ const formatDate = (dateString: string) =>
 
 /* 📱 Mobile */
 @media (max-width: 600px) {
-  .vault-card {
+  .history-card {
     border-radius: 12px;
     padding: 4px;
   }

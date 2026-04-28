@@ -82,8 +82,8 @@ const routes: Array<RouteRecordRaw> = [
     }
   },
   {
-    path: '/dashboard/vault',
-    name: 'Vault',
+    path: '/dashboard/history',
+    name: 'History',
     component: () => import('../pages/dashboard/Vault.vue'),
     meta: {
       layout: 'dashboard',

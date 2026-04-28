@@ -261,10 +261,17 @@ const validateAndRegister = async () => {
     router.push({ path: '/verify', query: { email: email.value.trim() } })
 
   } catch (error: any) {
-    const message =
-      error?.response?.data?.message ||
-      error.message ||
-      'Registration failed'
+    let message = 'Registration failed'
+    
+    // Handle specific HTTP error codes
+    if (error?.response?.status === 409) {
+      message = 'This email is already registered. Please use a different email or try logging in.'
+    } else {
+      message =
+        error?.response?.data?.message ||
+        error.message ||
+        'Registration failed'
+    }
 
     await displayAlert(message)
   } finally {

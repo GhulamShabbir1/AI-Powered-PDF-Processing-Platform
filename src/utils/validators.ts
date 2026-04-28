@@ -24,32 +24,32 @@ export function validatePassword(password: string): { valid: boolean; error?: st
   }
 
   if (password.length < 8) {
-    return { valid: false, error: 'Minimum 8 characters required' };
+    return { valid: false, error: '8 characters required' };
   }
 
   if (password.length > 64) {
-    return { valid: false, error: 'Password is too long (max 64)' };
+    return { valid: false, error: 'Password is too long' };
   }
 
   if (!/[A-Z]/.test(password)) {
-    return { valid: false, error: 'At least one uppercase letter required' };
+    return { valid: false, error: 'One uppercase required' };
   }
 
   if (!/[a-z]/.test(password)) {
-    return { valid: false, error: 'At least one lowercase letter required' };
+    return { valid: false, error: 'One lowercase required' };
   }
 
   if (!/[0-9]/.test(password)) {
-    return { valid: false, error: 'At least one number required' };
+    return { valid: false, error: 'One number required' };
   }
 
   if (!/[!@#$%^&*()\-_=+[\]{};:'",.<>/?\\|]/.test(password)) {
-    return { valid: false, error: 'At least one special character required' };
+    return { valid: false, error: 'Special character required' };
   }
 
   // Prevent spaces
   if (/\s/.test(password)) {
-    return { valid: false, error: 'Password cannot contain spaces' };
+    return { valid: false, error: 'Password can\'t contain spaces' };
   }
 
   return { valid: true };

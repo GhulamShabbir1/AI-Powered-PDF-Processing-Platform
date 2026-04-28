@@ -36,8 +36,9 @@
             prepend-inner-icon="mdi-lock-outline"
             :append-inner-icon="showPassword ? 'mdi-eye-off' : 'mdi-eye'"
             @click:append-inner="showPassword = !showPassword"
+            @keydown.space.prevent="handlePasswordSpacePress"
             validate-on="input"
-            :rules="[rules.required]"
+            :rules="[rules.passwordLogin]"
           />
 
           <!-- OPTIONS -->
@@ -85,7 +86,7 @@
     <AuthLayout />
 
     <!-- SNACKBAR -->
-    <v-snackbar v-model="showAlert" color="error" timeout="4000">
+    <v-snackbar v-model="showAlert" color="error" timeout="4000" location="top left">
       {{ alertMessage }}
     </v-snackbar>
 
@@ -117,6 +118,12 @@ const showPassword = ref(false)
 const showAlert = ref(false)
 const alertMessage = ref('')
 
+// Handler for space key in password field
+const handlePasswordSpacePress = () => {
+  alertMessage.value = "Password can't contain spaces"
+  showAlert.value = true
+}
+
 // VALIDATION RULES
 const rules = {
   required: (v: string) => {
@@ -127,6 +134,13 @@ const rules = {
   email: (v: string) => {
     const result = validateEmail(v)
     return result.valid ? true : result.error || 'Invalid email'
+  },
+
+  passwordLogin: (v: string) => {
+    // For login, only check if password is provided (not empty)
+    // The backend will verify if the password is correct
+    const result = validateRequired(v, 'Password')
+    return result.valid ? true : result.error || 'Password is required'
   },
 }
 
@@ -186,5 +200,16 @@ const validateAndLogin = async () => {
   width: 100%;
   max-width: 420px;
   padding: 32px;
+}
+
+:deep(.v-text-field) {
+  margin-bottom: 5px;
+}
+
+:deep(.v-messages) {
+  min-height: 0;
+  padding: 4px 0;
+  text-align: right;
+  font-size: 0.75rem;
 }
 </style>

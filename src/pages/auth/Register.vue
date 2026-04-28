@@ -53,24 +53,27 @@
             prepend-inner-icon="mdi-lock-outline"
             :append-inner-icon="showPassword ? 'mdi-eye-off' : 'mdi-eye'"
             @click:append-inner="showPassword = !showPassword"
+            @keydown.space.prevent="handlePasswordSpacePress"
             validate-on="input"
             :rules="[rules.required, rules.password]"
           />
 
           <!-- PASSWORD STRENGTH -->
-          <v-progress-linear
-            :model-value="passwordStrength"
-            :color="passwordStrengthColor"
-            height="6"
-            rounded
-            class="mb-1"
-          />
+          <div class="password-strength-container">
+            <v-progress-linear
+              :model-value="passwordStrength"
+              :color="passwordStrengthColor"
+              height="6"
+              rounded
+              class="mb-0 mt-n3"
+            />
 
-          <div class="text-caption mb-4">
-            Strength: 
-            <span :class="`text-${passwordStrengthColor}`">
-              {{ passwordStrengthText }}
-            </span>
+            <div class="text-caption mb-4 mt-0">
+              Strength: 
+              <span :class="`text-${passwordStrengthColor}`">
+                {{ passwordStrengthText }}
+              </span>
+            </div>
           </div>
 
           <!-- CONFIRM PASSWORD -->
@@ -123,7 +126,7 @@
     <AuthLayout />
 
     <!-- SNACKBAR -->
-    <v-snackbar v-model="showAlert" color="error" timeout="4000">
+    <v-snackbar v-model="showAlert" color="error" timeout="4000" location="top left">
       {{ alertMessage }}
     </v-snackbar>
 
@@ -131,7 +134,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed } from 'vue'
+import { ref, computed, nextTick } from 'vue'
 import { useRouter } from 'vue-router'
 import AuthLayout from '../../layouts/AuthLayout.vue'
 import { useAuthStore } from '../../stores'
@@ -158,6 +161,20 @@ const showConfirmPassword = ref(false)
 // ALERT
 const showAlert = ref(false)
 const alertMessage = ref('')
+
+// Helper function to show alert with proper cleanup
+const displayAlert = async (message: string) => {
+  showAlert.value = false
+  alertMessage.value = message
+  await nextTick()
+  showAlert.value = true
+}
+
+// Handler for space key in password field
+const handlePasswordSpacePress = () => {
+  alertMessage.value = "Password can't contain spaces"
+  showAlert.value = true
+}
 
 // RULES
 const rules = {
@@ -244,12 +261,12 @@ const validateAndRegister = async () => {
     router.push({ path: '/verify', query: { email: email.value.trim() } })
 
   } catch (error: any) {
-    alertMessage.value =
+    const message =
       error?.response?.data?.message ||
       error.message ||
       'Registration failed'
 
-    showAlert.value = true
+    await displayAlert(message)
   } finally {
     loading.value = false
   }
@@ -279,5 +296,20 @@ const validateAndRegister = async () => {
   width: 100%;
   max-width: 420px;
   padding: 32px;
+}
+
+:deep(.v-text-field) {
+  margin-bottom: 5px;
+}
+
+:deep(.v-messages) {
+  min-height: 0;
+  padding: 4px 0;
+  text-align: right;
+  font-size: 0.75rem;
+}
+
+.password-strength-container {
+  width: 50%;
 }
 </style>

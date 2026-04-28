@@ -82,8 +82,6 @@ export const useAuthStore = defineStore('auth', {
           console.warn('Push notification init failed after register:', e)
         })
 
-      } catch (error) {
-        throw error
       } finally {
         this.isLoading = false
       }

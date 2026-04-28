@@ -5,9 +5,9 @@ const storedUser = localStorage.getItem('user')
 const parsedUser = storedUser ? JSON.parse(storedUser) : null
 
 import { defineStore } from 'pinia';
-import type { AuthState } from '../types/auth.types';
 import authService from '../services/auth.service';
 import notificationService from '../services/notification.service';
+import type { AuthState } from '../types/auth.types';
 
 
 
@@ -45,8 +45,10 @@ export const useAuthStore = defineStore('auth', {
           localStorage.setItem('organization_name', organizationName)
         }
 
-        // Initialize push notifications
-        notificationService.initPushNotifications()
+        // Initialize push notifications (fire-and-forget, non-blocking)
+        notificationService.initPushNotifications().catch((e) => {
+          console.warn('Push notification init failed after login:', e)
+        })
 
       } finally {
         this.isLoading = false
@@ -75,8 +77,10 @@ export const useAuthStore = defineStore('auth', {
         }
         localStorage.setItem('organization_name', organization)
 
-        // Initialize push notifications
-        notificationService.initPushNotifications()
+        // Initialize push notifications (fire-and-forget, non-blocking)
+        notificationService.initPushNotifications().catch((e) => {
+          console.warn('Push notification init failed after register:', e)
+        })
 
       } finally {
         this.isLoading = false
@@ -104,6 +108,13 @@ export const useAuthStore = defineStore('auth', {
     async logout() {
       this.isLoading = true
       try {
+        // Unregister FCM token so the server stops sending pushes to this device
+        try {
+          await notificationService.unregisterToken()
+        } catch (e) {
+          console.warn('FCM token cleanup failed during logout:', e)
+        }
+
         await authService.logout()
       } finally {
         this.token = null

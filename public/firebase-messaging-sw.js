@@ -19,12 +19,49 @@ const messaging = firebase.messaging();
 
 messaging.onBackgroundMessage((payload) => {
   console.log('[firebase-messaging-sw.js] Received background message ', payload);
-  // Customize notification here
-  const notificationTitle = payload.notification.title || 'New Notification';
+
+  const notificationTitle = payload?.notification?.title || 'New Notification';
   const notificationOptions = {
-    body: payload.notification.body || 'You have a new message.',
-    icon: '/favicon.svg',
+    body: payload?.notification?.body || 'You have a new message.',
+    icon: payload?.notification?.icon || '/favicon.svg',
+    badge: '/favicon.svg',
+    tag: payload?.messageId || 'general',
+    data: payload?.data || {},
+    requireInteraction: false,
   };
 
   self.registration.showNotification(notificationTitle, notificationOptions);
 });
+
+// Handle notification clicks — open/focus the app
+self.addEventListener('notificationclick', (event) => {
+  event.notification.close();
+
+  const clickAction = event.notification?.data?.click_action || event.notification?.click_action || '/';
+
+  event.waitUntil(
+    clients
+      .matchAll({ type: 'window', includeUncontrolled: true })
+      .then((clientList) => {
+        // If a window client is already open, focus it
+        for (const client of clientList) {
+          if (client.url.includes(self.location.origin) && 'focus' in client) {
+            return client.focus().then((focusedClient) => {
+              if ('navigate' in focusedClient) {
+                focusedClient.navigate(clickAction);
+              }
+              return focusedClient;
+            });
+          }
+        }
+        // Otherwise open a new window
+        if (clients.openWindow) {
+          return clients.openWindow(clickAction);
+        }
+      })
+      .catch((err) => {
+        console.error('[firebase-messaging-sw.js] Error handling notification click:', err);
+      })
+  );
+});
+

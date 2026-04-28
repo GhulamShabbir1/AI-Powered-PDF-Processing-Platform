@@ -15,10 +15,10 @@
 <script setup lang="ts">
 import { computed, onMounted } from 'vue'
 import { useRoute } from 'vue-router'
-import DefaultLayout from './layouts/DefaultLayout.vue'
 import DashboardLayout from './layouts/DashboardLayout.vue'
-import { useAuthStore } from './stores/auth.store'
+import DefaultLayout from './layouts/DefaultLayout.vue'
 import notificationService from './services/notification.service'
+import { useAuthStore } from './stores/auth.store'
 
 const route = useRoute()
 const authStore = useAuthStore()
@@ -26,12 +26,15 @@ const authStore = useAuthStore()
 const isDefaultLayout = computed(() => route.meta.layout === 'default')
 const isDashboardLayout = computed(() => route.meta.layout === 'dashboard')
 
-onMounted(() => {
+onMounted(async () => {
   if (authStore.isAuthenticated) {
-    notificationService.initPushNotifications()
+    try {
+      await notificationService.initPushNotifications()
+    } catch (e) {
+      console.error('Failed to initialize push notifications on app mount:', e)
+    }
   }
 })
-
 </script>
 
 <style>

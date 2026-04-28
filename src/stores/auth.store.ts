@@ -82,8 +82,11 @@ export const useAuthStore = defineStore('auth', {
           console.warn('Push notification init failed after register:', e)
         })
 
+<<<<<<<<< Temporary merge branch 1
       } catch (error) {
         throw error
+=========
+>>>>>>>>> Temporary merge branch 2
       } finally {
         this.isLoading = false
       }

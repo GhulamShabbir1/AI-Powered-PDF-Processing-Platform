@@ -1,6 +1,7 @@
 import axios from 'axios';
 import type { AxiosInstance, AxiosError } from 'axios';
-import type { ApiError } from '../types/api.types'; // Assuming you export this
+import type { ApiError } from '../types/api.types';
+import { installNotificationMiddleware } from '../middleware/notification-middleware';
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://178.104.58.236:8085/api';
 
@@ -39,5 +40,8 @@ apiClient.interceptors.response.use(
     return Promise.reject(error);
   }
 );
+
+// Install notification middleware for automatic notifications on API calls
+installNotificationMiddleware(apiClient);
 
 export default apiClient;

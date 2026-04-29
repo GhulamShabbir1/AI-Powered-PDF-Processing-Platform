@@ -7,6 +7,8 @@ import type {
   ServiceType,
 } from '@/types/request.types'
 import apiClient from './apiClient'
+import { notificationLogger } from '../utils/notification-utils'
+import clientNotificationService from './clientNotification.service'
 
 const toArray = (payload: unknown): Record<string, any>[] => {
   if (Array.isArray(payload)) return payload as Record<string, any>[]
@@ -60,22 +62,39 @@ export const requestService = {
     organizationId: string,
     filters: RequestListFilters = {}
   ): Promise<RequestListResponse> {
-    const response = await apiClient.get('/service/list', {
-      params: {
-        organization_id: organizationId,
-        ...(filters.search ? { search: filters.search } : {}),
-        ...(filters.type ? { type: filters.type } : {}),
-        ...(filters.status ? { status: filters.status } : {}),
-        ...(filters.dateFrom ? { date_from: filters.dateFrom } : {}),
-        ...(filters.dateTo ? { date_to: filters.dateTo } : {}),
-        ...(filters.targetLanguage ? { target_language: filters.targetLanguage } : {}),
-      },
-    })
+    try {
+      notificationLogger.debug('Fetching requests', {
+        organizationId,
+        hasFilters: !!Object.keys(filters).length,
+      })
 
-    const services = toArray(response.data).map(mapServiceRecord)
-    return {
-      data: services,
-      total: services.length,
+      const response = await apiClient.get('/service/list', {
+        params: {
+          organization_id: organizationId,
+          ...(filters.search ? { search: filters.search } : {}),
+          ...(filters.type ? { type: filters.type } : {}),
+          ...(filters.status ? { status: filters.status } : {}),
+          ...(filters.dateFrom ? { date_from: filters.dateFrom } : {}),
+          ...(filters.dateTo ? { date_to: filters.dateTo } : {}),
+          ...(filters.targetLanguage ? { target_language: filters.targetLanguage } : {}),
+        },
+      })
+
+      const services = toArray(response.data).map(mapServiceRecord)
+
+      notificationLogger.info('✅ Requests fetched successfully', {
+        count: services.length,
+      })
+
+      return {
+        data: services,
+        total: services.length,
+      }
+    } catch (error) {
+      notificationLogger.error('Failed to fetch requests', {
+        error: (error as Error).message,
+      })
+      throw error
     }
   },
 
@@ -83,51 +102,159 @@ export const requestService = {
     params: RequestReadParams,
     serviceType?: ServiceType
   ): Promise<PDFRequest | null> {
-    const response = await apiClient.get('/service/read', {
-      params: {
-        file_id: params.fileId,
-      },
-    })
+    try {
+      notificationLogger.debug('Fetching request by ID', {
+        fileId: params.fileId,
+        serviceType,
+      })
 
-    const services = toArray(response.data).map(mapServiceRecord)
-    return pickMatchingService(services, serviceType)
+      const response = await apiClient.get('/service/read', {
+        params: {
+          file_id: params.fileId,
+        },
+      })
+
+      const services = toArray(response.data).map(mapServiceRecord)
+      const result = pickMatchingService(services, serviceType)
+
+      if (result) {
+        notificationLogger.info('✅ Request fetched successfully', {
+          status: result.status,
+          serviceType: result.serviceType,
+        })
+      } else {
+        notificationLogger.warn('⚠️  No matching request found', {
+          fileId: params.fileId,
+          serviceType,
+        })
+      }
+
+      return result
+    } catch (error) {
+      notificationLogger.error('Failed to fetch request by ID', {
+        fileId: params.fileId,
+        error: (error as Error).message,
+      })
+      throw error
+    }
   },
 
   async getServicesByFile(params: RequestReadParams): Promise<PDFRequest[]> {
-    const response = await apiClient.get('/service/read', {
-      params: {
-        file_id: params.fileId,
-      },
-    })
+    try {
+      notificationLogger.debug('Fetching services by file', { fileId: params.fileId })
 
-    return toArray(response.data).map(mapServiceRecord)
+      const response = await apiClient.get('/service/read', {
+        params: {
+          file_id: params.fileId,
+        },
+      })
+
+      const services = toArray(response.data).map(mapServiceRecord)
+
+      notificationLogger.info('✅ Services fetched successfully', {
+        count: services.length,
+        fileId: params.fileId,
+      })
+
+      return services
+    } catch (error) {
+      notificationLogger.error('Failed to fetch services by file', {
+        fileId: params.fileId,
+        error: (error as Error).message,
+      })
+      throw error
+    }
   },
 
   async createRequest(data: CreateRequestData): Promise<PDFRequest> {
-    const payload = {
-      file_id: data.fileId,
-      type: data.type,
-      target_language: data.targetLanguage ?? '',
-    }
+    try {
+      notificationLogger.info('Creating processing request', {
+        serviceType: data.type,
+        fileId: data.fileId,
+      })
 
-    const response = await apiClient.post('/service/create', payload)
-    const item = response.data?.data ?? response.data
-    return mapServiceRecord(item)
+      // Show processing notification
+      await clientNotificationService.showStatus(
+        'Processing Started',
+        `Converting document using ${data.type}...`
+      )
+
+      const payload = {
+        file_id: data.fileId,
+        type: data.type,
+        target_language: data.targetLanguage ?? '',
+      }
+
+      const response = await apiClient.post('/service/create', payload)
+      const item = response.data?.data ?? response.data
+      const request = mapServiceRecord(item)
+
+      notificationLogger.info('✅ Processing request created successfully', {
+        requestId: request.id,
+        status: request.status,
+        serviceType: request.serviceType,
+      })
+
+      return request
+    } catch (error) {
+      const errorMsg = (error as Error).message
+
+      await clientNotificationService.showError(
+        '❌ Processing Failed',
+        `Could not start processing: ${errorMsg}`
+      )
+
+      notificationLogger.error('Failed to create processing request', {
+        error: errorMsg,
+        serviceType: data.type,
+      })
+
+      throw error
+    }
   },
 
   async deleteRequest(fileId: string): Promise<void> {
-    await apiClient.delete('/file/delete', {
-      data: {
-        file_id: fileId,
-      },
-    })
+    try {
+      notificationLogger.debug('Deleting request', { fileId })
+
+      await apiClient.delete('/file/delete', {
+        data: {
+          file_id: fileId,
+        },
+      })
+
+      notificationLogger.info('✅ Request deleted successfully', { fileId })
+    } catch (error) {
+      notificationLogger.error('Failed to delete request', {
+        fileId,
+        error: (error as Error).message,
+      })
+      throw error
+    }
   },
 
   async getRequestStatus(
     params: RequestReadParams,
     serviceType?: ServiceType
   ): Promise<PDFRequest | null> {
-    return this.getRequestById(params, serviceType)
+    try {
+      const status = await this.getRequestById(params, serviceType)
+
+      if (status) {
+        notificationLogger.debug('Request status retrieved', {
+          fileId: params.fileId,
+          status: status.status,
+        })
+      }
+
+      return status
+    } catch (error) {
+      notificationLogger.error('Failed to get request status', {
+        fileId: params.fileId,
+        error: (error as Error).message,
+      })
+      throw error
+    }
   },
 }
 

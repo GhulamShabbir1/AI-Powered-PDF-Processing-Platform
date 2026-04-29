@@ -110,6 +110,7 @@ export const useAuthStore = defineStore('auth', {
         // Unregister FCM token so the server stops sending pushes to this device
         try {
           await notificationService.unregisterToken()
+          await notificationService.cleanup()
         } catch (e) {
           console.warn('FCM token cleanup failed during logout:', e)
         }

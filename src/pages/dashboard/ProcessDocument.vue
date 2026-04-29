@@ -126,10 +126,12 @@
               <v-autocomplete
                 v-model="translateSettings.target"
                 :items="translationLanguageOptions"
+                :loading="isLoadingTranslationLanguages"
                 variant="outlined"
                 density="comfortable"
                 item-title="title"
                 item-value="value"
+                placeholder="Select a language"
                 hide-details
               />
             </div>
@@ -204,10 +206,12 @@
 </template>
 
 <script setup lang="ts">
-import { computed, onBeforeUnmount, ref, watch } from 'vue'
+import { computed, onBeforeUnmount, onMounted, ref, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import FileUploader from '../../components/upload/FileUploader.vue'
+import languageService from '../../services/language.service'
 import { useRequestStore, useUploadStore } from '../../stores'
+import type { LanguageOption } from '../../types/language.types'
 import type { PDFRequest, ServiceType } from '../../types/request.types'
 import { formatFileSize, truncateText } from '../../utils/helpers'
 
@@ -238,17 +242,20 @@ const serviceConfig = {
 const serviceTitle = computed(() => serviceConfig[activeService.value as keyof typeof serviceConfig]?.title || 'Process')
 const currentServiceInfo = computed(() => serviceConfig[activeService.value as keyof typeof serviceConfig]?.info || '')
 const serviceType = computed<ServiceType>(() => serviceConfig[activeService.value as keyof typeof serviceConfig]?.type || 'ocr')
-const translationLanguageOptions = [
-  { title: 'English', value: 'eng' },
-  { title: 'Spanish', value: 'spa' },
-  { title: 'French', value: 'fra' },
-  { title: 'German', value: 'deu' },
-  { title: 'Chinese', value: 'zho' },
-  { title: 'Japanese', value: 'jpn' },
+const fallbackTranslationLanguages: LanguageOption[] = [
+  { code: 'en', name: 'English' },
+  { code: 'ur', name: 'Urdu' },
+  { code: 'ar', name: 'Arabic' },
+  { code: 'fr', name: 'French' },
+  { code: 'es', name: 'Spanish' },
+  { code: 'de', name: 'German' },
+  { code: 'it', name: 'Italian' },
+  { code: 'pt', name: 'Portuguese' },
+  { code: 'ru', name: 'Russian' },
+  { code: 'zh', name: 'Chinese (Simplified)' },
+  { code: 'ja', name: 'Japanese' },
+  { code: 'ko', name: 'Korean' },
 ]
-const translationLanguageMap = Object.fromEntries(
-  translationLanguageOptions.map((item) => [item.value, item.title])
-) as Record<string, string>
 
 const selectedFile = ref<File | null>(null)
 const previewUrl = ref<string | null>(null)
@@ -259,10 +266,12 @@ const processError = ref<string | null>(null)
 const processSuccess = ref<string | null>(null)
 const currentRequest = ref<PDFRequest | null>(null)
 const pollingTimer = ref<number | null>(null)
+const translationLanguages = ref<LanguageOption[]>([...fallbackTranslationLanguages])
+const isLoadingTranslationLanguages = ref(false)
 
 const ocrSettings = ref({ languages: ['English'] })
 const summarizeSettings = ref({ length: 'Medium (Standard)', format: 'Bullet Points' })
-const translateSettings = ref({ target: 'eng' })
+const translateSettings = ref({ target: fallbackTranslationLanguages[0]?.code || '' })
 
 const isImage = computed(() => selectedFile.value?.type.startsWith('image/'))
 const isPdf = computed(() => selectedFile.value?.type === 'application/pdf')
@@ -278,9 +287,18 @@ const actionLabel = computed(() => {
   if (isSubmitting.value) return 'Processing'
   return activeService.value.toUpperCase()
 })
+const translationLanguageOptions = computed(() =>
+  translationLanguages.value.map((language) => ({
+    title: language.name,
+    value: language.code,
+  }))
+)
+const translationLanguageMap = computed(() =>
+  Object.fromEntries(translationLanguages.value.map((language) => [language.code, language.name])) as Record<string, string>
+)
 const selectedTranslationLabel = computed(() => {
   if (!currentRequest.value?.targetLanguage) return ''
-  return translationLanguageMap[currentRequest.value.targetLanguage] || currentRequest.value.targetLanguage
+  return translationLanguageMap.value[currentRequest.value.targetLanguage] || currentRequest.value.targetLanguage
 })
 
 const statusColor = computed(() => {
@@ -325,6 +343,29 @@ onBeforeUnmount(() => {
   }
   stopPolling()
 })
+
+const loadTranslationLanguages = async () => {
+  isLoadingTranslationLanguages.value = true
+
+  try {
+    const languages = await languageService.getLanguages()
+    if (languages.length) {
+      translationLanguages.value = languages
+    }
+  } catch (error) {
+    console.warn('Failed to load translation languages. Falling back to local defaults.', error)
+  } finally {
+    const hasSelectedLanguage = translationLanguages.value.some(
+      (language) => language.code === translateSettings.value.target
+    )
+
+    if (!hasSelectedLanguage) {
+      translateSettings.value.target = translationLanguages.value[0]?.code || ''
+    }
+
+    isLoadingTranslationLanguages.value = false
+  }
+}
 
 const startPolling = () => {
   stopPolling()
@@ -441,6 +482,10 @@ const processDocument = async () => {
     isSubmitting.value = false
   }
 }
+
+onMounted(() => {
+  void loadTranslationLanguages()
+})
 </script>
 
 <style scoped>

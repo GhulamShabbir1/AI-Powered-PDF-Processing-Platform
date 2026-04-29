@@ -32,32 +32,43 @@ const isDashboardLayout = computed(() => route.meta.layout === 'dashboard')
 onMounted(async () => {
   notificationLogger.info('App mounted - initializing notification system')
 
+  // ============================================================
+  // SECURE CONTEXT GUARD (The fix for HTTP deployments)
+  // ============================================================
+  // Browsers disable Service Workers and Push APIs on non-HTTPS sites.
+  // This check prevents the Firebase SDK from crashing on your server IP.
+  if (!window.isSecureContext) {
+    notificationLogger.warn('⚠️ Notifications disabled: Running in an insecure context (HTTP). ' +
+      'Notifications require HTTPS or localhost.');
+    return; // Exit early to prevent initialization crashes
+  }
+
   // Wait a bit for Service Worker to register
   await new Promise((resolve) => setTimeout(resolve, 500))
 
   // Check service worker health
-  const swHealth = await checkServiceWorkerHealth()
-  notificationLogger.debug('Service Worker health check', swHealth)
+  try {
+    const swHealth = await checkServiceWorkerHealth()
+    notificationLogger.debug('Service Worker health check', swHealth)
 
-  // Ping Service Worker to check if it's alive
-  if (isRegistered.value) {
-    const swPing = await ping()
-    notificationLogger.debug('Service Worker ping', { response: swPing })
-  }
+    // Ping Service Worker to check if it's alive
+    if (isRegistered.value) {
+      const swPing = await ping()
+      notificationLogger.debug('Service Worker ping', { response: swPing })
+    }
 
-  // Initialize push notifications if authenticated
-  if (authStore.isAuthenticated) {
-    try {
+    // Initialize push notifications if authenticated
+    if (authStore.isAuthenticated) {
       await notificationService.initPushNotifications()
       notificationLogger.info('✅ Push notifications initialized on app mount')
-    } catch (e) {
-      notificationLogger.error('Failed to initialize push notifications on app mount', { 
-        error: (e as Error).message 
-      })
     }
+  } catch (e) {
+    notificationLogger.error('Failed to initialize push notifications on app mount', { 
+      error: (e as Error).message 
+    })
   }
 
-  // Listen to notification events for logging/analytics
+  // Listen to notification events
   const unsubscribeInit = notificationService.on('init-success', () => {
     notificationLogger.info('✅ Notification service initialized successfully')
   })

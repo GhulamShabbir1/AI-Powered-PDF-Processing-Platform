@@ -12,29 +12,28 @@ export const firebaseConfig = {
   measurementId: import.meta.env.VITE_FIREBASE_MEASUREMENT_ID,
 };
 
-// Initialize Firebase
 const app = initializeApp(firebaseConfig);
 
-// Initialize Analytics (optional, works in browser) user Activites
 export const analytics = typeof window !== 'undefined' ? getAnalytics(app) : null;
 
-// Initialize Firebase Cloud Messaging and get a reference to the service
-// Only initialize if messaging is supported (excludes some browsers / private modes)
-let messagingInstance: ReturnType<typeof getMessaging> | null = null;
+let messagingInstance: any = null;
 
 export async function getMessagingInstance() {
   if (messagingInstance) return messagingInstance;
-  const supported = await isSupported();
-  if (supported) {
-    messagingInstance = getMessaging(app);
+  
+  // Try/Catch block is extra insurance for insecure environments
+  try {
+    const supported = await isSupported();
+    if (supported) {
+      messagingInstance = getMessaging(app);
+    }
+  } catch (err) {
+    console.warn("Firebase Messaging not supported:", err);
   }
   return messagingInstance;
 }
 
-export function isMessagingSupported(): Promise<boolean> {
-  return isSupported();
-}
-
-export const messaging = getMessaging(app);
+// --- DELETE OR COMMENT OUT THE LINE BELOW ---
+// export const messaging = getMessaging(app); 
 
 export default app;

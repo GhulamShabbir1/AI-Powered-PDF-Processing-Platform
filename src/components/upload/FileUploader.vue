@@ -38,29 +38,6 @@
           Select file
         </BaseButton>
 
-        <div class="cloud-actions d-flex flex-column gap-2 ml-4">
-          <v-btn 
-            icon 
-            color="red-darken-1" 
-            size="small" 
-            elevation="2" 
-            class="cloud-btn"
-            title="Google Drive"
-          >
-            <v-icon size="20">mdi-google-drive</v-icon>
-          </v-btn>
-          
-          <v-btn 
-            icon 
-            color="blue-darken-2" 
-            size="small" 
-            elevation="2" 
-            class="cloud-btn"
-            title="Dropbox"
-          >
-            <v-icon size="20">mdi-dropbox</v-icon>
-          </v-btn>
-        </div>
       </div>
 
       <p class="text-h6 text-grey-darken-1 font-weight-regular">

@@ -101,15 +101,6 @@
             </div>
 
             <div v-if="activeService === 'summarize'">
-              <div class="text-subtitle-2 font-weight-bold mb-2 text-black">Summary Length</div>
-              <v-select
-                v-model="summarizeSettings.length"
-                :items="['Short (Executive)', 'Medium (Standard)', 'Detailed (Comprehensive)']"
-                variant="outlined"
-                density="comfortable"
-                class="mb-4"
-                hide-details
-              />
 
               <div class="text-subtitle-2 font-weight-bold mb-2 text-black">Output Format</div>
               <v-select
@@ -271,7 +262,7 @@ const translationLanguages = ref<LanguageOption[]>([...fallbackTranslationLangua
 const isLoadingTranslationLanguages = ref(false)
 
 const ocrSettings = ref({ languages: ['English'] })
-const summarizeSettings = ref({ length: 'Medium (Standard)', format: 'Bullet Points' })
+const summarizeSettings = ref({ format: 'Bullet Points' })
 const translateSettings = ref({ target: fallbackTranslationLanguages[0]?.code || '' })
 
 const isImage = computed(() => selectedFile.value?.type.startsWith('image/'))

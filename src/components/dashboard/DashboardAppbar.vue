@@ -18,6 +18,30 @@
 
       <div class="d-none d-sm-flex align-center ga-3">
         <div v-if="authStore.isLoggedIn" class="d-flex align-center ga-2">
+          <v-btn
+            v-if="showEnableNotifications"
+            variant="tonal"
+            color="primary"
+            prepend-icon="mdi-bell-badge-outline"
+            :loading="isEnablingNotifications"
+            @click="handleEnableNotifications"
+          >
+            Enable Notifications
+          </v-btn>
+
+          <v-tooltip v-else-if="isSubscribed" text="Notifications enabled">
+            <template #activator="{ props }">
+              <v-btn
+                icon
+                variant="tonal"
+                color="success"
+                v-bind="props"
+              >
+                <v-icon>mdi-bell-check-outline</v-icon>
+              </v-btn>
+            </template>
+          </v-tooltip>
+
           <v-menu location="bottom end" offset="10">
             <template #activator="{ props }">
               <v-btn
@@ -116,6 +140,17 @@
               <v-list-item-title>History</v-list-item-title>
             </v-list-item>
 
+            <v-list-item
+              v-if="showEnableNotifications"
+              :disabled="isEnablingNotifications"
+              @click="handleEnableNotifications"
+            >
+              <template #prepend>
+                <v-icon color="primary">mdi-bell-badge-outline</v-icon>
+              </template>
+              <v-list-item-title>Enable Notifications</v-list-item-title>
+            </v-list-item>
+
             <v-list-item v-if="authStore.isLoggedIn" @click="handleLogout" :disabled="isLoggingOut">
               <v-list-item-title class="text-error">Logout</v-list-item-title>
             </v-list-item>
@@ -131,13 +166,22 @@
 import { computed, ref } from 'vue'
 import { useAuthStore } from '../../stores/auth.store'
 import { useRouter } from 'vue-router'
+import { useToast } from 'vue-toastification'
+import { useNotifications } from '../../composables/useNotifications'
 
 const router = useRouter()
 const authStore = useAuthStore()
+const toast = useToast()
 const isLoggingOut = ref(false)
+const isEnablingNotifications = ref(false)
+const { canSubscribe, isSubscribed, permission, enableNotifications, refreshState } = useNotifications()
 const userInitial = computed(() => {
   const name = authStore.currentUser?.name?.trim()
   return name ? name.charAt(0).toUpperCase() : 'U'
+})
+
+const showEnableNotifications = computed(() => {
+  return authStore.isLoggedIn && canSubscribe.value && !isSubscribed.value
 })
 
 const goToServices = () => {
@@ -146,6 +190,31 @@ const goToServices = () => {
 
 const goToHistory = () => {
   router.push({ name: 'History' })
+}
+
+const handleEnableNotifications = async () => {
+  isEnablingNotifications.value = true
+
+  try {
+    const granted = await enableNotifications()
+    refreshState()
+
+    if (granted) {
+      toast.success('Push notifications enabled.')
+      return
+    }
+
+    if (permission.value === 'denied') {
+      toast.error('Notifications are blocked in this browser. Please allow them in site settings.')
+    } else {
+      toast.info('Notification permission was not granted.')
+    }
+  } catch (error) {
+    console.error('Failed to enable notifications:', error)
+    toast.error('Failed to enable notifications. Please try again.')
+  } finally {
+    isEnablingNotifications.value = false
+  }
 }
 
 const handleLogout = async () => {

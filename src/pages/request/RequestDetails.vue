@@ -7,6 +7,7 @@
             <h1 class="text-h3 text-md-h4 font-weight-bold text-grey-darken-4">
               {{ pageTitle }}
             </h1>
+            <p class="text-body-1 text-medium-emphasis mt-2">{{ pageDescription }}</p>
           </div>
 
           <div class="d-flex flex-wrap ga-2">
@@ -166,6 +167,7 @@ import { useRoute, useRouter } from 'vue-router'
 import { useRequestStore } from '../../stores'
 import type { PDFRequest, ServiceType } from '../../types/request.types'
 import { downloadTextAsPdf } from '../../utils/pdf'
+import clientNotificationService from '../../services/clientNotification.service'
 
 const route = useRoute()
 const router = useRouter()
@@ -191,11 +193,12 @@ const serviceRouteName = computed(() => {
 })
 
 const friendlyServiceName = computed(() => {
-  return {
+  const names: Record<ServiceType, string> = {
     ocr: 'OCR',
     summarization: 'Summarization',
     translation: 'Translation',
-  }[serviceType.value]
+  }
+  return names[serviceType.value]
 })
 
 const pageTitle = computed(() => `${friendlyServiceName.value} Result`)
@@ -210,12 +213,13 @@ const pageDescription = computed(() => {
 })
 
 const statusColor = computed(() => {
-  return {
+  const colors: Record<string, string> = {
     completed: 'success',
     processing: 'warning',
     pending: 'info',
     failed: 'error',
-  }[requestDetails.value?.status || 'pending']
+  }
+  return colors[requestDetails.value?.status || 'pending'] || 'info'
 })
 
 const statusMessage = computed(() => {
@@ -273,7 +277,6 @@ const extractReadableText = (value: unknown): string => {
 
 const formattedResult = computed(() => {
   const result = requestDetails.value?.result
-  if (!result) return ''
   return extractReadableText(result)
 })
 
@@ -373,18 +376,44 @@ const refreshRequest = async () => {
   }
 }
 
-const downloadResultPdf = () => {
+const downloadResultPdf = async () => {
   if (!formattedResult.value) return
-  const filename = `${friendlyServiceName.value.toLowerCase()}-${fileId.value}.pdf`
-  const header = [
-    pageTitle.value,
-    `Service: ${friendlyServiceName.value}`,
-    `File ID: ${fileId.value}`,
-    `Status: ${requestDetails.value?.status || 'unknown'}`,
-    '',
-  ].join('\n')
+  
+  // Show download notification
+  const downloadId = await clientNotificationService.showProgress(
+    'Downloading Result',
+    0
+  )
+  
+  try {
+    const filename = `${friendlyServiceName.value.toLowerCase()}-${fileId.value}.pdf`
+    const header = [
+      pageTitle.value,
+      `Service: ${friendlyServiceName.value}`,
+      `File ID: ${fileId.value}`,
+      `Status: ${requestDetails.value?.status || 'unknown'}`,
+      '',
+    ].join('\n')
 
-  downloadTextAsPdf(filename, pageTitle.value, `${header}\n${formattedResult.value}`)
+    // Simulate download progress (PDF generation)
+    for (let i = 0; i <= 100; i += 20) {
+      await clientNotificationService.updateProgress(downloadId, i)
+      await new Promise(resolve => setTimeout(resolve, 100))
+    }
+    
+    downloadTextAsPdf(filename, pageTitle.value, `${header}\n${formattedResult.value}`)
+    
+    await clientNotificationService.completeProgress(
+      downloadId,
+      'Download Complete!',
+      `${filename} saved to Downloads folder`
+    )
+  } catch (error) {
+    await clientNotificationService.showError(
+      'Download Failed',
+      'Please try downloading again'
+    )
+  }
 }
 
 onMounted(async () => {

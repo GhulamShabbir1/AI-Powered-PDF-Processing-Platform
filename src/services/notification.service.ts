@@ -12,7 +12,7 @@ const TOKEN_VALUE_KEY = 'fcm_token_value';
 
 class NotificationService {
   private toast: ReturnType<typeof useToast> | null = null;
-  private initialized = false;
+  private foregroundHandlerBound = false;
 
   private getToast() {
     if (!this.toast) {
@@ -238,11 +238,6 @@ class NotificationService {
    * - Prevents duplicate initialization
    */
   async initPushNotifications(): Promise<void> {
-    if (this.initialized) {
-      console.log('Push notifications already initialized.');
-      return;
-    }
-
     const supported = await this.isSupported();
     if (!supported) {
       console.warn('Push notifications are not supported in this browser.');
@@ -252,24 +247,26 @@ class NotificationService {
     const messaging = await getMessagingInstance();
     if (!messaging) return;
 
-    this.initialized = true;
+    if (!this.foregroundHandlerBound) {
+      this.foregroundHandlerBound = true;
 
-    // Handle foreground messages
-    onMessage(messaging, (payload: FcmMessagePayload) => {
-      console.log('Message received in foreground:', payload);
+      // Bind the foreground listener only once, but keep subsequent init calls safe.
+      onMessage(messaging, (payload: FcmMessagePayload) => {
+        console.log('Message received in foreground:', payload);
 
-      if (payload.notification) {
-        const toast = this.getToast();
-        if (toast) {
-          const { title, body } = payload.notification;
-          toast.info(`${title || 'Notification'}: ${body || ''}`, {
-            timeout: 7000,
-            closeOnClick: true,
-            pauseOnHover: true,
-          });
+        if (payload.notification) {
+          const toast = this.getToast();
+          if (toast) {
+            const { title, body } = payload.notification;
+            toast.info(`${title || 'Notification'}: ${body || ''}`, {
+              timeout: 7000,
+              closeOnClick: true,
+              pauseOnHover: true,
+            });
+          }
         }
-      }
-    });
+      });
+    }
 
     // If permission already granted → get token
     // If permission not yet decided → we wait for explicit user action (better UX)
@@ -326,4 +323,3 @@ class NotificationService {
 
 export const notificationService = new NotificationService();
 export default notificationService;
-

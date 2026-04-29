@@ -1,5 +1,6 @@
-import apiClient from './apiClient'
 import type { UploadProgress } from '@/types/api.types'
+import apiClient from './apiClient'
+import clientNotificationService from './clientNotification.service'
 
 export interface UploadedFileResponse {
   fileId: string
@@ -14,25 +15,51 @@ export const uploadService = {
     const formData = new FormData()
     formData.append('file', file)
 
-    const response = await apiClient.post('/file/upload', formData, {
-      headers: { 'Content-Type': 'multipart/form-data' },
-      onUploadProgress: (progressEvent) => {
-        if (onProgress && progressEvent.total) {
-          const percentage = Math.round((progressEvent.loaded * 100) / progressEvent.total)
-          onProgress({
-            loaded: progressEvent.loaded,
-            total: progressEvent.total,
-            percentage,
-          })
-        }
-      },
-    })
+    // Start upload notification
+    const notificationId = await clientNotificationService.showProgress(
+      `Uploading ${file.name}`,
+      0
+    )
 
-    const payload = response.data?.data ?? response.data ?? {}
+    try {
+      const response = await apiClient.post('/file/upload', formData, {
+        headers: { 'Content-Type': 'multipart/form-data' },
+        onUploadProgress: async (progressEvent) => {
+          if (onProgress && progressEvent.total) {
+            const percentage = Math.round((progressEvent.loaded * 100) / progressEvent.total)
+            onProgress({
+              loaded: progressEvent.loaded,
+              total: progressEvent.total,
+              percentage,
+            })
+            
+            // Update notification progress
+            await clientNotificationService.updateProgress(notificationId, percentage)
+          }
+        },
+      })
 
-    return {
-      fileId: payload.file_id ?? payload.fileId,
-      filename: payload.filename ?? payload.file_name ?? file.name,
+      // Complete upload notification
+      await clientNotificationService.completeProgress(
+        notificationId,
+        'Upload Complete!',
+        `${file.name} ready for processing`
+      )
+
+      const payload = response.data?.data ?? response.data ?? {}
+
+      return {
+        fileId: payload.file_id ?? payload.fileId,
+        filename: payload.filename ?? payload.file_name ?? file.name,
+      }
+    } catch (error) {
+      // Show error notification
+      await clientNotificationService.showError(
+        'Upload Failed',
+        `Failed to upload ${file.name}`,
+        { tag: notificationId }
+      )
+      throw error
     }
   },
 
@@ -66,3 +93,4 @@ export const uploadService = {
 }
 
 export default uploadService
+

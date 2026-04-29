@@ -1,5 +1,3 @@
-// src/types/notification.types.ts
-
 /**
  * Represents the data structure inside an FCM message payload.
  */
@@ -54,5 +52,18 @@ export interface NotificationServiceInterface {
   initPushNotifications: () => Promise<void>;
   isSupported: () => boolean;
   getCurrentToken: () => Promise<string | null>;
+}
+
+/**
+ * Client-side notification types (foreground operations)
+ */
+export type NotificationPermission = 'default' | 'granted' | 'denied';
+
+export interface ClientNotificationOptions {
+  tag?: string;
+  requireInteraction?: boolean;
+  icon?: string;
+  image?: string;
+  actions?: Array<{ action: string; title: string }>;
 }
 

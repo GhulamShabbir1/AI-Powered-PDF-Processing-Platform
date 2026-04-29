@@ -208,6 +208,7 @@
 <script setup lang="ts">
 import { computed, onBeforeUnmount, onMounted, ref, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
+import clientNotificationService from '../../services/clientNotification.service'
 import FileUploader from '../../components/upload/FileUploader.vue'
 import languageService from '../../services/language.service'
 import { useRequestStore, useUploadStore } from '../../stores'
@@ -240,7 +241,7 @@ const serviceConfig = {
 }
 
 const serviceTitle = computed(() => serviceConfig[activeService.value as keyof typeof serviceConfig]?.title || 'Process')
-const currentServiceInfo = computed(() => serviceConfig[activeService.value as keyof typeof serviceConfig]?.info || '')
+
 const serviceType = computed<ServiceType>(() => serviceConfig[activeService.value as keyof typeof serviceConfig]?.type || 'ocr')
 const fallbackTranslationLanguages: LanguageOption[] = [
   { code: 'en', name: 'English' },
@@ -367,29 +368,7 @@ const loadTranslationLanguages = async () => {
   }
 }
 
-const startPolling = () => {
-  stopPolling()
-  if (!uploadedFileId.value) return
 
-  pollingTimer.value = window.setInterval(async () => {
-    try {
-      const latest = await requestStore.fetchRequestById(
-        uploadedFileId.value as string,
-        serviceType.value
-      )
-
-      if (latest) {
-        currentRequest.value = latest
-      }
-
-      if (!latest || latest.status === 'completed' || latest.status === 'failed') {
-        stopPolling()
-      }
-    } catch {
-      stopPolling()
-    }
-  }, 4000)
-}
 
 const onFileSelected = (file: File) => {
   selectedFile.value = file
@@ -455,6 +434,12 @@ const processDocument = async () => {
 
   isSubmitting.value = true
 
+  // Show processing notification
+  const processingId = await clientNotificationService.showProgress(
+    `Starting ${serviceTitle.value}`,
+    0
+  )
+
   try {
     const fileId = uploadedFileId.value || (await uploadCurrentFile())
 
@@ -466,6 +451,14 @@ const processDocument = async () => {
 
     currentRequest.value = created
     processSuccess.value = `${serviceTitle.value} started successfully.`
+
+    // Update notification with polling info
+    await clientNotificationService.completeProgress(
+      processingId,
+      `${serviceTitle.value} Started!`,
+      'Check notification bar for status updates'
+    )
+
     await router.push({
       name: 'RequestDetails',
       params: {
@@ -474,6 +467,10 @@ const processDocument = async () => {
       },
     })
   } catch (error: any) {
+    await clientNotificationService.showError(
+      `${serviceTitle.value} Failed`,
+      error?.response?.data?.message || error?.message || `Failed to start ${serviceTitle.value}.`
+    )
     processError.value =
       error?.response?.data?.message ||
       error?.message ||

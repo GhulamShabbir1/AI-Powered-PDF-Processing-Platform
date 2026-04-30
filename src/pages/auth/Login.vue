@@ -43,12 +43,7 @@
 
           <!-- OPTIONS -->
           <div class="d-flex align-center justify-space-between mb-4">
-            <v-checkbox
-              v-model="rememberMe"
-              label="Remember me"
-              density="compact"
-              hide-details
-            />
+            
 
             <v-btn
               variant="text"

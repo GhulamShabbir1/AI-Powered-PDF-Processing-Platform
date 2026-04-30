@@ -29,8 +29,8 @@ class NotificationService {
   private toast: ReturnType<typeof useToast> | null = null;
   private foregroundHandlerBound = false;
   private initialized = false;
-  private tokenRefreshTimer: NodeJS.Timeout | null = null;
-  private backgroundCheckTimer: NodeJS.Timeout | null = null;
+  private tokenRefreshTimer: ReturnType<typeof setInterval> | null = null;
+  private backgroundCheckTimer: ReturnType<typeof setInterval> | null = null;
   private visibilityChangeListener: (() => void) | null = null;
   private eventListeners: Map<string, Set<(data: any) => void>> = new Map();
 
@@ -428,7 +428,13 @@ class NotificationService {
       }
       notificationDeduplicator.markAsShown(notificationTag);
 
-      if (payload.notification) {
+      const notificationType = payload.data?.notification_type || payload.data?.type || '';
+      const isProgressUpdate =
+        notificationType === 'progress' ||
+        notificationType === 'processing-progress' ||
+        notificationTag.startsWith('progress-');
+
+      if (payload.notification && document.visibilityState === 'visible' && !isProgressUpdate) {
         const { title, body } = payload.notification;
         const message = `${title || 'Notification'}: ${body || ''}`;
 
@@ -442,6 +448,11 @@ class NotificationService {
         } else {
           notificationLogger.warn('Toast service not available');
         }
+      } else if (isProgressUpdate) {
+        notificationLogger.debug('Foreground progress push suppressed', {
+          notificationTag,
+          notificationType,
+        });
       }
 
       this.emit('message-received-foreground', payload);

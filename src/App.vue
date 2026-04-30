@@ -15,16 +15,17 @@
 <script setup lang="ts">
 import { computed, onMounted, onUnmounted } from 'vue'
 import { useRoute } from 'vue-router'
+import useServiceWorker from './composables/useServiceWorker'
 import DashboardLayout from './layouts/DashboardLayout.vue'
 import DefaultLayout from './layouts/DefaultLayout.vue'
 import notificationService from './services/notification.service'
 import { useAuthStore } from './stores/auth.store'
-import { notificationLogger, checkServiceWorkerHealth } from './utils/notification-utils'
-import useServiceWorker from './composables/useServiceWorker'
+import { checkServiceWorkerHealth, notificationLogger } from './utils/notification-utils'
 
 const route = useRoute()
 const authStore = useAuthStore()
 const { isRegistered, ping } = useServiceWorker()
+const unsubscribers: Array<() => void> = []
 
 const isDefaultLayout = computed(() => route.meta.layout === 'default')
 const isDashboardLayout = computed(() => route.meta.layout === 'dashboard')
@@ -32,89 +33,67 @@ const isDashboardLayout = computed(() => route.meta.layout === 'dashboard')
 onMounted(async () => {
   notificationLogger.info('App mounted - initializing notification system')
 
-  // ============================================================
-  // SECURE CONTEXT GUARD (The fix for HTTP deployments)
-  // ============================================================
-  // Browsers disable Service Workers and Push APIs on non-HTTPS sites.
-  // This check prevents the Firebase SDK from crashing on your server IP.
   if (!window.isSecureContext) {
-    notificationLogger.warn('⚠️ Notifications disabled: Running in an insecure context (HTTP). ' +
-      'Notifications require HTTPS or localhost.');
-    return; // Exit early to prevent initialization crashes
+    notificationLogger.warn(
+      'Notifications disabled: Running in an insecure context (HTTP). Notifications require HTTPS or localhost.'
+    )
+    return
   }
 
-  // Wait a bit for Service Worker to register
+  if (unsubscribers.length === 0) {
+    unsubscribers.push(
+      notificationService.on('init-success', () => {
+        notificationLogger.info('Notification service initialized successfully')
+      }),
+      notificationService.on('init-failed', (data) => {
+        notificationLogger.warn('Notification initialization failed', data)
+      }),
+      notificationService.on('token-sent', (data) => {
+        notificationLogger.info('FCM token sent to backend', data)
+      }),
+      notificationService.on('token-backend-failed', (data) => {
+        notificationLogger.warn('FCM token backend send failed', data)
+      }),
+      notificationService.on('app-online', () => {
+        notificationLogger.info('App came online - will retry failed operations')
+      }),
+      notificationService.on('app-offline', () => {
+        notificationLogger.warn('App went offline')
+      }),
+      notificationService.on('message-received-foreground', (payload) => {
+        notificationLogger.debug('Foreground message received', {
+          title: payload.notification?.title,
+          hasData: !!payload.data,
+        })
+      })
+    )
+  }
+
   await new Promise((resolve) => setTimeout(resolve, 500))
 
-  // Check service worker health
   try {
     const swHealth = await checkServiceWorkerHealth()
     notificationLogger.debug('Service Worker health check', swHealth)
 
-    // Ping Service Worker to check if it's alive
     if (isRegistered.value) {
       const swPing = await ping()
       notificationLogger.debug('Service Worker ping', { response: swPing })
     }
 
-    // Initialize push notifications if authenticated
     if (authStore.isAuthenticated) {
       await notificationService.initPushNotifications()
-      notificationLogger.info('✅ Push notifications initialized on app mount')
+      notificationLogger.info('Push notifications initialized on app mount')
     }
-  } catch (e) {
-    notificationLogger.error('Failed to initialize push notifications on app mount', { 
-      error: (e as Error).message 
+  } catch (error) {
+    notificationLogger.error('Failed to initialize push notifications on app mount', {
+      error: (error as Error).message,
     })
   }
+})
 
-  // Listen to notification events
-  const unsubscribeInit = notificationService.on('init-success', () => {
-    notificationLogger.info('✅ Notification service initialized successfully')
-  })
-
-  const unsubscribeInitFailed = notificationService.on('init-failed', (data) => {
-    notificationLogger.warn('❌ Notification initialization failed', data)
-  })
-
-  const unsubscribeTokenSent = notificationService.on('token-sent', (data) => {
-    notificationLogger.info('✅ FCM token sent to backend', data)
-  })
-
-  const unsubscribeTokenFailed = notificationService.on('token-backend-failed', (data) => {
-    notificationLogger.warn('⚠️  FCM token backend send failed', data)
-  })
-
-  const unsubscribeOnline = notificationService.on('app-online', () => {
-    notificationLogger.info('✅ App came online - will retry failed operations')
-  })
-
-  const unsubscribeOffline = notificationService.on('app-offline', () => {
-    notificationLogger.warn('⚠️  App went offline')
-  })
-
-  const unsubscribeMessage = notificationService.on('message-received-foreground', (payload) => {
-    notificationLogger.debug('📬 Foreground message received', {
-      title: payload.notification?.title,
-      hasData: !!payload.data,
-    })
-  })
-
-  // Store cleanup functions
-  const unsubscribers = [
-    unsubscribeInit,
-    unsubscribeInitFailed,
-    unsubscribeTokenSent,
-    unsubscribeTokenFailed,
-    unsubscribeOnline,
-    unsubscribeOffline,
-    unsubscribeMessage,
-  ]
-
-  onUnmounted(() => {
-    notificationLogger.info('App unmounting, cleaning up...')
-    unsubscribers.forEach((unsub) => unsub?.())
-  })
+onUnmounted(() => {
+  notificationLogger.info('App unmounting, cleaning up...')
+  unsubscribers.splice(0).forEach((unsubscribe) => unsubscribe())
 })
 </script>
 

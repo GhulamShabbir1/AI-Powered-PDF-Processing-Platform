@@ -417,12 +417,6 @@ const processDocument = async () => {
 
   isSubmitting.value = true
 
-  // Show processing notification
-  const processingId = await clientNotificationService.showProgress(
-    `Starting ${serviceTitle.value}`,
-    0
-  )
-
   try {
     const fileId = uploadedFileId.value || (await uploadCurrentFile())
 
@@ -434,13 +428,6 @@ const processDocument = async () => {
 
     currentRequest.value = created
     processSuccess.value = `${serviceTitle.value} started successfully.`
-
-    // Update notification with polling info
-    await clientNotificationService.completeProgress(
-      processingId,
-      `${serviceTitle.value} Started!`,
-      'Check notification bar for status updates'
-    )
 
     await router.push({
       name: 'RequestDetails',

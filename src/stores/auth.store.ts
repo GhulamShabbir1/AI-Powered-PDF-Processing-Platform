@@ -58,28 +58,12 @@ export const useAuthStore = defineStore('auth', {
     async register(name: string, email: string, organization: string, password: string) {
       this.isLoading = true
       try {
-        const data = await authService.register({
+        await authService.register({
           name,
           email,
           organization,
           password,
           confirmPassword: password,
-        })
-
-        this.token = data.access_token
-        this.user = data.user
-        this.isAuthenticated = true
-        authService.setToken(data.access_token)
-        localStorage.setItem('user', JSON.stringify(data.user))
-        localStorage.setItem('user_id', data.user.id)
-        if ((data.user as any).organization_id) {
-          localStorage.setItem('organization_id', (data.user as any).organization_id)
-        }
-        localStorage.setItem('organization_name', organization)
-
-        // Initialize push notifications (fire-and-forget, non-blocking)
-        notificationService.initPushNotifications().catch((e) => {
-          console.warn('Push notification init failed after register:', e)
         })
       } finally {
         this.isLoading = false
@@ -89,16 +73,7 @@ export const useAuthStore = defineStore('auth', {
     async verifyAccount(email: string, token: string) {
       this.isLoading = true
       try {
-        await authService.verifySignup(email, token)
-      } finally {
-        this.isLoading = false
-      }
-    },
-
-    async resendOtp(email: string) {
-      this.isLoading = true
-      try {
-        await authService.resendOtp(email)
+        await authService.verifySignup(token)
       } finally {
         this.isLoading = false
       }

@@ -3,7 +3,14 @@ import type { AxiosInstance, AxiosError } from 'axios';
 import type { ApiError } from '../types/api.types';
 import { installNotificationMiddleware } from '../middleware/notification-middleware';
 
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://178.104.58.236:8085/api';
+const normalizeApiBaseUrl = (value: string): string => {
+  const trimmed = value.replace(/\/$/, '');
+  return trimmed.endsWith('/api') ? trimmed : `${trimmed}/api`;
+};
+
+const API_BASE_URL = normalizeApiBaseUrl(
+  import.meta.env.VITE_API_BASE_URL || 'http://178.104.58.236:8085'
+);
 
 const apiClient: AxiosInstance = axios.create({
   baseURL: API_BASE_URL,
@@ -18,7 +25,7 @@ apiClient.interceptors.request.use(
   (config) => {
     const token = localStorage.getItem('token');
     if (token) {
-      config.headers.Authorization = token ;
+      config.headers.Authorization = token.startsWith('Bearer ') ? token : `Bearer ${token}`;
     }
     return config;
   },

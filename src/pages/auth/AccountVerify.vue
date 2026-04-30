@@ -72,29 +72,11 @@
               Verify Account
             </v-btn>
 
-            <!-- RESEND -->
             <div class="text-center mt-6">
-              <p class="text-body-2 text-grey-darken-1">
-
-                Didn't receive the code?
-
-                <v-btn
-                  variant="text"
-                  color="primary"
-                  class="pa-0 text-none font-weight-bold"
-                  :disabled="resendCooldown > 0 || isLoading"
-                  @click="resendOtp"
-                >
-                  <span v-if="resendCooldown === 0">Resend OTP</span>
-                  <span v-else>Resend in {{ resendCooldown }}s</span>
-                </v-btn>
-
-              </p>
-
               <v-btn
                 variant="text"
                 density="compact"
-                class="mt-4 text-none"
+                class="text-none"
                 to="/register"
               >
                 Back to Registration
@@ -124,15 +106,9 @@ const showAlert = ref(false)
 const alertMessage = ref('')
 const isLoading = ref(false)
 
-/* ✅ NEW: resend cooldown */
-const resendCooldown = ref(0)
-let timer: any = null
-
 onMounted(() => {
   if (route.query.email) {
     email.value = String(route.query.email)
-  } else {
-    router.push('/register')
   }
 })
 
@@ -174,40 +150,6 @@ const handleVerify = async () => {
   } finally {
     isLoading.value = false
   }
-}
-
-/* ================= RESEND ================= */
-
-const resendOtp = async () => {
-  if (resendCooldown.value > 0) return
-
-  isLoading.value = true
-
-  try {
-    await authStore.resendOtp(email.value) // 👈 must exist in backend
-
-    startCooldown()
-
-  } catch (error: any) {
-    showError(
-      error.response?.data?.message ||
-      'Failed to resend OTP'
-    )
-  } finally {
-    isLoading.value = false
-  }
-}
-
-const startCooldown = () => {
-  resendCooldown.value = 60
-
-  timer = setInterval(() => {
-    resendCooldown.value--
-
-    if (resendCooldown.value <= 0) {
-      clearInterval(timer)
-    }
-  }, 1000)
 }
 
 /* ================= ERROR ================= */

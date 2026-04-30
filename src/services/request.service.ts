@@ -59,26 +59,13 @@ const pickMatchingService = (
 
 export const requestService = {
   async getRequests(
-    organizationId: string,
-    filters: RequestListFilters = {}
+    _organizationId?: string,
+    _filters: RequestListFilters = {}
   ): Promise<RequestListResponse> {
     try {
-      notificationLogger.debug('Fetching requests', {
-        organizationId,
-        hasFilters: !!Object.keys(filters).length,
-      })
+      notificationLogger.debug('Fetching requests')
 
-      const response = await apiClient.get('/service/list', {
-        params: {
-          organization_id: organizationId,
-          ...(filters.search ? { search: filters.search } : {}),
-          ...(filters.type ? { type: filters.type } : {}),
-          ...(filters.status ? { status: filters.status } : {}),
-          ...(filters.dateFrom ? { date_from: filters.dateFrom } : {}),
-          ...(filters.dateTo ? { date_to: filters.dateTo } : {}),
-          ...(filters.targetLanguage ? { target_language: filters.targetLanguage } : {}),
-        },
-      })
+      const response = await apiClient.get('/service/list')
 
       const services = toArray(response.data).map(mapServiceRecord)
 
@@ -104,13 +91,14 @@ export const requestService = {
   ): Promise<PDFRequest | null> {
     try {
       notificationLogger.debug('Fetching request by ID', {
-        fileId: params.fileId,
+        serviceId: params.fileId,
         serviceType,
       })
 
       const response = await apiClient.get('/service/read', {
-        params: {
-          file_id: params.fileId,
+        data: {
+          service_id: params.fileId,
+          download_pdf: '1',
         },
       })
 
@@ -124,7 +112,7 @@ export const requestService = {
         })
       } else {
         notificationLogger.warn('⚠️  No matching request found', {
-          fileId: params.fileId,
+          serviceId: params.fileId,
           serviceType,
         })
       }
@@ -132,7 +120,7 @@ export const requestService = {
       return result
     } catch (error) {
       notificationLogger.error('Failed to fetch request by ID', {
-        fileId: params.fileId,
+        serviceId: params.fileId,
         error: (error as Error).message,
       })
       throw error
@@ -144,8 +132,9 @@ export const requestService = {
       notificationLogger.debug('Fetching services by file', { fileId: params.fileId })
 
       const response = await apiClient.get('/service/read', {
-        params: {
-          file_id: params.fileId,
+        data: {
+          service_id: params.fileId,
+          download_pdf: '1',
         },
       })
 

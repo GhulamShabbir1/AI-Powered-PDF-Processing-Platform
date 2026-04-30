@@ -445,7 +445,7 @@ const processDocument = async () => {
     await router.push({
       name: 'RequestDetails',
       params: {
-        fileId,
+        fileId: created.id, // ✅ FIX: Send the actual Service ID to the URL
         serviceType: created.serviceType,
       },
     })

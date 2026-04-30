@@ -86,30 +86,24 @@
               {{ processSuccess }}
             </v-alert>
 
-            <div v-if="activeService === 'ocr'">
-              <div class="text-subtitle-2 font-weight-bold mb-2 text-black">Document languages</div>
-              <v-autocomplete
-                v-model="ocrSettings.languages"
-                :items="['English', 'Spanish', 'French', 'German', 'Arabic']"
-                multiple
-                chips
-                closable-chips
-                variant="outlined"
-                density="comfortable"
-                hide-details
-              />
+<div v-if="activeService === 'ocr'">
+              <v-alert
+                type="info"
+                variant="tonal"
+                class="mb-3 rounded-lg text-body-2"
+              >
+                The document language will be automatically detected during OCR processing.
+              </v-alert>
             </div>
 
-            <div v-if="activeService === 'summarize'">
-
-              <div class="text-subtitle-2 font-weight-bold mb-2 text-black">Output Format</div>
-              <v-select
-                v-model="summarizeSettings.format"
-                :items="['Bullet Points', 'Paragraphs']"
-                variant="outlined"
-                density="comfortable"
-                hide-details
-              />
+<div v-if="activeService === 'summarize'">
+              <v-alert
+                type="info"
+                variant="tonal"
+                class="mb-3 rounded-lg text-body-2"
+              >
+                The document will be summarized automatically. No format selection needed.
+              </v-alert>
             </div>
 
             <div v-if="activeService === 'translate'">
@@ -199,8 +193,8 @@
 <script setup lang="ts">
 import { computed, onBeforeUnmount, onMounted, ref, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
-import clientNotificationService from '../../services/clientNotification.service'
 import FileUploader from '../../components/upload/FileUploader.vue'
+import clientNotificationService from '../../services/clientNotification.service'
 import languageService from '../../services/language.service'
 import { useRequestStore, useUploadStore } from '../../stores'
 import type { LanguageOption } from '../../types/language.types'
@@ -261,8 +255,6 @@ const pollingTimer = ref<number | null>(null)
 const translationLanguages = ref<LanguageOption[]>([...fallbackTranslationLanguages])
 const isLoadingTranslationLanguages = ref(false)
 
-const ocrSettings = ref({ languages: ['English'] })
-const summarizeSettings = ref({ format: 'Bullet Points' })
 const translateSettings = ref({ target: fallbackTranslationLanguages[0]?.code || '' })
 
 const isImage = computed(() => selectedFile.value?.type.startsWith('image/'))

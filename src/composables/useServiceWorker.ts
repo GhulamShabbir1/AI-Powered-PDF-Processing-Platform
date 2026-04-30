@@ -3,136 +3,152 @@
  * Handles SW registration, updates, and client-SW communication
  */
 
-import { onMounted, ref, onUnmounted } from 'vue';
-import { notificationLogger } from '../utils/notification-utils';
+import { onMounted, onUnmounted, ref } from 'vue'
+import { notificationLogger } from '../utils/notification-utils'
 
-const isServiceWorkerSupported = () => 'serviceWorker' in navigator;
+const isServiceWorkerSupported = () => 'serviceWorker' in navigator
 
-let registration: ServiceWorkerRegistration | null = null;
+let registration: ServiceWorkerRegistration | null = null
+let registerPromise: Promise<boolean> | null = null
+let updateIntervalId: ReturnType<typeof setInterval> | null = null
 
 export function useServiceWorker() {
-  const isRegistered = ref(false);
-  const hasUpdate = ref(false);
-  const error = ref<string | null>(null);
+  const isRegistered = ref(!!registration)
+  const hasUpdate = ref(false)
+  const error = ref<string | null>(null)
 
   async function register() {
     if (!isServiceWorkerSupported()) {
-      notificationLogger.warn('Service Worker not supported');
-      return;
+      notificationLogger.warn('Service Worker not supported')
+      return false
     }
 
-    try {
-      notificationLogger.info('Registering Service Worker...');
+    if (registration) {
+      isRegistered.value = true
+      return true
+    }
 
-      registration = await navigator.serviceWorker.register('/firebase-messaging-sw.js', {
-        scope: '/',
-      });
+    if (registerPromise) {
+      return registerPromise
+    }
 
-      notificationLogger.info('✅ Service Worker registered successfully', {
-        scope: registration.scope,
-        active: !!registration.active,
-        installing: !!registration.installing,
-      });
+    registerPromise = (async () => {
+      try {
+        notificationLogger.info('Registering Service Worker...')
 
-      isRegistered.value = true;
+        registration = await navigator.serviceWorker.register('/firebase-messaging-sw.js', {
+          scope: '/',
+        })
 
-      // Listen for updates
-      registration.addEventListener('updatefound', () => {
-        const newWorker = registration?.installing;
-        if (newWorker) {
+        notificationLogger.info('Service Worker registered successfully', {
+          scope: registration.scope,
+          active: !!registration.active,
+          installing: !!registration.installing,
+        })
+
+        isRegistered.value = true
+
+        registration.addEventListener('updatefound', () => {
+          const newWorker = registration?.installing
+          if (!newWorker) return
+
           newWorker.addEventListener('statechange', () => {
             if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
-              notificationLogger.info('New Service Worker available');
-              hasUpdate.value = true;
+              notificationLogger.info('New Service Worker available')
+              hasUpdate.value = true
             }
-          });
+          })
+        })
+
+        if (!updateIntervalId) {
+          updateIntervalId = setInterval(() => {
+            registration?.update().catch((err) => {
+              notificationLogger.warn('SW update check failed', { error: err.message })
+            })
+          }, 60 * 60 * 1000)
         }
-      });
 
-      // Periodic update check every hour
-      setInterval(() => {
-        registration?.update().catch((err) => {
-          notificationLogger.warn('SW update check failed', { error: err.message });
-        });
-      }, 60 * 60 * 1000);
+        return true
+      } catch (err) {
+        const errorMsg = (err as Error).message
+        notificationLogger.error('Service Worker registration failed', { error: errorMsg })
+        error.value = errorMsg
+        isRegistered.value = false
+        return false
+      } finally {
+        registerPromise = null
+      }
+    })()
 
-      return true;
-    } catch (err) {
-      const errorMsg = (err as Error).message;
-      notificationLogger.error('Service Worker registration failed', { error: errorMsg });
-      error.value = errorMsg;
-      isRegistered.value = false;
-      return false;
-    }
+    return registerPromise
   }
 
   async function unregister() {
-    if (!registration) return;
+    if (!registration) return
 
     try {
-      const success = await registration.unregister();
+      const success = await registration.unregister()
       if (success) {
-        notificationLogger.info('Service Worker unregistered');
-        isRegistered.value = false;
+        notificationLogger.info('Service Worker unregistered')
+        registration = null
+        isRegistered.value = false
+        hasUpdate.value = false
       }
     } catch (err) {
       notificationLogger.error('Failed to unregister Service Worker', {
         error: (err as Error).message,
-      });
+      })
     }
   }
 
   async function updateServiceWorker() {
-    if (!registration) return;
+    if (!registration) return
 
     try {
-      await registration.update();
-      notificationLogger.info('Service Worker update check performed');
+      await registration.update()
+      notificationLogger.info('Service Worker update check performed')
     } catch (err) {
-      notificationLogger.error('SW update failed', { error: (err as Error).message });
+      notificationLogger.error('SW update failed', { error: (err as Error).message })
     }
   }
 
   async function skipWaiting() {
-    const worker = registration?.waiting;
+    const worker = registration?.waiting
     if (worker) {
-      worker.postMessage({ type: 'SKIP_WAITING' });
-      notificationLogger.info('Skip waiting requested');
+      worker.postMessage({ type: 'SKIP_WAITING' })
+      notificationLogger.info('Skip waiting requested')
     }
   }
 
   async function ping(): Promise<boolean> {
     return new Promise((resolve) => {
       if (!navigator.serviceWorker.controller) {
-        resolve(false);
-        return;
+        resolve(false)
+        return
       }
 
-      const channel = new MessageChannel();
+      const channel = new MessageChannel()
       const timeout = setTimeout(() => {
-        resolve(false);
-      }, 5000);
+        resolve(false)
+      }, 5000)
 
       channel.port1.onmessage = (event) => {
-        clearTimeout(timeout);
-        notificationLogger.debug('SW ping response received', event.data);
-        resolve(event.data.swReady === true);
-      };
+        clearTimeout(timeout)
+        notificationLogger.debug('SW ping response received', event.data)
+        resolve(event.data.swReady === true)
+      }
 
-      navigator.serviceWorker.controller.postMessage(
-        { type: 'PING' },
-        [channel.port2]
-      );
-    });
+      navigator.serviceWorker.controller.postMessage({ type: 'PING' }, [channel.port2])
+    })
   }
 
   onMounted(() => {
-    register();
-  });
+    void register()
+  })
 
   onUnmounted(() => {
-    // Don't unregister on unmount - keep SW active
-  });
+    isRegistered.value = !!registration
+  })
 
   return {
     isRegistered,
@@ -143,7 +159,7 @@ export function useServiceWorker() {
     updateServiceWorker,
     skipWaiting,
     ping,
-  };
+  }
 }
 
-export default useServiceWorker;
+export default useServiceWorker

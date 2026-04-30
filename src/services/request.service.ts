@@ -43,6 +43,34 @@ const normalizeServiceType = (value: unknown): ServiceType => {
   return 'ocr'
 }
 
+const extractServiceResult = (item: Record<string, any>): unknown => {
+  const rawResult = item.result ?? item.output ?? item.response ?? null
+
+  if (!rawResult || typeof rawResult !== 'object') {
+    return rawResult
+  }
+
+  const record = rawResult as Record<string, any>
+  const nestedData = record.data
+
+  if (nestedData && typeof nestedData === 'object') {
+    const nestedRecord = nestedData as Record<string, any>
+
+    if (
+      nestedRecord.summarized_text ||
+      nestedRecord.translated_text ||
+      nestedRecord.extracted_text ||
+      nestedRecord.ocr_text ||
+      nestedRecord.text ||
+      nestedRecord.summary
+    ) {
+      return nestedData
+    }
+  }
+
+  return rawResult
+}
+
 const mapServiceRecord = (item: Record<string, any>): PDFRequest => ({
   id: String(item.service_id ?? item.id ?? item._id ?? item.file_id ?? crypto.randomUUID()),
   fileId: String(item.file_id ?? item.fileId ?? item.file?.id ?? ''),
@@ -53,7 +81,7 @@ const mapServiceRecord = (item: Record<string, any>): PDFRequest => ({
   serviceType: normalizeServiceType(item.type ?? item.service_type),
   createdAt: item.created_at ?? item.createdAt ?? new Date().toISOString(),
   updatedAt: item.updated_at ?? item.updatedAt ?? item.created_at ?? new Date().toISOString(),
-  result: item.result ?? item.output ?? item.response ?? null,
+  result: extractServiceResult(item),
   error: item.error ?? item.message ?? null,
   downloadUrl: item.download_url ?? item.downloadUrl ?? item.file_url ?? null,
   targetLanguage: item.target_language ?? item.targetLanguage ?? null,

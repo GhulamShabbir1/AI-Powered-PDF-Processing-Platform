@@ -26,7 +26,7 @@ export class ClientNotificationService {
     return this.toast
   }
 
-private getPermission(): Promise<NotificationPermission> {
+  private getPermission(): Promise<NotificationPermission> {
     return new Promise((resolve) => {
       if (!('Notification' in window)) {
         resolve('denied')
@@ -41,37 +41,33 @@ private getPermission(): Promise<NotificationPermission> {
     return permission === 'granted'
   }
 
+  private shouldUseSystemNotification(): boolean {
+    if (typeof document === 'undefined') {
+      return false
+    }
+
+    return document.visibilityState !== 'visible' || !document.hasFocus()
+  }
+
+  private closeTrackedNotification(id: string): void {
+    const existing = this.notifications.get(id)
+    if (existing) {
+      existing.close()
+      this.notifications.delete(id)
+    }
+  }
+
   /**
-   * Show progress notification (upload/download/processing)
+   * Show progress notification (upload/download/processing).
+   * Progress updates stay in-app only to avoid noisy OS-level spam.
    */
   async showProgress(
     title: string,
     progress: number,
     options: ClientNotificationOptions = {}
   ): Promise<string> {
-    const canShow = await this.canShowNotifications()
-    if (!canShow) {
-      this.showToastFallback(title, `${Math.round(progress)}% complete`)
-      return ''
-    }
-
     const id = options.tag || `progress-${Date.now()}`
-    const notification = new Notification(title, {
-      body: `Progress: ${Math.round(progress)}%`,
-      tag: id,
-      icon: options.icon || '/favicon.svg',
-      requireInteraction: options.requireInteraction ?? false,
-      silent: false,
-      ...options,
-    })
-
-    this.notifications.set(id, notification)
-    
-    // Note: Notification.body is read-only after creation
-    notification.onclose = () => {
-      this.notifications.delete(id)
-    }
-
+    this.showToastFallback(title, `${Math.round(progress)}% complete`)
     return id
   }
 
@@ -79,17 +75,8 @@ private getPermission(): Promise<NotificationPermission> {
    * Update existing progress notification
    */
   async updateProgress(id: string, progress: number): Promise<void> {
-    const notification = this.notifications.get(id)
-    if (notification) {
-      const baseTitle = notification.title.replace(/ - \d+%$/, '')
-      const newNotification = new Notification(`${baseTitle} - ${Math.round(progress)}%`, {
-        body: `Progress: ${Math.round(progress)}%`,
-        tag: id,
-        icon: notification.icon,
-        silent: true
-      })
-      this.notifications.set(id, newNotification)
-    }
+    void progress
+    if (!id) return
   }
 
   /**
@@ -100,7 +87,9 @@ private getPermission(): Promise<NotificationPermission> {
     title: string = 'Complete!',
     body: string = 'Operation finished successfully'
   ): Promise<void> {
-    this.notifications.delete(id)
+    if (id) {
+      this.closeTrackedNotification(id)
+    }
     await this.showSuccess(title, body)
   }
 
@@ -113,15 +102,16 @@ private getPermission(): Promise<NotificationPermission> {
     options: ClientNotificationOptions = {}
   ): Promise<void> {
     const canShow = await this.canShowNotifications()
-    if (!canShow) {
+    if (!canShow || !this.shouldUseSystemNotification()) {
       this.showToastFallback(title, body)
       return
     }
 
     const notification = new Notification(title, {
       body,
-      icon: '/icons-success.svg' || options.icon,
+      icon: options.icon || '/icons-success.svg',
       badge: '/favicon.svg',
+      tag: options.tag || `success-${Date.now()}`,
       ...options,
     })
 
@@ -138,20 +128,25 @@ private getPermission(): Promise<NotificationPermission> {
     options: ClientNotificationOptions = {}
   ): Promise<void> {
     const canShow = await this.canShowNotifications()
-    if (!canShow) {
+    if (!canShow || !this.shouldUseSystemNotification()) {
       this.showToastFallback(title, body, 'error')
       return
     }
 
-    new Notification(title, {
+    const tag = options.tag || `error-${Date.now()}`
+    const notification = new Notification(title, {
       body,
-      icon: '/icons-error.svg' || options.icon,
+      icon: options.icon || '/icons-error.svg',
       badge: '/favicon.svg',
       requireInteraction: true,
+      tag,
       ...options,
     })
 
-    // Persist until user dismisses
+    this.notifications.set(tag, notification)
+    notification.onclose = () => {
+      this.notifications.delete(tag)
+    }
   }
 
   /**
@@ -162,20 +157,8 @@ private getPermission(): Promise<NotificationPermission> {
     status: string,
     options: ClientNotificationOptions = {}
   ): Promise<void> {
-    const canShow = await this.canShowNotifications()
-    if (!canShow) {
-      this.showToastFallback(title, status)
-      return
-    }
-
-    const notification = new Notification(title, {
-      body: status,
-      tag: 'status-update',
-      icon: options.icon || '/favicon.svg',
-      ...options,
-    })
-
-    setTimeout(() => notification.close(), 4000)
+    void options
+    this.showToastFallback(title, status)
   }
 
   private showToastFallback(title: string, body: string, type: 'info' | 'success' | 'error' = 'info') {
@@ -206,4 +189,3 @@ private getPermission(): Promise<NotificationPermission> {
 
 export const clientNotificationService = new ClientNotificationService()
 export default clientNotificationService
-

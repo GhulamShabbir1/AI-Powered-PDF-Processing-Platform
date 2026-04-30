@@ -244,15 +244,17 @@ const extractReadableText = (value: unknown): string => {
   if (typeof value === 'object') {
     const record = value as Record<string, unknown>
     const preferredKeys = [
+      'summarized_text',
+      'translated_text',
+      'extracted_text',
+      'ocr_text',
       'text',
+      'data',
       'result',
       'content',
       'output',
       'summary',
-      'translated_text',
       'translation',
-      'ocr_text',
-      'extracted_text',
       'message',
     ]
 

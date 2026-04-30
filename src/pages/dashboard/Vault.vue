@@ -1,204 +1,143 @@
 <template>
   <div class="history-page">
-    <v-container class="py-4 py-md-6">
+    
+    <div class="d-flex align-center justify-space-between mb-6 flex-shrink-0">
+      <div>
+        <h1 class="text-h5 font-weight-bold text-grey-darken-4 mb-1">History</h1>
+        <p class="text-body-2 text-medium-emphasis mb-0">
+          All processed files ({{ filteredRequestCount }})
+        </p>
+      </div>
+      <v-btn
+        color="primary"
+        variant="tonal"
+        prepend-icon="mdi-arrow-left"
+        :to="{ name: 'Dashboard' }"
+        class="text-none rounded-lg"
+      >
+        Back
+      </v-btn>
+    </div>
 
-      <!-- 🔷 Header -->
-      <div class="history-header d-flex flex-column flex-sm-row align-start align-sm-center justify-space-between mb-4 mb-md-6 ga-2">
-        <div>
-          <h1 class="text-h5 text-md-h4 font-weight-bold mb-1">History</h1>
-          <p class="text-body-2 text-medium-emphasis">
-            All processed files ({{ filteredRequestCount }})
-          </p>
-        </div>
+    <div class="d-flex flex-wrap align-center ga-3 mb-6 flex-shrink-0">
+      <v-select
+        v-model="selectedServiceType"
+        :items="serviceTypeOptions"
+        item-title="text"
+        item-value="value"
+        label="Service"
+        variant="outlined"
+        density="compact"
+        hide-details
+        class="filter-input bg-white"
+        clearable
+      />
+      <v-select
+        v-model="selectedStatus"
+        :items="statusOptions"
+        item-title="text"
+        item-value="value"
+        label="Status"
+        variant="outlined"
+        density="compact"
+        hide-details
+        class="filter-input bg-white"
+        clearable
+      />
+      <v-text-field
+        v-model="dateFrom"
+        type="date"
+        label="From Date"
+        variant="outlined"
+        density="compact"
+        hide-details
+        class="filter-input bg-white"
+      />
+      <v-text-field
+        v-model="dateTo"
+        type="date"
+        label="To Date"
+        variant="outlined"
+        density="compact"
+        hide-details
+        class="filter-input bg-white"
+      />
 
-        <v-btn
-          color="primary"
-          variant="flat"
-          prepend-icon="mdi-arrow-left"
-          :to="{ name: 'Dashboard' }"
-          class="rounded-lg"
-        >
-          Back
-        </v-btn>
+      <v-btn
+        v-if="hasActiveFilters"
+        variant="text"
+        color="primary"
+        prepend-icon="mdi-close-circle-outline"
+        @click="resetFilters"
+        class="text-none font-weight-bold tracking-normal"
+        height="40"
+      >
+        CLEAR FILTERS
+      </v-btn>
+    </div>
+
+    <v-card class="history-card" elevation="0">
+      
+      <div v-if="requestStore.isLoading" class="d-flex flex-grow-1 align-center justify-center">
+        <v-progress-circular indeterminate color="primary" size="48" width="4"></v-progress-circular>
       </div>
 
-      <!-- 🔍 Filters -->
-      <v-card class="filters-card mb-6 pa-4" elevation="1">
-        <div class="d-flex flex-wrap ga-4 align-end">
-          <!-- Service Type Filter -->
-          <div class="filter-group">
-            <label class="text-caption font-weight-medium mb-2 d-block">Service</label>
-            <v-select
-              v-model="selectedServiceType"
-              :items="serviceTypeOptions"
-              item-title="text"
-              item-value="value"
-              label="All Services"
-              variant="outlined"
-              density="compact"
-              clearable
-              class="filter-select"
-              @update:model-value="applyFilters"
-            />
-          </div>
-
-          <!-- Status Filter -->
-          <div class="filter-group">
-            <label class="text-caption font-weight-medium mb-2 d-block">Status</label>
-            <v-select
-              v-model="selectedStatus"
-              :items="statusOptions"
-              item-title="text"
-              item-value="value"
-              label="All Status"
-              variant="outlined"
-              density="compact"
-              clearable
-              class="filter-select"
-              @update:model-value="applyFilters"
-            />
-          </div>
-
-          <!-- Date From Filter -->
-          <div class="filter-group">
-            <label class="text-caption font-weight-medium mb-2 d-block">From Date</label>
-            <v-text-field
-              v-model="dateFrom"
-              type="date"
-              variant="outlined"
-              density="compact"
-              class="filter-select"
-              @update:model-value="applyFilters"
-            />
-          </div>
-
-          <!-- Date To Filter -->
-          <div class="filter-group">
-            <label class="text-caption font-weight-medium mb-2 d-block">To Date</label>
-            <v-text-field
-              v-model="dateTo"
-              type="date"
-              variant="outlined"
-              density="compact"
-              class="filter-select"
-              @update:model-value="applyFilters"
-            />
-          </div>
-
-          <!-- Reset Filters Button -->
-          <v-btn
-            v-if="hasActiveFilters"
-            variant="text"
-            color="primary"
-            size="medium"
-            prepend-icon="mdi-close-circle-outline"
-            @click="resetFilters"
-            class="mt-6"
-          >
-            Clear Filters
-          </v-btn>
-        </div>
-      </v-card>
-
-      <!-- 🔄 Loading -->
-      <div v-if="requestStore.isLoading">
-        <v-skeleton-loader type="table" />
-      </div>
-
-      <!-- 📭 Empty State -->
-      <div v-else-if="filteredRequests.length === 0" class="empty-state">
-        <v-icon icon="mdi-file-document-outline" size="90" class="mb-4 empty-icon" />
-
-        <h3 class="text-h6 mb-2">{{ hasActiveFilters ? 'No files match your filters' : 'No files uploaded yet' }}</h3>
-
+      <div v-else-if="filteredRequests.length === 0" class="empty-state d-flex flex-column align-center justify-center flex-grow-1">
+        <v-icon icon="mdi-file-document-outline" size="64" color="grey-lighten-2" class="mb-4" />
+        <h3 class="text-h6 font-weight-medium text-grey-darken-3">
+          {{ hasActiveFilters ? 'No files match your filters' : 'No files uploaded yet' }}
+        </h3>
         <p class="text-body-2 text-medium-emphasis mb-5">
           {{ hasActiveFilters ? 'Try adjusting your filters' : 'Process your first PDF to see it here' }}
         </p>
-
-        <v-btn color="primary" size="large" class="rounded-lg" :to="{ name: 'Dashboard' }">
+        <v-btn color="primary" variant="tonal" class="text-none rounded-lg" :to="{ name: 'Dashboard' }">
           {{ hasActiveFilters ? 'Clear Filters' : 'Upload Document' }}
         </v-btn>
       </div>
 
-      <!-- 📊 Table -->
-      <v-card
+      <v-data-table
         v-else
-        class="history-card overflow-x-auto"
-        elevation="0"
+        :headers="headers"
+        :items="filteredRequests"
+        item-value="id"
+        density="comfortable"
+        fixed-header
+        class="history-table"
       >
-        <v-data-table
-          :headers="headers"
-          :items="filteredRequests"
-          item-value="id"
-          density="comfortable"
-          class="history-table"
-        >
-
-          <!-- 📄 File -->
-          <template #item.filename="{ item }">
-            <div class="d-flex align-center ga-3">
-              <v-avatar color="primary" size="40" class="file-avatar">
-                <v-icon icon="mdi-file-pdf" />
-              </v-avatar>
-
-              <div>
-                <div class="font-weight-medium line-clamp-1">
-                  {{ item.filename || item.id.slice(-8) }}
-                </div>
-                <div class="text-caption text-medium-emphasis">
-                  {{ formatDate(item.createdAt) }}
-                </div>
+        <template #item.filename="{ item }">
+          <div class="d-flex align-center ga-3 py-2">
+            <v-avatar color="primary" size="36" class="file-avatar">
+              <v-icon icon="mdi-file-pdf" size="20" />
+            </v-avatar>
+            <div>
+              <div class="font-weight-medium text-body-2 line-clamp-1">
+                {{ item.filename || item.id.slice(-8) }}
+              </div>
+              <div class="text-caption text-medium-emphasis">
+                {{ formatDate(item.createdAt) }}
               </div>
             </div>
-          </template>
+          </div>
+        </template>
 
-          <!-- ⚡ Status -->
-          <template #item.status="{ item }">
-            <v-chip
-              :color="getStatusColor(item.status)"
-              size="small"
-              variant="flat"
-              class="font-weight-medium"
-            >
-              {{ capitalize(item.status) }}
-            </v-chip>
-          </template>
+        <template #item.status="{ item }">
+          <v-chip
+            :color="getStatusColor(item.status)"
+            size="small"
+            variant="flat"
+            class="font-weight-medium text-capitalize"
+          >
+            {{ item.status }}
+          </v-chip>
+        </template>
 
-          <!-- ⚙️ Actions -->
-          <template #item.actions="{ item }">
-            <div class="d-flex ga-2">
-              <v-btn
-                icon="mdi-refresh"
-                size="small"
-                variant="text"
-                color="primary"
-                class="action-btn"
-                @click="refreshRequest(item)"
-              />
-
-              <v-btn
-                icon="mdi-download-outline"
-                size="small"
-                variant="text"
-                color="success"
-                class="action-btn"
-                :href="item.downloadUrl || undefined"
-                :disabled="!item.downloadUrl"
-              />
-
-              <v-btn
-                icon="mdi-delete-outline"
-                size="small"
-                variant="text"
-                color="error"
-                class="action-btn"
-                @click="removeFile(item)"
-              />
-            </div>
-          </template>
-        </v-data-table>
-      </v-card>
-    </v-container>
+        <template #item.updatedAt="{ item }">
+          <span class="text-body-2 text-medium-emphasis">
+            {{ formatDate(item.updatedAt) }}
+          </span>
+        </template>
+      </v-data-table>
+    </v-card>
   </div>
 </template>
 
@@ -211,7 +150,6 @@ import { computed, onMounted, ref } from 'vue'
 const authStore = useAuthStore()
 const requestStore = useRequestStore()
 
-// Filter states
 const selectedServiceType = ref<string | null>(null)
 const selectedStatus = ref<string | null>(null)
 const dateFrom = ref<string>('')
@@ -224,21 +162,18 @@ const toSafeText = (value: unknown): string => {
 }
 
 const organizationId = computed(
-  () =>
-    toSafeText(authStore.currentUser?.organization_id) ||
-    toSafeText(localStorage.getItem('organization_id')) ||
-    ''
+  () => toSafeText(authStore.currentUser?.organization_id) || toSafeText(localStorage.getItem('organization_id')) || ''
 )
 
-// Service type options
 const serviceTypeOptions = [
+  { text: 'All Services', value: null },
   { text: 'OCR', value: 'ocr' },
   { text: 'Summarization', value: 'summarization' },
   { text: 'Translation', value: 'translation' },
 ]
 
-// Status filter options
 const statusOptions = [
+  { text: 'All Status', value: null },
   { text: 'Pending', value: 'pending' },
   { text: 'Processing', value: 'processing' },
   { text: 'Completed', value: 'completed' },
@@ -247,26 +182,21 @@ const statusOptions = [
 
 const allRequests = computed(() => requestStore.requests)
 
-// Check if any filters are active
 const hasActiveFilters = computed(() => {
   return selectedServiceType.value !== null || selectedStatus.value !== null || dateFrom.value || dateTo.value
 })
 
-// Filter logic
 const filteredRequests = computed(() => {
   let filtered = allRequests.value
 
-  // Filter by service type
   if (selectedServiceType.value) {
     filtered = filtered.filter((req: PDFRequest) => req.serviceType === selectedServiceType.value)
   }
 
-  // Filter by status
   if (selectedStatus.value) {
     filtered = filtered.filter((req: PDFRequest) => req.status === selectedStatus.value)
   }
 
-  // Filter by date range
   if (dateFrom.value) {
     const fromDate = new Date(dateFrom.value)
     fromDate.setHours(0, 0, 0, 0)
@@ -290,14 +220,13 @@ const filteredRequests = computed(() => {
 })
 
 const filteredRequestCount = computed(() => filteredRequests.value.length)
-const requestCount = computed(() => allRequests.value.length)
 
+// Actions column has been removed
 const headers = [
   { title: 'File', key: 'filename', sortable: false },
   { title: 'Service', key: 'serviceType', width: 140 },
   { title: 'Status', key: 'status', width: 130, sortable: false },
-  { title: 'Processed', key: 'updatedAt', width: 160 },
-  { title: '', key: 'actions', width: 100, sortable: false },
+  { title: 'Processed', key: 'updatedAt', width: 180 }
 ]
 
 onMounted(async () => {
@@ -306,29 +235,11 @@ onMounted(async () => {
   }
 })
 
-const applyFilters = () => {
-  // Filters are applied reactively through computed properties
-}
-
 const resetFilters = () => {
   selectedServiceType.value = null
   selectedStatus.value = null
   dateFrom.value = ''
   dateTo.value = ''
-}
-
-const refreshRequest = async (item: PDFRequest) => {
-  const latest = await requestStore.fetchRequestById(item.fileId, item.serviceType)
-  if (latest) {
-    const index = requestStore.requests.findIndex((request: PDFRequest) => request.id === latest.id)
-    if (index >= 0) {
-      requestStore.requests[index] = latest
-    }
-  }
-}
-
-const removeFile = async (item: PDFRequest) => {
-  await requestStore.deleteRequest(item.fileId)
 }
 
 const getStatusColor = (status: PDFRequest['status']) => {
@@ -340,101 +251,89 @@ const getStatusColor = (status: PDFRequest['status']) => {
   }[status] || 'grey'
 }
 
-const capitalize = (str: string) =>
-  str.charAt(0).toUpperCase() + str.slice(1)
-
-const formatDate = (dateString: string) =>
-  new Date(dateString).toLocaleDateString('en-US', {
+const formatDate = (dateString: string) => {
+  if (!dateString) return ''
+  return new Date(dateString).toLocaleDateString('en-US', {
     year: 'numeric',
     month: 'short',
     day: 'numeric',
     hour: '2-digit',
     minute: '2-digit'
   })
+}
 </script>
 
 <style scoped>
-
-/* 🌫 Background */
+/* 1. Exact viewport math: 
+  100vh - Navbar (64px) - Footer (48px) - Padding (~48px) = ~160px.
+  This completely destroys the universal scroll.
+*/
 .history-page {
-  background: linear-gradient(135deg, #f8fafc, #eef2ff);
-  min-height: 100vh;
-}
-
-/* 🔝 Header */
-.history-header {
-  padding: 0 4px;
-}
-
-/* � Filters */
-.filters-card {
-  border-radius: 14px;
-  background: white;
-  border: 1px solid rgba(79, 70, 229, 0.1);
-}
-
-.filter-group {
-  min-width: 180px;
-}
-
-.filter-select {
-  min-width: 180px;
-}
-
-/* 🔄 Loader */
-.loader-wrapper {
-  height: 300px;
+  height: calc(100vh - 160px);
   display: flex;
-  align-items: center;
-  justify-content: center;
+  flex-direction: column;
+  overflow: hidden;
 }
 
-/* 📭 Empty */
-.empty-state {
-  text-align: center;
-  padding: 60px 20px;
-}
-
-.empty-icon {
-  color: #cbd5f5;
-}
-
-/* 📦 Card */
+/* 2. Container expands to fill remaining space but never overflows */
 .history-card {
-  border-radius: 18px;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  border-radius: 12px;
   background: white;
-  padding: 10px;
-  box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+  border: 1px solid rgba(15, 23, 42, 0.08);
 }
 
-/* 📊 Table */
-.history-table :deep(.v-data-table-header__row) {
+/* 3. The table forces the inner body wrapper to scroll */
+.history-table {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.history-table :deep(.v-table__wrapper) {
+  flex: 1;
+  overflow-y: auto;
+}
+
+.history-table :deep(.v-data-table-footer) {
+  flex-shrink: 0; /* Keep the pagination locked at the bottom */
+}
+
+/* Filters */
+.filter-input {
+  min-width: 160px;
+  max-width: 220px;
+  flex: 1 1 auto;
+}
+
+/* Table Aesthetics */
+.history-table :deep(.v-data-table-header__row) th {
   background: #f8fafc !important;
+  font-weight: 600 !important;
+  color: #475569 !important;
+  border-bottom: 1px solid rgba(15, 23, 42, 0.08) !important;
 }
 
 .history-table :deep(.v-data-table-row) {
-  transition: all 0.2s ease;
+  transition: background-color 0.2s ease;
 }
 
 .history-table :deep(.v-data-table-row:hover) {
-  background: #f1f5f9 !important;
+  background: #f8fafc !important;
 }
 
-/* 📄 File Avatar */
+/* File Avatar */
 .file-avatar {
-  box-shadow: 0 4px 10px rgba(79,70,229,0.3);
+  border-radius: 8px;
+  background: rgba(79, 70, 229, 0.1) !important;
+  color: #4F46E5 !important;
 }
 
-/* ⚙️ Actions */
-.action-btn {
-  transition: all 0.2s ease;
-}
-
-.action-btn:hover {
-  transform: scale(1.15);
-}
-
-/* ✂️ Text Clamp */
+/* Text Truncation */
 .line-clamp-1 {
   display: -webkit-box;
   line-clamp: 1;
@@ -443,20 +342,14 @@ const formatDate = (dateString: string) =>
   overflow: hidden;
 }
 
-/* 📱 Mobile */
+/* Mobile Adjustments */
 @media (max-width: 600px) {
-  .history-card {
-    border-radius: 12px;
-    padding: 4px;
+  .history-page {
+    height: calc(100vh - 120px); /* Tighter padding on mobile */
   }
-
-  .filter-group {
+  .filter-input {
     min-width: 100%;
-  }
-
-  .filter-select {
-    min-width: 100%;
+    max-width: 100%;
   }
 }
-
 </style>

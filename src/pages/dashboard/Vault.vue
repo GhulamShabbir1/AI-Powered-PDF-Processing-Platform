@@ -2,7 +2,7 @@
 
   <div class="history-page">
 
-   
+
 
     <div class="d-flex align-center justify-space-between mb-6 flex-shrink-0">
 
@@ -18,19 +18,8 @@
 
       </div>
 
-      <v-btn
-
-        color="primary"
-
-        variant="tonal"
-
-        prepend-icon="mdi-arrow-left"
-
-        :to="{ name: 'Dashboard' }"
-
-        class="text-none rounded-lg"
-
-      >
+      <v-btn color="primary" variant="tonal" prepend-icon="mdi-arrow-left" :to="{ name: 'Dashboard' }"
+        class="text-none rounded-lg">
 
         Back
 
@@ -42,109 +31,22 @@
 
     <div class="d-flex flex-wrap align-center ga-3 mb-6 flex-shrink-0">
 
-      <v-select
+      <v-select v-model="selectedServiceType" :items="serviceTypeOptions" item-title="text" item-value="value"
+        label="Service" variant="outlined" density="compact" hide-details class="filter-input bg-white" clearable />
 
-        v-model="selectedServiceType"
+      <v-select v-model="selectedStatus" :items="statusOptions" item-title="text" item-value="value" label="Status"
+        variant="outlined" density="compact" hide-details class="filter-input bg-white" clearable />
 
-        :items="serviceTypeOptions"
+      <v-text-field v-model="dateFrom" type="date" label="From Date" variant="outlined" density="compact" hide-details
+        class="filter-input bg-white" />
 
-        item-title="text"
-
-        item-value="value"
-
-        label="Service"
-
-        variant="outlined"
-
-        density="compact"
-
-        hide-details
-
-        class="filter-input bg-white"
-
-        clearable
-
-      />
-
-      <v-select
-
-        v-model="selectedStatus"
-
-        :items="statusOptions"
-
-        item-title="text"
-
-        item-value="value"
-
-        label="Status"
-
-        variant="outlined"
-
-        density="compact"
-
-        hide-details
-
-        class="filter-input bg-white"
-
-        clearable
-
-      />
-
-      <v-text-field
-
-        v-model="dateFrom"
-
-        type="date"
-
-        label="From Date"
-
-        variant="outlined"
-
-        density="compact"
-
-        hide-details
-
-        class="filter-input bg-white"
-
-      />
-
-      <v-text-field
-
-        v-model="dateTo"
-
-        type="date"
-
-        label="To Date"
-
-        variant="outlined"
-
-        density="compact"
-
-        hide-details
-
-        class="filter-input bg-white"
-
-      />
+      <v-text-field v-model="dateTo" type="date" label="To Date" variant="outlined" density="compact" hide-details
+        class="filter-input bg-white" />
 
 
 
-      <v-btn
-
-        v-if="hasActiveFilters"
-
-        variant="text"
-
-        color="primary"
-
-        prepend-icon="mdi-close-circle-outline"
-
-        @click="resetFilters"
-
-        class="text-none font-weight-bold tracking-normal"
-
-        height="40"
-
-      >
+      <v-btn v-if="hasActiveFilters" variant="text" color="primary" prepend-icon="mdi-close-circle-outline"
+        @click="resetFilters" class="text-none font-weight-bold tracking-normal" height="40">
 
         CLEAR FILTERS
 
@@ -156,7 +58,7 @@
 
     <v-card class="history-card" elevation="0">
 
-     
+
 
       <div v-if="requestStore.isLoading" class="d-flex flex-grow-1 align-center justify-center">
 
@@ -166,7 +68,8 @@
 
 
 
-      <div v-else-if="filteredRequests.length === 0" class="empty-state d-flex flex-column align-center justify-center flex-grow-1">
+      <div v-else-if="filteredRequests.length === 0"
+        class="empty-state d-flex flex-column align-center justify-center flex-grow-1">
 
         <v-icon icon="mdi-file-document-outline" size="64" color="grey-lighten-2" class="mb-4" />
 
@@ -192,23 +95,8 @@
 
 
 
-      <v-data-table
-
-        v-else
-
-        :headers="headers"
-
-        :items="filteredRequests"
-
-        item-value="id"
-
-        density="comfortable"
-
-        fixed-header
-
-        class="history-table"
-
-      >
+      <v-data-table v-else :headers="headers" :items="filteredRequests" item-value="id" density="comfortable"
+        fixed-header class="history-table">
 
         <template #item.filename="{ item }">
 
@@ -244,17 +132,8 @@
 
         <template #item.status="{ item }">
 
-          <v-chip
-
-            :color="getStatusColor(item.status)"
-
-            size="small"
-
-            variant="flat"
-
-            class="font-weight-medium text-capitalize"
-
-          >
+          <v-chip :color="getStatusColor(item.status)" size="small" variant="flat"
+            class="font-weight-medium text-capitalize">
 
             {{ item.status }}
 
@@ -529,7 +408,6 @@ const formatDate = (dateString: string) => {
 
 
 <style scoped>
-
 /* 1. Exact viewport math:
 
   100vh - Navbar (64px) - Footer (48px) - Padding (48px) = 160px.
@@ -602,7 +480,8 @@ const formatDate = (dateString: string) => {
 
 .history-table :deep(.v-data-table-footer) {
 
-  flex-shrink: 0; /* Keep the pagination locked at the bottom */
+  flex-shrink: 0;
+  /* Keep the pagination locked at the bottom */
 
 }
 
@@ -692,7 +571,8 @@ const formatDate = (dateString: string) => {
 
   .history-page {
 
-    height: calc(100vh - 120px); /* Tighter padding on mobile */
+    height: calc(100vh - 120px);
+    /* Tighter padding on mobile */
 
   }
 
@@ -705,5 +585,4 @@ const formatDate = (dateString: string) => {
   }
 
 }
-
 </style>

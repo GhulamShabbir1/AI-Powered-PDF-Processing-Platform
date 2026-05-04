@@ -7,35 +7,32 @@ import type {
   ServiceType,
 } from '@/types/request.types'
 import apiClient from './apiClient'
-import { notificationLogger } from '../utils/notification-utils'
 import clientNotificationService from './clientNotification.service'
 
 const toArray = (payload: unknown): Record<string, any>[] => {
   if (Array.isArray(payload)) return payload as Record<string, any>[]
-  
+
   if (payload && typeof payload === 'object') {
     const data = payload as Record<string, any>
-    
+
     if (data.data && typeof data.data === 'object') {
-      // 🚨 THE FIX: Catch the exact structure your backend sends -> { data: { service: { ... } } }
       if (data.data.service && typeof data.data.service === 'object') {
         return [data.data.service]
       }
-      
+
       if (Array.isArray(data.data.services)) return data.data.services
       if (Array.isArray(data.data.items)) return data.data.items
       if (Array.isArray(data.data.results)) return data.data.results
-      
-      // Fallback if data.data itself is the service object
       if (data.data.service_id || data.data.id) return [data.data]
     }
-    
+
     if (Array.isArray(data.data)) return data.data
     if (Array.isArray(data.services)) return data.services
   }
-  
+
   return []
 }
+
 const normalizeServiceType = (value: unknown): ServiceType => {
   if (value === 'translation' || value === 'summarization' || value === 'ocr') {
     return value
@@ -101,107 +98,86 @@ export const requestService = {
     organizationId: string,
     filters: RequestListFilters = {}
   ): Promise<RequestListResponse> {
-    try {
-      const response = await apiClient.get('/service/list', {
-        params: {
-          organization_id: organizationId,
-          ...(filters.search ? { search: filters.search } : {}),
-          ...(filters.type ? { type: filters.type } : {}),
-          ...(filters.status ? { status: filters.status } : {}),
-          ...(filters.dateFrom ? { date_from: filters.dateFrom } : {}),
-          ...(filters.dateTo ? { date_to: filters.dateTo } : {}),
-          ...(filters.targetLanguage ? { target_language: filters.targetLanguage } : {}),
-        },
-      })
+    const response = await apiClient.get('/service/list', {
+      params: {
+        organization_id: organizationId,
+        ...(filters.search ? { search: filters.search } : {}),
+        ...(filters.type ? { type: filters.type } : {}),
+        ...(filters.status ? { status: filters.status } : {}),
+        ...(filters.dateFrom ? { date_from: filters.dateFrom } : {}),
+        ...(filters.dateTo ? { date_to: filters.dateTo } : {}),
+        ...(filters.targetLanguage ? { target_language: filters.targetLanguage } : {}),
+      },
+    })
 
-      const services = toArray(response.data).map(mapServiceRecord)
-      return { data: services, total: services.length }
-    } catch (error) {
-      throw error
-    }
+    const services = toArray(response.data).map(mapServiceRecord)
+    return { data: services, total: services.length }
   },
 
   async getRequestById(
     params: RequestReadParams,
     serviceType?: ServiceType
   ): Promise<PDFRequest | null> {
-    try {
-      const response = await apiClient.get('/service/read', {
-        params: {
-          // 🚨 Token removed from payload. apiClient sends it in the Header.
-          service_id: (params as any).serviceId || params.fileId,
-        },
-      })
+    const response = await apiClient.get('/service/read', {
+      params: {
+        service_id: (params as any).serviceId || params.fileId,
+      },
+    })
 
-      const services = toArray(response.data).map(mapServiceRecord)
-      return pickMatchingService(services, serviceType)
-    } catch (error) {
-      throw error
-    }
+    const services = toArray(response.data).map(mapServiceRecord)
+    return pickMatchingService(services, serviceType)
   },
 
   async getServicesByFile(params: RequestReadParams): Promise<PDFRequest[]> {
-    try {
-      const response = await apiClient.get('/service/read', {
-        params: {
-          // 🚨 Token removed from payload.
-          service_id: (params as any).serviceId || params.fileId,
-        },
-      })
+    const response = await apiClient.get('/service/read', {
+      params: {
+        service_id: (params as any).serviceId || params.fileId,
+      },
+    })
 
-      return toArray(response.data).map(mapServiceRecord)
-    } catch (error) {
-      throw error
-    }
+    return toArray(response.data).map(mapServiceRecord)
   },
 
   async createRequest(data: CreateRequestData): Promise<PDFRequest> {
     try {
-      await clientNotificationService.showStatus(
-        'Processing Started',
-        `Converting document using ${data.type}...`
-      )
-
       const payload = {
-        // 🚨 Token removed from payload.
         file_id: data.fileId,
         type: data.type,
         target_language: data.targetLanguage ?? '',
       }
 
       const response = await apiClient.post('/service/create', payload)
+      await clientNotificationService.showStatus(
+        'Processing Started',
+        `Converting document using ${data.type}...`
+      )
+
       const item = response.data?.data ?? response.data
       return mapServiceRecord(item)
     } catch (error) {
       const errorMsg = (error as Error).message
-      await clientNotificationService.showError('❌ Processing Failed', `Could not start processing: ${errorMsg}`)
+      await clientNotificationService.showError(
+        'Processing Failed',
+        `Could not start processing: ${errorMsg}`
+      )
       throw error
     }
   },
 
   async deleteRequest(fileId: string): Promise<void> {
-    try {
-      await apiClient.delete('/file/delete', {
-        data: {
-          // 🚨 Token removed from payload.
-          file_id: fileId,
-          service_id: fileId,
-        },
-      })
-    } catch (error) {
-      throw error
-    }
+    await apiClient.delete('/file/delete', {
+      data: {
+        file_id: fileId,
+        service_id: fileId,
+      },
+    })
   },
 
   async getRequestStatus(
     params: RequestReadParams,
     serviceType?: ServiceType
   ): Promise<PDFRequest | null> {
-    try {
-      return await this.getRequestById(params, serviceType)
-    } catch (error) {
-      throw error
-    }
+    return await this.getRequestById(params, serviceType)
   },
 }
 

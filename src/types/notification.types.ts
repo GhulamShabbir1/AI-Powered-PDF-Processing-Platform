@@ -36,6 +36,7 @@ export interface SaveFcmTokenPayload {
 export interface NotificationState {
   isSupported: boolean;
   permission: NotificationPermission | 'default' | 'denied' | 'granted';
+  isEnabled: boolean;
   isSubscribed: boolean;
   hasSentTokenToBackend: boolean;
 }
@@ -45,9 +46,11 @@ export interface NotificationState {
  */
 export interface NotificationServiceInterface {
   requestPermission: () => Promise<boolean>;
+  isEnabled: () => boolean;
   getAndSaveToken: () => Promise<string | null>;
   sendTokenToBackend: (token: string) => Promise<void>;
   unregisterToken: () => Promise<void>;
+  disableNotifications: () => Promise<void>;
   deleteToken: () => Promise<void>;
   initPushNotifications: () => Promise<void>;
   isSupported: () => boolean;
@@ -66,4 +69,3 @@ export interface ClientNotificationOptions {
   image?: string;
   actions?: Array<{ action: string; title: string }>;
 }
-

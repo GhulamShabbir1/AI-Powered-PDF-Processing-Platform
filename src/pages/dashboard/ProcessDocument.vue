@@ -4,7 +4,7 @@
       <div v-if="!selectedFile" class="w-100 h-100 d-flex align-center justify-center">
         <FileUploader
           :title="serviceTitle"
-          description="Upload a PDF or image, preview it, then start the selected AI service."
+          description="Upload a PDF or image up to 20 mb , preview it, then start the selected AI service."
           @file-selected="onFileSelected"
         />
       </div>
@@ -401,7 +401,10 @@ const uploadCurrentFile = async () => {
     throw new Error('Please choose a file first.')
   }
 
-  const uploadedFile = await uploadStore.uploadFile(selectedFile.value)
+  const uploadedFile = await uploadStore.uploadFile(selectedFile.value, {
+    showStartNotification: false,
+    showCompletionNotification: false,
+  })
   uploadedFileId.value = uploadedFile.fileId
   return uploadedFile.fileId
 }

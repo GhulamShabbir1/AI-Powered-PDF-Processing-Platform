@@ -8,38 +8,46 @@ export interface UploadedFileResponse {
   filename?: string
 }
 
+export interface UploadNotificationOptions {
+  showStartNotification?: boolean
+  showCompletionNotification?: boolean
+}
+
 export const uploadService = {
   async uploadFile(
     file: File,
-    onProgress?: (progress: UploadProgress) => void
+    onProgress?: (progress: UploadProgress) => void,
+    notificationOptions: UploadNotificationOptions = {}
   ): Promise<UploadedFileResponse> {
     const formData = new FormData()
     formData.append('file', file)
 
-    // Append identity data
-    const userId = localStorage.getItem('user_id');
-    const orgId = localStorage.getItem('organization_id');
-    
-    if (userId) formData.append('user_id', userId);
-    if (orgId) formData.append('organization_id', orgId);
+    const userId = localStorage.getItem('user_id')
+    const orgId = localStorage.getItem('organization_id')
+
+    if (userId) formData.append('user_id', userId)
+    if (orgId) formData.append('organization_id', orgId)
+
+    const {
+      showStartNotification = true,
+      showCompletionNotification = true,
+    } = notificationOptions
 
     notificationLogger.info(`Starting file upload: ${file.name}`)
-    const notificationId = await clientNotificationService.showProgress(`Uploading ${file.name}`, 0)
+    const notificationId = showStartNotification
+      ? await clientNotificationService.showProgress(`Uploading ${file.name}`, 0)
+      : ''
 
     try {
-      // 1. Grab the raw token from localStorage
-      const rawToken = localStorage.getItem('token') || '';
+      const rawToken = localStorage.getItem('token') || ''
 
       const response = await apiClient.post('/file/upload', formData, {
         headers: {
-          // 2. Send the RAW token (no "Bearer ")
-          'Authorization': rawToken 
+          Authorization: rawToken,
         },
-        // 3. THIS IS CRITICAL: Delete the global JSON header from apiClient.ts 
-        // so the browser natively builds the multipart file boundary.
         transformRequest: [(data, headers) => {
-          delete headers['Content-Type'];
-          return data;
+          delete headers['Content-Type']
+          return data
         }],
         onUploadProgress: async (progressEvent) => {
           if (onProgress && progressEvent.total) {
@@ -49,27 +57,35 @@ export const uploadService = {
               total: progressEvent.total,
               percentage,
             })
-            await clientNotificationService.updateProgress(notificationId, percentage)
+
+            if (notificationId) {
+              await clientNotificationService.updateProgress(notificationId, percentage)
+            }
           }
         },
       })
 
-      await clientNotificationService.completeProgress(
-        notificationId,
-        '✅ Upload Complete!',
-        `${file.name} is ready for processing`
-      )
+      if (showCompletionNotification) {
+        await clientNotificationService.completeProgress(
+          notificationId,
+          'Upload Complete',
+          `${file.name} is ready for processing`
+        )
+      }
 
       const payload = response.data?.data ?? response.data ?? {}
 
       return {
         fileId: payload.file_id ?? payload.fileId,
-        filename: payload.filename ?? payload.file_name ?? file.name
+        filename: payload.filename ?? payload.file_name ?? file.name,
       }
-      
     } catch (error) {
       const errorMsg = (error as Error).message || 'Unknown error'
-      await clientNotificationService.showError('❌ Upload Failed', `Failed to upload: ${errorMsg}`, { tag: notificationId })
+      await clientNotificationService.showError(
+        'Upload Failed',
+        `Failed to upload: ${errorMsg}`,
+        notificationId ? { tag: notificationId } : {}
+      )
       throw error
     }
   },

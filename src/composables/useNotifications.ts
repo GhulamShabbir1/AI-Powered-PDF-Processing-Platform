@@ -8,10 +8,12 @@ const state = ref<NotificationState>({
   permission: 'default',
   isSubscribed: false,
   hasSentTokenToBackend: false,
+  isEnabled: false,
 });
 
 function refreshState() {
   state.value.permission = Notification.permission;
+  state.value.isEnabled = notificationService.isEnabled();
   state.value.isSubscribed = notificationService.isSubscribed();
   state.value.hasSentTokenToBackend = localStorage.getItem('fcm_token_sent') === 'true';
 }
@@ -24,6 +26,7 @@ export function useNotifications() {
 
   const isSupported = computed(() => state.value.isSupported);
   const permission = computed(() => state.value.permission);
+  const isEnabled = computed(() => state.value.isEnabled);
   const isSubscribed = computed(() => state.value.isSubscribed);
   const hasSentToken = computed(() => state.value.hasSentTokenToBackend);
 
@@ -43,6 +46,11 @@ export function useNotifications() {
     return granted;
   }
 
+  async function disableNotifications(): Promise<void> {
+    await notificationService.disableNotifications();
+    refreshState();
+  }
+
   async function unregister(): Promise<void> {
     await notificationService.unregisterToken();
     refreshState();
@@ -51,15 +59,16 @@ export function useNotifications() {
   return {
     isSupported,
     permission,
+    isEnabled,
     isSubscribed,
     hasSentToken,
     canSubscribe,
     requestPermission,
     enableNotifications,
+    disableNotifications,
     unregister,
     refreshState,
   };
 }
 
 export default useNotifications;
-

@@ -193,6 +193,7 @@ const errorMessage = ref<string | null>(null)
 const isRefreshing = ref(false)
 const pollingTimer = ref<number | null>(null)
 const isCopying = ref(false) // NEW: Track if just copied for visual feedback
+const notificationActive = ref(false) // NEW: Prevent duplicate toasts while one is visible
 
 const validServiceTypes: ServiceType[] = ['ocr', 'summarization', 'translation']
 
@@ -322,9 +323,9 @@ const resultIntro = computed(() => {
   return 'Generated summary from your document:'
 })
 
-// NEW: Disable copy button if there's no text to copy or still loading
+  // NEW: Disable copy button if there's no text to copy, still loading, or already copying
 const isCopyDisabled = computed(() => {
-  return !formattedResult.value || isLoading.value
+  return !formattedResult.value || isLoading.value || isCopying.value
 })
 
 const stopPolling = () => {
@@ -444,37 +445,48 @@ const copyToClipboard = async () => {
   // Guard: Don't copy if there's no text
   if (!formattedResult.value) return
 
+  // Prevent duplicate clicks/notifications while a copy is already in progress
+  if (isCopying.value) return
+
+  // Immediately mark as copying so the button becomes disabled and further clicks are blocked
+  isCopying.value = true
+
   try {
     // Step 1: Copy text to system clipboard
-    // navigator.clipboard.writeText() is the modern browser API
-    // It's async, so we wait for it with 'await'
     await navigator.clipboard.writeText(formattedResult.value)
 
-    // Step 2: Show success notification to user
-    // The user won't see the clipboard, so we must tell them!
-    await clientNotificationService.showSuccess(
-      'Copied to Clipboard!',
-      'The extracted text has been copied successfully'
-    )
+    // Step 2: Show success notification to user (only if no active notification)
+    if (!notificationActive.value) {
+      notificationActive.value = true
+      await clientNotificationService.showSuccess(
+        'Copied to Clipboard!',
+        'The extracted text has been copied successfully'
+      )
+      // match toast timeout (5000ms) used by the notification service
+      setTimeout(() => {
+        notificationActive.value = false
+      }, 6000)
+    }
 
-    // Step 3: Visual feedback - change button appearance temporarily
-    // Set flag to true, button will show "Copied!" state
-    isCopying.value = true
-
-    // Step 4: Reset button appearance after 2 seconds
-    // This shows the temporary feedback then returns to normal
+    // Keep the copying state for a short visual feedback period, then reset
     setTimeout(() => {
       isCopying.value = false
     }, 2000)
 
   } catch (error: any) {
-    // Step 5: Handle errors gracefully
-    // Common reasons: user denied permission, clipboard not available, HTTPS required
+    // Handle errors gracefully and reset copying state so user can try again
     console.error('Copy to clipboard failed:', error)
-    await clientNotificationService.showError(
-      'Failed to Copy',
-      'Could not copy to clipboard. Please try again.'
-    )
+    isCopying.value = false
+    if (!notificationActive.value) {
+      notificationActive.value = true
+      await clientNotificationService.showError(
+        'Failed to Copy',
+        'Could not copy to clipboard. Please try again.'
+      )
+      setTimeout(() => {
+        notificationActive.value = false
+      }, 5000)
+    }
   }
 }
 

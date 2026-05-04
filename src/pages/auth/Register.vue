@@ -1,27 +1,26 @@
 <template>
   <div class="register-container pa-0 ma-0">
     
-    <!-- LEFT SIDE -->
     <div class="register-form-section d-flex align-center justify-center">
       <div class="form-wrapper">
 
-        <!-- Logo -->
-        <div class="text-center mb-8">
-          <v-img src="@/assets/logo.png" height="50" contain />
-          <h1 class="text-h5 font-weight-bold mt-4">Create Account</h1>
+        <div class="text-center mb-6">
+          <v-img src="@/assets/logo.png" height="40" contain />
+          <h1 class="text-h6 font-weight-bold mt-2">Create Account</h1>
           <p class="text-body-2 text-medium-emphasis">
             Join us and start managing your PDFs
           </p>
         </div>
 
-        <!-- FORM -->
         <v-form ref="formRef" v-model="isFormValid" validate-on="input">
 
           <v-text-field
             v-model="fullName"
             label="Full Name"
             variant="outlined"
-            prepend-inner-icon="mdi-account-outline"
+            density="comfortable"
+            hide-details="auto"
+            class="mb-3"
             validate-on="input"
             :rules="[rules.fullName]"
           />
@@ -30,7 +29,9 @@
             v-model="organization"
             label="Organization"
             variant="outlined"
-            prepend-inner-icon="mdi-domain"
+            density="comfortable"
+            hide-details="auto"
+            class="mb-3"
             validate-on="input"
             :rules="[rules.required]"
           />
@@ -39,18 +40,21 @@
             v-model="email"
             label="Email"
             variant="outlined"
-            prepend-inner-icon="mdi-email-outline"
+            density="comfortable"
+            hide-details="auto"
+            class="mb-3"
             validate-on="input"
             :rules="[rules.required, rules.email]"
           />
 
-          <!-- PASSWORD -->
           <v-text-field
             v-model="password"
             :type="showPassword ? 'text' : 'password'"
             label="Password"
             variant="outlined"
-            prepend-inner-icon="mdi-lock-outline"
+            density="comfortable"
+            hide-details="auto"
+            class="mb-2"
             :append-inner-icon="showPassword ? 'mdi-eye-off' : 'mdi-eye'"
             @click:append-inner="showPassword = !showPassword"
             @keydown.space.prevent="handlePasswordSpacePress"
@@ -58,31 +62,30 @@
             :rules="[rules.required, rules.password]"
           />
 
-          <!-- PASSWORD STRENGTH -->
-          <div class="password-strength-container">
+          <div v-if="password.length > 0" class="password-strength-container mb-3 px-1">
             <v-progress-linear
               :model-value="passwordStrength"
               :color="passwordStrengthColor"
-              height="6"
+              height="4"
               rounded
-              class="mb-0 mt-n3"
+              class="mt-1"
             />
-
-            <div class="text-caption mb-4 mt-0">
+            <div class="text-caption mt-1" style="font-size: 0.75rem !important;">
               Strength: 
-              <span :class="`text-${passwordStrengthColor}`">
+              <span :class="`text-${passwordStrengthColor} font-weight-bold`">
                 {{ passwordStrengthText }}
               </span>
             </div>
           </div>
 
-          <!-- CONFIRM PASSWORD -->
           <v-text-field
             v-model="confirmPassword"
             :type="showConfirmPassword ? 'text' : 'password'"
             label="Confirm Password"
             variant="outlined"
-            prepend-inner-icon="mdi-lock-check-outline"
+            density="comfortable"
+            hide-details="auto"
+            class="mb-6 mt-1"
             :append-inner-icon="showConfirmPassword ? 'mdi-eye-off' : 'mdi-eye'"
             @click:append-inner="showConfirmPassword = !showConfirmPassword"
             validate-on="input"
@@ -92,18 +95,11 @@
             ]"
           />
 
-          <!-- TERMS -->
-          <v-checkbox
-            v-model="termsAccepted"
-            label="I agree to Terms & Conditions"
-            :rules="[v => !!v || 'You must accept terms']"
-          />
-
-          <!-- BUTTON -->
           <v-btn
             color="primary"
             size="large"
             block
+            variant="flat"
             :loading="loading"
             :disabled="!canSubmit"
             @click="validateAndRegister"
@@ -113,19 +109,16 @@
 
         </v-form>
 
-        <!-- LOGIN -->
         <div class="text-center mt-6">
           <span class="text-body-2">Already have an account?</span>
-          <v-btn variant="text" to="/login">Login</v-btn>
+          <v-btn variant="text" to="/login" density="compact" class="ml-1">Login</v-btn>
         </div>
 
       </div>
     </div>
 
-    <!-- RIGHT SIDE -->
     <AuthLayout />
 
-    <!-- SNACKBAR -->
     <v-snackbar v-model="showAlert" color="error" timeout="4000" location="top left">
       {{ alertMessage }}
     </v-snackbar>
@@ -153,7 +146,6 @@ const organization = ref('')
 const email = ref('')
 const password = ref('')
 const confirmPassword = ref('')
-const termsAccepted = ref(false)
 
 const showPassword = ref(false)
 const showConfirmPassword = ref(false)
@@ -213,18 +205,19 @@ const canSubmit = computed(() => {
     isOrganizationValid &&
     isEmailValid &&
     isPasswordValid &&
-    isConfirmPasswordValid &&
-    termsAccepted.value
+    isConfirmPasswordValid
   )
 })
 
 // PASSWORD STRENGTH
 const passwordStrength = computed(() => {
   let score = 0
+  
   if (password.value.length >= 8) score += 25
   if (/[A-Z]/.test(password.value)) score += 25
   if (/[0-9]/.test(password.value)) score += 25
   if (/[!@#$%^&*]/.test(password.value)) score += 25
+  
   return score
 })
 
@@ -282,7 +275,7 @@ const validateAndRegister = async () => {
 
 <style scoped>
 .register-container {
-  min-height: 80vh;
+  min-height: 100vh;
 }
 
 .register-form-section {
@@ -290,6 +283,7 @@ const validateAndRegister = async () => {
   position: fixed;
   height: 100vh;
   background: white;
+  overflow-y: auto;
 }
 
 @media (max-width: 960px) {
@@ -302,11 +296,8 @@ const validateAndRegister = async () => {
 .form-wrapper {
   width: 100%;
   max-width: 420px;
-  padding: 32px;
-}
-
-:deep(.v-text-field) {
-  margin-bottom: 5px;
+  padding: 24px;
+  margin: auto;
 }
 
 :deep(.v-messages) {
@@ -317,6 +308,6 @@ const validateAndRegister = async () => {
 }
 
 .password-strength-container {
-  width: 50%;
+  width: 100%;
 }
 </style>

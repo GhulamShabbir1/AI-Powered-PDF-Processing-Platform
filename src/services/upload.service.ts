@@ -16,17 +16,31 @@ export const uploadService = {
     const formData = new FormData()
     formData.append('file', file)
 
-    notificationLogger.info(`Starting file upload: ${file.name} (${(file.size / 1024 / 1024).toFixed(2)} MB)`)
+    // Append identity data
+    const userId = localStorage.getItem('user_id');
+    const orgId = localStorage.getItem('organization_id');
+    
+    if (userId) formData.append('user_id', userId);
+    if (orgId) formData.append('organization_id', orgId);
 
-    // Start upload notification
-    const notificationId = await clientNotificationService.showProgress(
-      `Uploading ${file.name}`,
-      0
-    )
+    notificationLogger.info(`Starting file upload: ${file.name}`)
+    const notificationId = await clientNotificationService.showProgress(`Uploading ${file.name}`, 0)
 
     try {
+      // 1. Grab the raw token from localStorage
+      const rawToken = localStorage.getItem('token') || '';
+
       const response = await apiClient.post('/file/upload', formData, {
-        headers: { 'Content-Type': 'multipart/form-data' },
+        headers: {
+          // 2. Send the RAW token (no "Bearer ")
+          'Authorization': rawToken 
+        },
+        // 3. THIS IS CRITICAL: Delete the global JSON header from apiClient.ts 
+        // so the browser natively builds the multipart file boundary.
+        transformRequest: [(data, headers) => {
+          delete headers['Content-Type'];
+          return data;
+        }],
         onUploadProgress: async (progressEvent) => {
           if (onProgress && progressEvent.total) {
             const percentage = Math.round((progressEvent.loaded * 100) / progressEvent.total)
@@ -35,16 +49,11 @@ export const uploadService = {
               total: progressEvent.total,
               percentage,
             })
-            
-            // Update notification progress
             await clientNotificationService.updateProgress(notificationId, percentage)
-            
-            notificationLogger.debug(`Upload progress: ${file.name}`, { percentage })
           }
         },
       })
 
-      // Complete upload notification
       await clientNotificationService.completeProgress(
         notificationId,
         '✅ Upload Complete!',
@@ -53,94 +62,35 @@ export const uploadService = {
 
       const payload = response.data?.data ?? response.data ?? {}
 
-      const fileId = payload.file_id ?? payload.fileId
-      const filename = payload.filename ?? payload.file_name ?? file.name
-
-      notificationLogger.info('✅ File upload completed successfully', {
-        fileId,
-        filename,
-        sizeKB: Math.round(file.size / 1024),
-      })
-
       return {
-        fileId,
-        filename,
+        fileId: payload.file_id ?? payload.fileId,
+        filename: payload.filename ?? payload.file_name ?? file.name
       }
+      
     } catch (error) {
       const errorMsg = (error as Error).message || 'Unknown error'
-      
-      // Show error notification
-      await clientNotificationService.showError(
-        '❌ Upload Failed',
-        `Failed to upload ${file.name}: ${errorMsg}`,
-        { tag: notificationId }
-      )
-
-      notificationLogger.error('File upload failed', {
-        filename: file.name,
-        error: errorMsg,
-      })
-
+      await clientNotificationService.showError('❌ Upload Failed', `Failed to upload: ${errorMsg}`, { tag: notificationId })
       throw error
     }
   },
 
   async deleteFile(fileId: string): Promise<void> {
     try {
-      notificationLogger.debug('Deleting file', { fileId })
-      
-      await apiClient.delete('/file/delete', {
-        data: {
-          file_id: fileId,
-        },
-      })
-
-      notificationLogger.info('✅ File deleted successfully', { fileId })
+      await apiClient.delete('/file/delete', { data: { file_id: fileId } })
     } catch (error) {
-      notificationLogger.error('Failed to delete file', {
-        fileId,
-        error: (error as Error).message,
-      })
       throw error
     }
   },
 
   validateFile(file: File): { valid: boolean; error?: string } {
     const MAX_SIZE = 20 * 1024 * 1024
-    const ALLOWED_TYPES = [
-      'application/pdf',
-      'image/png',
-      'image/jpeg',
-      'image/jpg',
-    ]
+    const ALLOWED_TYPES = ['application/pdf', 'image/png', 'image/jpeg', 'image/jpg']
 
-    if (!ALLOWED_TYPES.includes(file.type)) {
-      const error = 'Only PDF, PNG, JPG, or JPEG files are allowed'
-      notificationLogger.warn('File validation failed: invalid type', {
-        filename: file.name,
-        fileType: file.type,
-      })
-      return { valid: false, error }
-    }
-
-    if (file.size > MAX_SIZE) {
-      const error = 'File size exceeds 20MB limit'
-      notificationLogger.warn('File validation failed: too large', {
-        filename: file.name,
-        sizeMB: (file.size / 1024 / 1024).toFixed(2),
-      })
-      return { valid: false, error }
-    }
-
-    notificationLogger.debug('File validation passed', {
-      filename: file.name,
-      sizeMB: (file.size / 1024 / 1024).toFixed(2),
-      type: file.type,
-    })
+    if (!ALLOWED_TYPES.includes(file.type)) return { valid: false, error: 'Only PDF, PNG, JPG, or JPEG files are allowed' }
+    if (file.size > MAX_SIZE) return { valid: false, error: 'File size exceeds 20MB limit' }
 
     return { valid: true }
   },
 }
 
 export default uploadService
-

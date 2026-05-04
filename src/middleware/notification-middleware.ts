@@ -81,6 +81,7 @@ interface RequestMetadata {
 }
 
 let toast: ReturnType<typeof useToast> | null = null;
+const NOTIFICATION_MIDDLEWARE_INSTALLED = Symbol.for('pdf-processor.notification-middleware-installed');
 
 function getToast() {
   if (!toast) {
@@ -279,9 +280,15 @@ export function withNotificationConfig(
  * Install notification middleware into API client
  */
 export function installNotificationMiddleware(apiClient: any) {
+  if (apiClient[NOTIFICATION_MIDDLEWARE_INSTALLED]) {
+    notificationLogger.debug('Notification middleware already installed, skipping');
+    return;
+  }
+
   notificationLogger.info('Installing notification middleware into API client');
   setupRequestInterceptor(apiClient);
   setupResponseInterceptor(apiClient);
+  apiClient[NOTIFICATION_MIDDLEWARE_INSTALLED] = true;
 }
 
 export default {

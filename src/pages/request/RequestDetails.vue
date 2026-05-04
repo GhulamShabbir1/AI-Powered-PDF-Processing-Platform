@@ -122,9 +122,22 @@
               <v-card-text class="pa-4 pa-md-5">
                 <div class="d-flex align-center justify-space-between mb-3">
                   <div class="text-subtitle-2 font-weight-bold">Output</div>
-                  <v-chip :color="statusColor" size="small" variant="tonal">
-                    {{ statusMessage }}
-                  </v-chip>
+                  <div class="d-flex align-center ga-2">
+                    <!-- NEW: Copy button -->
+                    <v-btn
+                      variant="outlined"
+                      :color="isCopying ? 'success' : 'primary'"
+                      size="small"
+                      :disabled="isCopyDisabled"
+                      :icon="isCopying ? 'mdi-check' : 'mdi-content-copy'"
+                      @click="copyToClipboard"
+                      class="text-none"
+                    >
+                    </v-btn>
+                    <v-chip :color="statusColor" size="small" variant="tonal">
+                      {{ statusMessage }}
+                    </v-chip>
+                  </div>
                 </div>
 
                 <div v-if="isLoading && !requestDetails">
@@ -177,6 +190,7 @@ const requestDetails = ref<PDFRequest | null>(null)
 const errorMessage = ref<string | null>(null)
 const isRefreshing = ref(false)
 const pollingTimer = ref<number | null>(null)
+const isCopying = ref(false) // NEW: Track if just copied for visual feedback
 
 const validServiceTypes: ServiceType[] = ['ocr', 'summarization', 'translation']
 
@@ -306,6 +320,11 @@ const resultIntro = computed(() => {
   return 'Generated summary from your document:'
 })
 
+// NEW: Disable copy button if there's no text to copy or still loading
+const isCopyDisabled = computed(() => {
+  return !formattedResult.value || isLoading.value
+})
+
 const stopPolling = () => {
   if (pollingTimer.value) {
     window.clearInterval(pollingTimer.value)
@@ -414,6 +433,45 @@ const downloadResultPdf = async () => {
     await clientNotificationService.showError(
       'Download Failed',
       'Please try downloading again'
+    )
+  }
+}
+
+// NEW: Copy result text to clipboard with user feedback
+const copyToClipboard = async () => {
+  // Guard: Don't copy if there's no text
+  if (!formattedResult.value) return
+
+  try {
+    // Step 1: Copy text to system clipboard
+    // navigator.clipboard.writeText() is the modern browser API
+    // It's async, so we wait for it with 'await'
+    await navigator.clipboard.writeText(formattedResult.value)
+
+    // Step 2: Show success notification to user
+    // The user won't see the clipboard, so we must tell them!
+    await clientNotificationService.showSuccess(
+      'Copied to Clipboard!',
+      'The extracted text has been copied successfully'
+    )
+
+    // Step 3: Visual feedback - change button appearance temporarily
+    // Set flag to true, button will show "Copied!" state
+    isCopying.value = true
+
+    // Step 4: Reset button appearance after 2 seconds
+    // This shows the temporary feedback then returns to normal
+    setTimeout(() => {
+      isCopying.value = false
+    }, 2000)
+
+  } catch (error: any) {
+    // Step 5: Handle errors gracefully
+    // Common reasons: user denied permission, clipboard not available, HTTPS required
+    console.error('Copy to clipboard failed:', error)
+    await clientNotificationService.showError(
+      'Failed to Copy',
+      'Could not copy to clipboard. Please try again.'
     )
   }
 }

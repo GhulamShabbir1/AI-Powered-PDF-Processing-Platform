@@ -11,8 +11,8 @@ export function useRequest() {
   const isLoading = computed(() => requestStore.isLoading);
   const error = computed(() => requestStore.error);
 
-  async function fetchRequests(organizationId: string, filters?: RequestListFilters) {
-    return requestStore.fetchRequests(organizationId, filters);
+  async function fetchRequests(filters?: RequestListFilters) {
+    return requestStore.fetchRequests(filters);
   }
 
   async function fetchRequestById(fileId: string, serviceType?: PDFRequest['serviceType']) {

@@ -1,11 +1,5 @@
 <template>
   <div class="history-page">
-<<<<<<< HEAD
-
-
-
-=======
->>>>>>> 8ac09b336bbcf10edf7946d54a96ece4238a6001
     <div class="d-flex align-center justify-space-between mb-6 flex-shrink-0">
       <div>
         <h1 class="text-h5 font-weight-bold text-grey-darken-4 mb-1">
@@ -17,11 +11,6 @@
         </p>
       </div>
 
-<<<<<<< HEAD
-      <v-btn color="primary" variant="tonal" prepend-icon="mdi-arrow-left" :to="{ name: 'Dashboard' }"
-        class="text-none rounded-lg">
-
-=======
       <v-btn
         color="primary"
         variant="tonal"
@@ -29,32 +18,11 @@
         :to="{ name: 'Dashboard' }"
         class="text-none rounded-lg"
       >
->>>>>>> 8ac09b336bbcf10edf7946d54a96ece4238a6001
         Back
       </v-btn>
     </div>
 
     <div class="d-flex flex-wrap align-center ga-3 mb-6 flex-shrink-0">
-<<<<<<< HEAD
-
-      <v-select v-model="selectedServiceType" :items="serviceTypeOptions" item-title="text" item-value="value"
-        label="Service" variant="outlined" density="compact" hide-details class="filter-input bg-white" clearable />
-
-      <v-select v-model="selectedStatus" :items="statusOptions" item-title="text" item-value="value" label="Status"
-        variant="outlined" density="compact" hide-details class="filter-input bg-white" clearable />
-
-      <v-text-field v-model="dateFrom" type="date" label="From Date" variant="outlined" density="compact" hide-details
-        class="filter-input bg-white" />
-
-      <v-text-field v-model="dateTo" type="date" label="To Date" variant="outlined" density="compact" hide-details
-        class="filter-input bg-white" />
-
-
-
-      <v-btn v-if="hasActiveFilters" variant="text" color="primary" prepend-icon="mdi-close-circle-outline"
-        @click="resetFilters" class="text-none font-weight-bold tracking-normal" height="40">
-
-=======
       <v-select
         v-model="selectedServiceType"
         :items="serviceTypeOptions"
@@ -110,29 +78,11 @@
         class="text-none font-weight-bold tracking-normal"
         height="40"
       >
->>>>>>> 8ac09b336bbcf10edf7946d54a96ece4238a6001
         CLEAR FILTERS
       </v-btn>
     </div>
 
     <v-card class="history-card" elevation="0">
-<<<<<<< HEAD
-
-
-
-      <div v-if="requestStore.isLoading" class="d-flex flex-grow-1 align-center justify-center">
-
-        <v-progress-circular indeterminate color="primary" size="48" width="4"></v-progress-circular>
-
-      </div>
-
-
-
-      <div v-else-if="filteredRequests.length === 0"
-        class="empty-state d-flex flex-column align-center justify-center flex-grow-1">
-
-        <v-icon icon="mdi-file-document-outline" size="64" color="grey-lighten-2" class="mb-4" />
-=======
       <div
         v-if="requestStore.isLoading"
         class="d-flex flex-grow-1 align-center justify-center"
@@ -155,7 +105,6 @@
           color="grey-lighten-2"
           class="mb-4"
         />
->>>>>>> 8ac09b336bbcf10edf7946d54a96ece4238a6001
 
         <h3 class="text-h6 font-weight-medium text-grey-darken-3">
           {{
@@ -183,13 +132,6 @@
         </v-btn>
       </div>
 
-<<<<<<< HEAD
-
-
-      <v-data-table v-else :headers="headers" :items="filteredRequests" item-value="id" density="comfortable"
-        fixed-header class="history-table">
-
-=======
       <v-data-table
         v-else
         :headers="headers"
@@ -199,7 +141,6 @@
         fixed-header
         class="history-table"
       >
->>>>>>> 8ac09b336bbcf10edf7946d54a96ece4238a6001
         <template #item.filename="{ item }">
           <div class="d-flex align-center ga-3 py-2">
             <v-avatar color="primary" size="36" class="file-avatar">
@@ -219,19 +160,12 @@
         </template>
 
         <template #item.status="{ item }">
-<<<<<<< HEAD
-
-          <v-chip :color="getStatusColor(item.status)" size="small" variant="flat"
-            class="font-weight-medium text-capitalize">
-
-=======
           <v-chip
             :color="getStatusColor(item.status)"
             size="small"
             variant="flat"
             class="font-weight-medium text-capitalize"
           >
->>>>>>> 8ac09b336bbcf10edf7946d54a96ece4238a6001
             {{ item.status }}
           </v-chip>
         </template>
@@ -476,14 +410,7 @@ const formatDate = (dateString: string) => {
 }
 
 .history-table :deep(.v-data-table-footer) {
-<<<<<<< HEAD
-
-  flex-shrink: 0;
-  /* Keep the pagination locked at the bottom */
-
-=======
   flex-shrink: 0; /* Keep the pagination locked at the bottom */
->>>>>>> 8ac09b336bbcf10edf7946d54a96ece4238a6001
 }
 
 /* Filters */
@@ -544,14 +471,7 @@ const formatDate = (dateString: string) => {
 
 @media (max-width: 600px) {
   .history-page {
-<<<<<<< HEAD
-
-    height: calc(100vh - 120px);
-    /* Tighter padding on mobile */
-
-=======
     height: calc(100vh - 120px); /* Tighter padding on mobile */
->>>>>>> 8ac09b336bbcf10edf7946d54a96ece4238a6001
   }
 
   .filter-input {
@@ -560,8 +480,4 @@ const formatDate = (dateString: string) => {
     max-width: 100%;
   }
 }
-<<<<<<< HEAD
 </style>
-=======
-</style>
->>>>>>> 8ac09b336bbcf10edf7946d54a96ece4238a6001

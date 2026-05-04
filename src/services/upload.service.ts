@@ -23,10 +23,8 @@ export const uploadService = {
     formData.append('file', file)
 
     const userId = localStorage.getItem('user_id')
-    const orgId = localStorage.getItem('organization_id')
 
     if (userId) formData.append('user_id', userId)
-    if (orgId) formData.append('organization_id', orgId)
 
     const {
       showStartNotification = true,

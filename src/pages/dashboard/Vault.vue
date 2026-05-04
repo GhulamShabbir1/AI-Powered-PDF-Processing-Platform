@@ -181,15 +181,11 @@
 </template>
 
 <script setup lang="ts">
-import { useAuthStore } from "../../stores";
-
 import { useRequestStore } from "../../stores/request.store";
 
 import type { PDFRequest } from "../../types/request.types";
 
 import { computed, onMounted, ref } from "vue";
-
-const authStore = useAuthStore();
 
 const requestStore = useRequestStore();
 
@@ -200,21 +196,6 @@ const selectedStatus = ref<string | null>(null);
 const dateFrom = ref<string>("");
 
 const dateTo = ref<string>("");
-
-const toSafeText = (value: unknown): string => {
-  if (typeof value === "string") return value;
-
-  if (typeof value === "number") return String(value);
-
-  return "";
-};
-
-const organizationId = computed(
-  () =>
-    toSafeText(authStore.currentUser?.organization_id) ||
-    toSafeText(localStorage.getItem("organization_id")) ||
-    ""
-);
 
 const serviceTypeOptions = [
   { text: "All Services", value: null },
@@ -308,9 +289,7 @@ const headers = [
 ];
 
 onMounted(async () => {
-  if (organizationId.value) {
-    await requestStore.fetchAllRequests(organizationId.value);
-  }
+  await requestStore.fetchAllRequests();
 });
 
 const resetFilters = () => {

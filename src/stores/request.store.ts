@@ -17,11 +17,11 @@ export const useRequestStore = defineStore('request', {
   },
 
   actions: {
-    async fetchRequests(organizationId: string, filters: RequestListFilters = {}) {
+    async fetchRequests(filters: RequestListFilters = {}) {
       this.isLoading = true
       this.error = null
       try {
-        const response = await requestService.getRequests(organizationId, filters)
+        const response = await requestService.getRequests(filters)
         this.requests = response.data
         return response
       } catch (error) {
@@ -32,8 +32,8 @@ export const useRequestStore = defineStore('request', {
       }
     },
 
-    async fetchAllRequests(organizationId: string, filters: RequestListFilters = {}) {
-      const response = await this.fetchRequests(organizationId, filters)
+    async fetchAllRequests(filters: RequestListFilters = {}) {
+      const response = await this.fetchRequests(filters)
       return response.data
     },
 

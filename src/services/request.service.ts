@@ -95,33 +95,13 @@ const pickMatchingService = (
 
 export const requestService = {
   async getRequests(
-    organizationId: string,
     filters: RequestListFilters = {}
   ): Promise<RequestListResponse> {
-    const response = await apiClient.get('/service/list', {
-      params: {
-        organization_id: organizationId,
-        ...(filters.search ? { search: filters.search } : {}),
-        ...(filters.type ? { type: filters.type } : {}),
-        ...(filters.status ? { status: filters.status } : {}),
-        ...(filters.dateFrom ? { date_from: filters.dateFrom } : {}),
-        ...(filters.dateTo ? { date_to: filters.dateTo } : {}),
-        ...(filters.targetLanguage ? { target_language: filters.targetLanguage } : {}),
-      },
-    })
+    void filters
 
+    const response = await apiClient.get('/service/list')
     const services = toArray(response.data).map(mapServiceRecord)
     return { data: services, total: services.length }
-    try {
-      // 🚨 REMOVED the `params` block completely!
-      // The backend only wants the token (which apiClient automatically adds to the headers).
-      const response = await apiClient.get('/service/list')
-
-      const services = toArray(response.data).map(mapServiceRecord)
-      return { data: services, total: services.length }
-    } catch (error) {
-      throw error
-    }
   },
 
   async getRequestById(

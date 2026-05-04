@@ -36,18 +36,11 @@
             <v-list-item prepend-icon="mdi-history" title="History" @click="goToHistory" />
 
             <v-list-item
-              v-if="showEnableNotifications"
-              prepend-icon="mdi-bell-outline"
-              title="Enable Notifications"
-              :disabled="isEnablingNotifications"
-              @click="handleEnableNotifications"
-            />
-
-            <v-list-item
-              v-else-if="isSubscribed"
-              prepend-icon="mdi-bell-check-outline"
-              title="Notifications Enabled"
-              disabled
+              v-if="showNotificationToggle"
+              :prepend-icon="isEnabled ? 'mdi-bell-off-outline' : 'mdi-bell-outline'"
+              :title="isEnabled ? 'Disable Notifications' : 'Enable Notifications'"
+              :disabled="isUpdatingNotifications"
+              @click="handleNotificationToggle"
             />
 
             <v-divider class="my-2" />
@@ -95,18 +88,11 @@
             />
 
             <v-list-item
-              v-if="showEnableNotifications"
-              prepend-icon="mdi-bell-outline"
-              title="Enable Notifications"
-              :disabled="isEnablingNotifications"
-              @click="handleEnableNotifications"
-            />
-
-            <v-list-item
-              v-else-if="isSubscribed"
-              prepend-icon="mdi-bell-check-outline"
-              title="Notifications Enabled"
-              disabled
+              v-if="showNotificationToggle"
+              :prepend-icon="isEnabled ? 'mdi-bell-off-outline' : 'mdi-bell-outline'"
+              :title="isEnabled ? 'Disable Notifications' : 'Enable Notifications'"
+              :disabled="isUpdatingNotifications"
+              @click="handleNotificationToggle"
             />
 
             <v-divider class="my-2" />
@@ -135,16 +121,16 @@ const router = useRouter()
 const authStore = useAuthStore()
 const toast = useToast()
 const isLoggingOut = ref(false)
-const isEnablingNotifications = ref(false)
-const { canSubscribe, isSubscribed, permission, enableNotifications, refreshState } = useNotifications()
+const isUpdatingNotifications = ref(false)
+const { canSubscribe, isEnabled, permission, enableNotifications, disableNotifications, refreshState } = useNotifications()
 
 const userInitial = computed(() => {
   const name = authStore.currentUser?.name?.trim()
   return name ? name.charAt(0).toUpperCase() : 'U'
 })
 
-const showEnableNotifications = computed(() => {
-  return authStore.isLoggedIn && canSubscribe.value && !isSubscribed.value
+const showNotificationToggle = computed(() => {
+  return authStore.isLoggedIn && canSubscribe.value
 })
 
 const goToServices = () => {
@@ -155,10 +141,16 @@ const goToHistory = () => {
   void router.push({ name: 'History' })
 }
 
-const handleEnableNotifications = async () => {
-  isEnablingNotifications.value = true
+const handleNotificationToggle = async () => {
+  isUpdatingNotifications.value = true
 
   try {
+    if (isEnabled.value) {
+      await disableNotifications()
+      toast.info('Notifications disabled.')
+      return
+    }
+
     const granted = await enableNotifications()
     refreshState()
 
@@ -173,10 +165,10 @@ const handleEnableNotifications = async () => {
       toast.info('Notification permission was not granted.')
     }
   } catch (error) {
-    console.error('Failed to enable notifications:', error)
-    toast.error('Failed to enable notifications. Please try again.')
+    console.error('Failed to update notifications:', error)
+    toast.error('Failed to update notifications. Please try again.')
   } finally {
-    isEnablingNotifications.value = false
+    isUpdatingNotifications.value = false
   }
 }
 

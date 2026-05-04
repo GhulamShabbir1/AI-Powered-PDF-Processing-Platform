@@ -13,6 +13,8 @@ interface ClientNotificationOptions {
 
 export class ClientNotificationService {
   private toast: ReturnType<typeof useToast> | null = null
+  private activeToastId: string | number | null = null
+  private activeBrowserNotification: Notification | null = null
   private notifications = new Map<string, Notification>()
 
   private getToast() {
@@ -37,6 +39,10 @@ export class ClientNotificationService {
   }
 
   private async canShowNotifications(): Promise<boolean> {
+    if (!notificationService.isEnabled()) {
+      return false
+    }
+
     const permission = await this.getPermission()
     return permission === 'granted'
   }
@@ -54,6 +60,26 @@ export class ClientNotificationService {
     if (existing) {
       existing.close()
       this.notifications.delete(id)
+    }
+  }
+
+  private dismissActiveToast(): void {
+    const toast = this.getToast()
+    if (toast) {
+      toast.dismiss()
+    }
+    if (this.activeToastId !== null) {
+      this.activeToastId = null
+    }
+  }
+
+  private replaceActiveBrowserNotification(notification: Notification): void {
+    this.activeBrowserNotification?.close()
+    this.activeBrowserNotification = notification
+    notification.onclose = () => {
+      if (this.activeBrowserNotification === notification) {
+        this.activeBrowserNotification = null
+      }
     }
   }
 
@@ -114,6 +140,7 @@ export class ClientNotificationService {
       tag: options.tag || `success-${Date.now()}`,
       ...options,
     })
+    this.replaceActiveBrowserNotification(notification)
 
     // Auto-close after 5s
     setTimeout(() => notification.close(), 5000)
@@ -143,6 +170,7 @@ export class ClientNotificationService {
       ...options,
     })
 
+    this.replaceActiveBrowserNotification(notification)
     this.notifications.set(tag, notification)
     notification.onclose = () => {
       this.notifications.delete(tag)
@@ -162,9 +190,14 @@ export class ClientNotificationService {
   }
 
   private showToastFallback(title: string, body: string, type: 'info' | 'success' | 'error' = 'info') {
+    if (!notificationService.isEnabled()) {
+      return
+    }
+
     const toast = this.getToast()
     if (toast) {
-      toast[type](`${title}: ${body}`, {
+      this.dismissActiveToast()
+      this.activeToastId = toast[type](`${title}: ${body}`, {
         timeout: 5000,
         closeOnClick: true,
       })
@@ -176,7 +209,7 @@ export class ClientNotificationService {
    */
   async isEnabled(): Promise<boolean> {
     const permission = await this.getPermission()
-    return permission === 'granted'
+    return notificationService.isEnabled() && permission === 'granted'
   }
 
   /**

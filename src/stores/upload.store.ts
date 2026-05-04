@@ -1,6 +1,6 @@
 import { defineStore } from 'pinia';
 import type { UploadProgress } from '../types/api.types';
-import uploadService from '../services/upload.service';
+import uploadService, { type UploadNotificationOptions } from '../services/upload.service';
 
 interface UploadState {
   currentFile: File | null;
@@ -25,7 +25,7 @@ export const useUploadStore = defineStore('upload', {
   },
 
   actions: {
-    async uploadFile(file: File) {
+    async uploadFile(file: File, notificationOptions: UploadNotificationOptions = {}) {
       const validation = uploadService.validateFile(file);
       if (!validation.valid) {
         this.error = validation.error || 'Invalid file';
@@ -38,9 +38,13 @@ export const useUploadStore = defineStore('upload', {
       this.progress = { loaded: 0, total: file.size, percentage: 0 };
 
       try {
-        const uploadedFile = await uploadService.uploadFile(file, (progress: UploadProgress) => {
-          this.progress = progress;
-        });
+        const uploadedFile = await uploadService.uploadFile(
+          file,
+          (progress: UploadProgress) => {
+            this.progress = progress;
+          },
+          notificationOptions
+        );
         this.fileId = uploadedFile.fileId;
         return uploadedFile;
       } catch (error) {

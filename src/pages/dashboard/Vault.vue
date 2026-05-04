@@ -5,7 +5,6 @@
         <h1 class="text-h5 font-weight-bold text-grey-darken-4 mb-1">
           History
         </h1>
-
         <p class="text-body-2 text-medium-emphasis mb-0">
           All processed files ({{ filteredRequestCount }})
         </p>
@@ -181,41 +180,44 @@
 </template>
 
 <script setup lang="ts">
+import { useAuthStore } from "../../stores";
 import { useRequestStore } from "../../stores/request.store";
-
 import type { PDFRequest } from "../../types/request.types";
-
 import { computed, onMounted, ref } from "vue";
 
+const authStore = useAuthStore();
 const requestStore = useRequestStore();
 
 const selectedServiceType = ref<string | null>(null);
-
 const selectedStatus = ref<string | null>(null);
-
 const dateFrom = ref<string>("");
-
 const dateTo = ref<string>("");
+
+const toSafeText = (value: unknown): string => {
+  if (typeof value === "string") return value;
+  if (typeof value === "number") return String(value);
+  return "";
+};
+
+const organizationId = computed(
+  () =>
+    toSafeText(authStore.currentUser?.organization_id) ||
+    toSafeText(localStorage.getItem("organization_id")) ||
+    ""
+);
 
 const serviceTypeOptions = [
   { text: "All Services", value: null },
-
   { text: "OCR", value: "ocr" },
-
   { text: "Summarization", value: "summarization" },
-
   { text: "Translation", value: "translation" },
 ];
 
 const statusOptions = [
   { text: "All Status", value: null },
-
   { text: "Pending", value: "pending" },
-
   { text: "Processing", value: "processing" },
-
   { text: "Completed", value: "completed" },
-
   { text: "Failed", value: "failed" },
 ];
 
@@ -247,26 +249,21 @@ const filteredRequests = computed(() => {
 
   if (dateFrom.value) {
     const fromDate = new Date(dateFrom.value);
-
     fromDate.setHours(0, 0, 0, 0);
 
     filtered = filtered.filter((req: PDFRequest) => {
       const createdDate = new Date(req.createdAt);
-
       createdDate.setHours(0, 0, 0, 0);
-
       return createdDate >= fromDate;
     });
   }
 
   if (dateTo.value) {
     const toDate = new Date(dateTo.value);
-
     toDate.setHours(23, 59, 59, 999);
 
     filtered = filtered.filter((req: PDFRequest) => {
       const createdDate = new Date(req.createdAt);
-
       return createdDate <= toDate;
     });
   }
@@ -276,29 +273,23 @@ const filteredRequests = computed(() => {
 
 const filteredRequestCount = computed(() => filteredRequests.value.length);
 
-// Actions column has been removed
-
 const headers = [
   { title: "File", key: "filename", sortable: false },
-
   { title: "Service", key: "serviceType", width: 140 },
-
   { title: "Status", key: "status", width: 130, sortable: false },
-
   { title: "Processed", key: "updatedAt", width: 180 },
 ];
 
 onMounted(async () => {
-  await requestStore.fetchAllRequests();
+  if (organizationId.value) {
+    await requestStore.fetchAllRequests(organizationId.value);
+  }
 });
 
 const resetFilters = () => {
   selectedServiceType.value = null;
-
   selectedStatus.value = null;
-
   dateFrom.value = "";
-
   dateTo.value = "";
 };
 
@@ -306,11 +297,8 @@ const getStatusColor = (status: PDFRequest["status"]) => {
   return (
     {
       completed: "success",
-
       processing: "warning",
-
       pending: "info",
-
       failed: "error",
     }[status] || "grey"
   );
@@ -318,16 +306,11 @@ const getStatusColor = (status: PDFRequest["status"]) => {
 
 const formatDate = (dateString: string) => {
   if (!dateString) return "";
-
   return new Date(dateString).toLocaleDateString("en-US", {
     year: "numeric",
-
     month: "short",
-
     day: "numeric",
-
     hour: "2-digit",
-
     minute: "2-digit",
   });
 };
@@ -335,57 +318,44 @@ const formatDate = (dateString: string) => {
 
 <style scoped>
 /* 1. Exact viewport math:
-
   100vh - Navbar (64px) - Footer (48px) - Padding (48px) = 160px.
-
   This completely destroys the universal scroll.
-
 */
-
 .history-page {
   height: calc(100vh - 160px);
-
   display: flex;
-
   flex-direction: column;
-
   overflow: hidden;
 }
 
 /* 2. Container expands to fill remaining space but never overflows */
-
 .history-card {
   flex: 1;
-
   display: flex;
-
   flex-direction: column;
-
   overflow: hidden;
-
   border-radius: 12px;
-
   background: white;
-
   border: 1px solid rgba(15, 23, 42, 0.08);
 }
 
 /* 3. The table forces the inner body wrapper to scroll */
-
 .history-table {
   flex: 1;
-
   display: flex;
-
   flex-direction: column;
-
   overflow: hidden;
 }
 
 .history-table :deep(.v-table__wrapper) {
   flex: 1;
-
   overflow-y: auto;
+}
+
+/* Push the scrollbar track down so it doesn't overlap the sticky header */
+.history-table :deep(.v-table__wrapper::-webkit-scrollbar-track) {
+  margin-top: 44px;
+  background: transparent;
 }
 
 .history-table :deep(.v-data-table-footer) {
@@ -393,24 +363,17 @@ const formatDate = (dateString: string) => {
 }
 
 /* Filters */
-
 .filter-input {
   min-width: 160px;
-
   max-width: 220px;
-
   flex: 1 1 auto;
 }
 
 /* Table Aesthetics */
-
 .history-table :deep(.v-data-table-header__row) th {
   background: #f8fafc !important;
-
   font-weight: 600 !important;
-
   color: #475569 !important;
-
   border-bottom: 1px solid rgba(15, 23, 42, 0.08) !important;
 }
 
@@ -423,31 +386,22 @@ const formatDate = (dateString: string) => {
 }
 
 /* File Avatar */
-
 .file-avatar {
   border-radius: 8px;
-
   background: rgba(79, 70, 229, 0.1) !important;
-
   color: #4f46e5 !important;
 }
 
 /* Text Truncation */
-
 .line-clamp-1 {
   display: -webkit-box;
-
   line-clamp: 1;
-
   -webkit-line-clamp: 1;
-
   -webkit-box-orient: vertical;
-
   overflow: hidden;
 }
 
 /* Mobile Adjustments */
-
 @media (max-width: 600px) {
   .history-page {
     height: calc(100vh - 120px); /* Tighter padding on mobile */
@@ -455,7 +409,6 @@ const formatDate = (dateString: string) => {
 
   .filter-input {
     min-width: 100%;
-
     max-width: 100%;
   }
 }

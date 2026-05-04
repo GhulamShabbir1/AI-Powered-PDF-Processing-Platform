@@ -112,6 +112,16 @@ export const requestService = {
 
     const services = toArray(response.data).map(mapServiceRecord)
     return { data: services, total: services.length }
+    try {
+      // 🚨 REMOVED the `params` block completely!
+      // The backend only wants the token (which apiClient automatically adds to the headers).
+      const response = await apiClient.get('/service/list')
+
+      const services = toArray(response.data).map(mapServiceRecord)
+      return { data: services, total: services.length }
+    } catch (error) {
+      throw error
+    }
   },
 
   async getRequestById(

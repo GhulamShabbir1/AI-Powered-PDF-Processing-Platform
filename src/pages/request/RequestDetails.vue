@@ -2,7 +2,9 @@
   <v-container class="result-page py-3 py-md-4">
     <v-row justify="center">
       <v-col cols="12" xl="11">
-        <div class="d-flex flex-wrap align-center justify-space-between ga-3  result-header">
+        
+        <div class="d-flex flex-wrap align-center justify-space-between ga-3 mb-6 result-header">
+          
           <div>
             <h1 class="text-h3 text-md-h4 font-weight-bold text-grey-darken-4">
               {{ pageTitle }}
